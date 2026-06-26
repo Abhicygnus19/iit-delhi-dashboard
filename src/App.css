@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* color:"#1e4a8d"  deep blue color */
+* {
+    outline: none;
+
+}
+
+/* .testcolors {
+    color: #4185c5;
+} */
