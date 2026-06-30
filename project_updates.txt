@@ -1,0 +1,35 @@
+1. completed from api
+Sponsor project data pull , Sanctioned proeject data fromSponsro project tab in sheet provided by client 
+sheet link :  https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=440863101#gid=440863101
+
+
+2. Consultancy project data pull
+Consultancy project data pull ,Consultancy Academic unit wise proejct data from sheet provided by client 
+sheet link-  https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1014204549#gid=1014204549
+
+3. Publication data pull
+Department Wise Publications & Citations, International Publications (From 2015-2025)	
+Total Publications of IIT Delhi
+Sheet link -   https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1190103417#gid=1190103417
+
+4. Patents IIT Delhi data pull
+FY,	Patents Filed, Patents Granted, Technology License Deal
+sheet link -  https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1297300024#gid=1297300024
+
+5. COE proeject data pull
+Title, Category, Sponsoring Agency,	Coordinator & Department, website 
+sheet link - https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1385536001#gid=1385536001
+
+
+
+
+
+
+
+2. to push in existing repo
+git remote add origin https://github.com/Abhicygnus19/iit-delhi-dashboard.git
+git branch -M main
+git push -u origin main
+
+
+3. in lib folder static object datas are present for testing purpose when calling api just comment the statci object

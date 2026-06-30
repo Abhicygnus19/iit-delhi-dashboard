@@ -1,12 +1,26 @@
-import React, { useMemo, useState } from "react";
-import { grpProjectData } from "./../lib/GrpProjectData";
+import React, { useEffect, useMemo, useState } from "react";
 import GrpFilters from "../dashboards/grpProject/GrpFilters";
-import GrpBarchart from "./../dashboards/grpProject/GrpBarchart"; // Unified reusable chart
+import GrpBarchart from "./../dashboards/grpProject/GrpBarchart";
 import GrpStatsCards from "../dashboards/grpProject/GrpStatsCards";
+import { fetchGrpProjectData } from "./../lib/GrpProjectData";
+import { LuLoaderCircle } from "react-icons/lu";
 
 function GrpProjects() {
+  const [grpProjectData, setGrpProjectData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedGrpTypes, setSelectedGrpTypes] = useState([]);
   const [selectedCollabs, setSelectedCollabs] = useState([]);
+
+  // fetching grp project
+  useEffect(() => {
+    const getGrpProjectData = async () => {
+      setLoading(true);
+      const apiGrpProjectData = await fetchGrpProjectData();
+      setGrpProjectData(apiGrpProjectData || []);
+      setLoading(false);
+    };
+    getGrpProjectData();
+  }, []);
 
   // 1. Dynamic GRP type options (Handles any new type added to data)
   const grpTypeOptions = useMemo(() => {
@@ -17,7 +31,7 @@ function GrpProjects() {
       label: t.charAt(0).toUpperCase() + t.slice(1),
       value: t.toLowerCase(),
     }));
-  }, []);
+  }, [grpProjectData]);
 
   // 2. Dynamic Collaboration options
   const collabOptions = useMemo(() => {
@@ -30,7 +44,7 @@ function GrpProjects() {
       label: c.charAt(0).toUpperCase() + c.slice(1),
       value: c.toLowerCase(),
     }));
-  }, []);
+  }, [grpProjectData]);
 
   // 3. Filtered Data
   const filteredData = useMemo(() => {
@@ -46,7 +60,7 @@ function GrpProjects() {
 
       return matchGrpType && matchCollab;
     });
-  }, [selectedGrpTypes, selectedCollabs]);
+  }, [selectedGrpTypes, selectedCollabs, grpProjectData]);
 
   // 4. DYNAMIC GROUPING: Group data by grpType dynamically
   const groupedData = useMemo(() => {
@@ -61,6 +75,15 @@ function GrpProjects() {
     }, {});
   }, [filteredData]);
 
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
+        <LuLoaderCircle className="animate-spin text-blue-900" size={60} />
+        <span className="text-slate-700 font-medium">Loading...</span>
+      </div>
+    );
+  }
+
   return (
     <>
       <GrpFilters
@@ -74,7 +97,7 @@ function GrpProjects() {
       <GrpStatsCards grpStatsData={filteredData} />
 
       {/* Grid adjusting layout dynamically based on how many charts are showing */}
-      <div className="px-4 py-6 max-w-[1500px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="px-4 py-6 max-w-[1500px] mx-auto grid grid-cols-1 gap-8">
         {Object.entries(groupedData).map(([type, data]) => (
           <GrpBarchart key={type} grpData={data} projectType={type} />
         ))}

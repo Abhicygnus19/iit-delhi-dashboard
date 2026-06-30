@@ -28,12 +28,12 @@ function BarChartStudentScheme({ schemeData = [] }) {
       if (!name) return;
       names.add(name);
 
-      if (scheme.yearly_data) {
-        Object.entries(scheme.yearly_data).forEach(([year, value]) => {
+      if (Array.isArray(scheme.yearlyData)) {
+        scheme.yearlyData.forEach(({ year, count }) => {
           if (!yearsMap[year]) {
             yearsMap[year] = { year: parseInt(year) };
           }
-          yearsMap[year][name] = value;
+          yearsMap[year][name] = count;
         });
       }
     });

@@ -7,11 +7,7 @@ import YearlyProjects from "../dashboards/sponsor_projects/YearlyProjects";
 import SponsorYearlyBudget from "../dashboards/sponsor_projects/SponsorYearlyBudget";
 import SanctionedProject from "../dashboards/sponsor_projects/SanctionedProject";
 
-import {
-  // sponsorProjectData,
-  fetchSponsorProjectData,
-} from "./../lib/sponsorData";
-
+import { fetchSponsorProjectData } from "./../lib/sponsorData";
 import { LuLoaderCircle } from "react-icons/lu";
 
 function SponsorProjects() {
@@ -21,17 +17,66 @@ function SponsorProjects() {
   const [selectedFunding, setSelectedFunding] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [selectedSponsorYear, setSelectedSponsorYear] = useState([]);
-
   const [activeSponsorYear, setActiveSponsorYear] = useState(null);
 
+  // Initialize range as null; we'll populate it dynamically once the API responds
+  const [sponsorYearRange, setSponsorYearRange] = useState(null);
+
+  // Helper function to safely extract the start year from formats like "2016-17"
+  const getStartYear = (yearStr) => {
+    if (!yearStr) return null;
+    const match = yearStr.match(/^(\d{4})/);
+    return match ? Number(match[1]) : null;
+  };
+
+  // Helper function to extract the 4-digit end year from formats like "2016-17" -> 2017
+  const getEndYear = (yearStr) => {
+    if (!yearStr) return null;
+    const match = yearStr.match(/^(\d{2})(\d{2})-(\d{2})$/);
+    if (match) {
+      const century = match[1]; // "20"
+      const endDecade = match[3]; // "17"
+      return Number(century + endDecade); // 2017
+    }
+    return getStartYear(yearStr);
+  };
+
+  // Compute absolute minimum and maximum years dynamically
+  const [minYear, maxYear] = useMemo(() => {
+    if (sponsorProjectData.length === 0) return [0, 0];
+
+    const startYears = sponsorProjectData
+      .map((item) => getStartYear(item.year))
+      .filter((y) => y !== null && !isNaN(y));
+
+    const endYears = sponsorProjectData
+      .map((item) => getEndYear(item.year))
+      .filter((y) => y !== null && !isNaN(y));
+
+    if (startYears.length === 0 || endYears.length === 0) return [0, 0];
+    return [Math.min(...startYears), Math.max(...endYears)];
+  }, [sponsorProjectData]);
+
+  //api calling
   useEffect(() => {
     const getSponsorProjectData = async () => {
       setLoading(true);
-
       const apiSponsorProject = await fetchSponsorProjectData();
+      const data = apiSponsorProject || [];
+      setSponsorProjectData(data);
 
-      setSponsorProjectData(apiSponsorProject || []);
+      if (data.length > 0) {
+        const startYears = data
+          .map((item) => getStartYear(item.year))
+          .filter((y) => y !== null);
+        const endYears = data
+          .map((item) => getEndYear(item.year))
+          .filter((y) => y !== null);
 
+        if (startYears.length > 0 && endYears.length > 0) {
+          setSponsorYearRange([Math.min(...startYears), Math.max(...endYears)]);
+        }
+      }
       setLoading(false);
     };
 
@@ -51,21 +96,37 @@ function SponsorProjects() {
     }));
   }, [sponsorProjectData]);
 
-  // Dynamically filter data tree based on dropdown selections AND clicked chart items
+  // Dynamically filter data tree based on configurations
   const filteredData = useMemo(() => {
-    // 1. First, slice by active clicked year if one exists
-    const baseData = activeSponsorYear
+    let baseData = activeSponsorYear
       ? sponsorProjectData.filter((item) => item.year === activeSponsorYear)
       : sponsorProjectData;
 
+    // Filter by the dynamic parsed Range Slider
+    if (
+      sponsorYearRange &&
+      sponsorYearRange[0] !== 0 &&
+      sponsorYearRange[1] !== 0
+    ) {
+      baseData = baseData.filter((item) => {
+        const itemStart = getStartYear(item.year);
+        const itemEnd = getEndYear(item.year);
+
+        return (
+          itemStart &&
+          itemEnd &&
+          itemStart >= sponsorYearRange[0] &&
+          itemEnd <= sponsorYearRange[1]
+        );
+      });
+    }
+
     return baseData.map((yearItem) => {
-      const filteredTypes = yearItem.types.filter((t) => {
+      const filteredTypes = (yearItem.types || []).filter((t) => {
         const matchesProject =
           selectedFunding.length === 0 || selectedFunding.includes(t.name);
         const matchesBudget =
           selectedUnits.length === 0 || selectedUnits.includes(t.name);
-
-        // Note: keeping state dropdown array check just in case
         const matchesYear =
           selectedSponsorYear.length === 0 ||
           selectedSponsorYear.includes(yearItem.year);
@@ -83,8 +144,9 @@ function SponsorProjects() {
     selectedUnits,
     selectedSponsorYear,
     activeSponsorYear,
+    sponsorYearRange,
     sponsorProjectData,
-  ]); // Added activeSponsorYear dependency
+  ]);
 
   if (loading) {
     return (
@@ -96,17 +158,19 @@ function SponsorProjects() {
   }
 
   return (
-    <div>
-      {/* 1. Global Filter Dashboard bar */}
+    <>
       <SponsorProjectFilter
         selectedFunding={selectedFunding}
         setSelectedFunding={setSelectedFunding}
         selectedUnits={selectedUnits}
         setSelectedUnits={setSelectedUnits}
         fundingOptionsSponsorProject={fundingOptionsSponsorProject}
+        sponsorYearRange={sponsorYearRange}
+        minYear={minYear}
+        maxYear={maxYear}
+        onSponsorYearRangeChange={setSponsorYearRange}
       />
 
-      {/* 2. Interactive Stats Metric Cards */}
       <SponsorStats
         activeData={filteredData}
         selectedFundingTypes={selectedFunding}
@@ -139,7 +203,7 @@ function SponsorProjects() {
           <SanctionedProject />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

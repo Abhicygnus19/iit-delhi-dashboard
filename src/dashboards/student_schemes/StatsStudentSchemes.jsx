@@ -5,11 +5,11 @@ function StatsStudentSchemes({ studentsSchemesActiveData = [] }) {
   // 1. Calculate the grand total of ALL currently active/filtered items combined
   const grandTotal = useMemo(() => {
     return studentsSchemesActiveData.reduce((acc, scheme) => {
-      const yearlyValues = scheme.yearly_data
-        ? Object.values(scheme.yearly_data)
+      const yearlyValues = Array.isArray(scheme.yearlyData)
+        ? scheme.yearlyData
         : [];
       const schemeSum = yearlyValues.reduce(
-        (sum, val) => sum + (Number(val) || 0),
+        (sum, item) => sum + (Number(item.count) || 0),
         0,
       );
       return acc + schemeSum;
@@ -19,11 +19,11 @@ function StatsStudentSchemes({ studentsSchemesActiveData = [] }) {
   // 2. Map whatever array items are inside studentsSchemesActiveData into distinct metric cards
   const dynamicCards = useMemo(() => {
     return studentsSchemesActiveData.map((scheme, index) => {
-      const yearlyValues = scheme.yearly_data
-        ? Object.values(scheme.yearly_data)
+      const yearlyValues = Array.isArray(scheme.yearlyData)
+        ? scheme.yearlyData
         : [];
       const totalValue = yearlyValues.reduce(
-        (sum, val) => sum + (Number(val) || 0),
+        (sum, item) => sum + (Number(item.count) || 0),
         0,
       );
 

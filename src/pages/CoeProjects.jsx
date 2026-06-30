@@ -1,22 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
-import CoeTableData from "../dashboards/Coeprojects/CoeTableData";
-import CoeFilters from "../dashboards/Coeprojects/CoeFilters";
-import { coeProjectData, fetchCoeProjectData } from "../lib/coeProjectData";
+import CoeTableData from "../dashboards/coeprojects/CoeTableData";
+import CoeFilters from "../dashboards/coeprojects/CoeFilters";
+import { fetchCoeProjectData } from "../lib/coeProjectData";
+
+import { LuLoaderCircle } from "react-icons/lu";
 
 function CoeProjects() {
-  // const [coeProjectData, setCoeProjectData] = useState([]);
+  const [coeProjectData, setCoeProjectData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  // useEffect(() => {
-  //   const getCoeProjectData = async () => {
-  //     setLoading(true);
-  //     const apiCoeProjectData = await fetchCoeProjectData();
-  //     setCoeProjectData(apiCoeProjectData || []);
-  //     setLoading(false);
-  //   };
-  //   getCoeProjectData();
-  // }, []);
+  useEffect(() => {
+    const getCoeProjectData = async () => {
+      setLoading(true);
+      const apiCoeProjectData = await fetchCoeProjectData();
+      setCoeProjectData(apiCoeProjectData || []);
+      setLoading(false);
+    };
+    getCoeProjectData();
+  }, []);
 
   //  Dynamically extract unique categories for the filter dropdown options
   const filterOptions = useMemo(() => {
@@ -24,10 +26,10 @@ function CoeProjects() {
       ...new Set(coeProjectData?.map((item) => item.category)),
     ];
     return uniqueCategories.map((cat) => ({
-      label: cat.charAt(0).toUpperCase() + cat.slice(1), // Capitalize label text cleanly
+      label: (cat || "").charAt(0).toUpperCase() + (cat || "").slice(1), // Capitalize label text cleanly
       value: cat,
     }));
-  }, []);
+  }, [coeProjectData]);
 
   //  Filter the data based on selection. If nothing is selected, show all data.
   const filteredData = useMemo(() => {
@@ -35,7 +37,16 @@ function CoeProjects() {
     return coeProjectData.filter((item) =>
       selectedCategories.includes(item.category),
     );
-  }, [selectedCategories]);
+  }, [selectedCategories, coeProjectData]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
+        <LuLoaderCircle className="animate-spin text-blue-900" size={60} />
+        <span className="text-slate-700 font-medium">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -45,7 +56,7 @@ function CoeProjects() {
         selected={selectedCategories}
         onChange={setSelectedCategories}
       />
-      <div className="px-2 min-h-screen max-w-[1500px] mx-auto">
+      <div className="px-2 min-h-screen max-w-[1500px] mx-auto pb-20">
         {/* Pass the dynamic filtered array instead of reading hardcoded data inside */}
         <CoeTableData data={filteredData} />
       </div>

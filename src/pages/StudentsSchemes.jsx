@@ -1,90 +1,102 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-import BarChartStudentScheme from "./../dashboards/student-schemes/BarChartStudentScheme";
-import StudentSchemeFilter from "./../dashboards/student-schemes/StudentSchemeFilter";
-import StatsStudentSchemes from "./../dashboards/student-schemes/StatsStudentSchemes";
-import { studentSchemeData } from "./../lib/studentSchemeData";
+import BarChartStudentScheme from "../dashboards/student_schemes/BarChartStudentScheme";
+import StudentSchemeFilter from "../dashboards/student_schemes/StudentSchemeFilter";
+import StatsStudentSchemes from "../dashboards/student_schemes/StatsStudentSchemes";
 
-// Pure helper function to dynamically pluck the absolute min and max years
-// out of whatever API structural data maps down.
-const getYearBounds = (data) => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return { minYear: 2000, maxYear: new Date().getFullYear() };
-  }
-
-  // 1. Extract all object keys from the nested 'yearly_data' objects
-  const allYears = data.flatMap((scheme) =>
-    scheme.yearly_data ? Object.keys(scheme.yearly_data).map(Number) : [],
-  );
-
-  if (allYears.length === 0) {
-    return { minYear: 2000, maxYear: new Date().getFullYear() };
-  }
-
-  // 2. Determine limits dynamically from data
-  return {
-    minYear: Math.min(...allYears),
-    maxYear: Math.max(...allYears),
-  };
-};
+import { fetchStudentSchemeData } from "./../lib/studentSchemeData";
+import { LuLoaderCircle } from "react-icons/lu";
 
 function StudentsSchemes() {
+  const [studentSchemeData, setStudentSchemeData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedSchemes, setSelectedSchemes] = useState([]);
 
-  // Compute boundaries safely away from state render lifecycle tracking blockers
+  // start range as null. If null, we use absolute min/max.
+  const [studentSchemeYearRange, setStudentSchemeYearRange] = useState(null);
+
+  const getYearBounds = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      return { minYear: 2000, maxYear: new Date().getFullYear() };
+    }
+    const allYears = data.flatMap((scheme) =>
+      Array.isArray(scheme.yearlyData)
+        ? scheme.yearlyData.map((d) => d.year)
+        : [],
+    );
+    if (allYears.length === 0) {
+      return { minYear: 2000, maxYear: new Date().getFullYear() };
+    }
+    return { minYear: Math.min(...allYears), maxYear: Math.max(...allYears) };
+  };
+
+  useEffect(() => {
+    const getStudentSchemeData = async () => {
+      setLoading(true);
+      const apiStudentSchemeData = await fetchStudentSchemeData();
+      setStudentSchemeData(apiStudentSchemeData || []);
+      setLoading(false);
+    };
+    getStudentSchemeData();
+  }, []);
+
   const { minYear, maxYear } = useMemo(
     () => getYearBounds(studentSchemeData),
-    [],
+    [studentSchemeData],
   );
 
-  // Initialize your range to match whatever the dataset rules dictate
-  const [studentSchemeYearRange, setStudentSchemeYearRange] = useState([
-    minYear,
-    maxYear,
-  ]);
-
-  // Generate unique filter choices
   const filterSchemeOptions = useMemo(() => {
     if (!Array.isArray(studentSchemeData)) return [];
     return studentSchemeData.map((scheme) => ({
       label: scheme.schemeName,
       value: scheme.schemeName,
     }));
-  }, []);
+  }, [studentSchemeData]);
 
-  // Filter raw dataset based on BOTH selection criteria array and the year interval
+  // Simplified filtering
   const filteredSchemesData = useMemo(() => {
     if (!Array.isArray(studentSchemeData)) return [];
 
+    // Use selected range if user moved slider, otherwise fall back to the absolute data limits
+    const startYear = studentSchemeYearRange
+      ? studentSchemeYearRange[0]
+      : minYear;
+    const endYear = studentSchemeYearRange
+      ? studentSchemeYearRange[1]
+      : maxYear;
+
     return studentSchemeData
       .filter((scheme) => {
-        // Condition A: Target filter matches selected options
         return (
           selectedSchemes.length === 0 ||
           selectedSchemes.includes(scheme.schemeName)
         );
       })
       .map((scheme) => {
-        // Condition B: Filter out specific data entries inside 'yearly_data' that fall outside the range
-        if (!scheme.yearly_data) return scheme;
+        if (!Array.isArray(scheme.yearlyData)) return scheme;
 
-        const filteredYearlyData = {};
-        Object.entries(scheme.yearly_data).forEach(([yearStr, value]) => {
-          const yr = Number(yearStr);
-          if (
-            yr >= studentSchemeYearRange[0] &&
-            yr <= studentSchemeYearRange[1]
-          ) {
-            filteredYearlyData[yearStr] = value;
-          }
+        const filteredYearlyData = scheme.yearlyData.filter((item) => {
+          return item.year >= startYear && item.year <= endYear;
         });
 
-        return {
-          ...scheme,
-          yearly_data: filteredYearlyData,
-        };
+        return { ...scheme, yearlyData: filteredYearlyData };
       });
-  }, [selectedSchemes, studentSchemeYearRange]);
+  }, [
+    studentSchemeData,
+    selectedSchemes,
+    studentSchemeYearRange,
+    minYear,
+    maxYear,
+  ]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
+        <LuLoaderCircle className="animate-spin text-blue-900" size={60} />
+        <span className="text-slate-700 font-medium">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pb-10">
@@ -92,7 +104,7 @@ function StudentsSchemes() {
         options={filterSchemeOptions}
         selected={selectedSchemes}
         onChange={setSelectedSchemes}
-        studentSchemeYearRange={studentSchemeYearRange}
+        studentSchemeYearRange={studentSchemeYearRange || [minYear, maxYear]}
         minYear={minYear}
         maxYear={maxYear}
         onstudentSchemeYearRangeChange={setStudentSchemeYearRange}

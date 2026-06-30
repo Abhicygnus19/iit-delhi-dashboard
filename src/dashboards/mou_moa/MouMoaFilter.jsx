@@ -40,7 +40,7 @@ const CustomSelect = ({ label, options, selected = [], onChange }) => {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute z-20 mt-1 w-full bg-white border rounded-md shadow-lg overflow-hidden">
+          <div className="absolute z-20 mt-1 w-full bg-white border rounded-md shadow-lg max-h-72 overflow-x-hidden overflow-y-auto">
             {options.map((option) => {
               const isChecked = selected.includes(option.value);
               return (

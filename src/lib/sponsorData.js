@@ -99,7 +99,7 @@ export const fetchSponsorProjectData = async () => {
     }
 
     const jsonResponse = await response.json();
-    // console.log("Sponsor Project Data", jsonResponse.data);
+    console.log("Sponsor Project Data", jsonResponse.data);
 
     return (jsonResponse.data || []).map((year) => ({
       ...year,
@@ -178,7 +178,7 @@ export const fetchSanctionedResearchProject = async () => {
     const jsonResponse = await response.json();
     const rawData = jsonResponse.data || [];
 
-    console.log("sanctioned research project data from api", rawData);
+    // console.log("sanctioned research project data from api", rawData);
 
     return rawData.map((yearObj) => {
       // Find the array property dynamically (e.g., "april2025toMarch2026")

@@ -54,16 +54,18 @@ function MoaTableData({ MoaData }) {
                     key={index}
                     className="border-b border-border/50 cursor-pointer hover:bg-gray-100 transition-colors"
                   >
-                    <td className="p-2">{item.universityAndOrganization}</td>
+                    <td className="p-2">
+                      {item.universityAndOrganization || "--"}
+                    </td>
                     <td className="p-2 font-medium">
                       {item.country.charAt(0).toUpperCase() +
                         item.country.slice(1)}
                     </td>
                     <td className="p-2 text-blue-600 hover:text-blue-900">
-                      {item.region}
+                      {item.region || "--"}
                     </td>{" "}
                     <td className="p-2 text-blue-600 hover:text-blue-900">
-                      {item.continent}
+                      {item.continent || "--"}
                     </td>
                   </tr>
                 ))

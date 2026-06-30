@@ -61,7 +61,7 @@ function MouTableData({ Moudata }) {
                         item.category.slice(1)}
                     </td>
                     <td className="p-2 text-blue-600 hover:text-blue-900">
-                      {item.mouSigningDate}
+                      {item.mouSigningDate || "--"}
                     </td>
                   </tr>
                 ))

@@ -1,4 +1,4 @@
-import "./App.css";
+// import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SponsorProjects from "./pages/SponsorProjects";
 import Header from "./components/ui/Header";
@@ -12,7 +12,7 @@ import StudentsSchemes from "./pages/StudentsSchemes";
 
 function App() {
   return (
-    <BrowserRouter basename="/">
+    <BrowserRouter basename="/iitd-rnd-dashboard-demo/v4/">
       <Header />
 
       <Routes>

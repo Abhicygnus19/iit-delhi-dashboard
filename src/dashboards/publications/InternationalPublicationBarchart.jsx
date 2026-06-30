@@ -105,18 +105,20 @@ export default function InternationalPublicationBarchart() {
   }
 
   return (
-    <div className="border-2 p-4 rounded-md shadow-sm text-xs">
-      <div className="flex justify-between gap-2 items-center mb-4">
+    <div className="border-2 rounded-md shadow-sm text-xs">
+      <div className="flex justify-between gap-2 items-center mb-4 p-4 bg-gray-100 border-b-2">
         <h3 className="font-semibold text-base ">
           International Publications from ({displayYear})
         </h3>
-        <CustomSelect
-          label="Select Year"
-          options={yearOptions}
-          selected={selectedYears}
-          onChange={setSelectedYears}
-          multiple={true}
-        />
+        <div className="text-sm">
+          <CustomSelect
+            label="Select Year"
+            options={yearOptions}
+            selected={selectedYears}
+            onChange={setSelectedYears}
+            multiple={true}
+          />
+        </div>{" "}
       </div>
 
       <ResponsiveContainer

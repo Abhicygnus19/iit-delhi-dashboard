@@ -31,51 +31,42 @@ function SponsorStats({
     });
   });
 
-  // ... keep your loop calculation data up here identical ...
-
-  // 1. Define your cards with explicit Tailwind left-border colors
   const allCards = [
     {
       title: "Total Government Projects",
       value: totalGovtProject,
       type: "government",
       metric: "project",
-      colorClass: "border-l-blue-500", // Blue for Government
     },
     {
       title: "Total Industry Projects",
       value: totalIndustryProject,
       type: "industry",
       metric: "project",
-      colorClass: "border-l-amber-500", // Amber/Orange for Industry
     },
     {
       title: "Total Foreign Projects",
       value: totalForeignProject,
       type: "foreign",
       metric: "project",
-      colorClass: "border-l-emerald-500", // Emerald/Green for Foreign
     },
     {
       title: "Total Budget of Government Projects",
       value: Number(totalGovBudget.toFixed(2)),
       type: "government",
       metric: "budget",
-      colorClass: "border-l-blue-600",
     },
     {
       title: "Total Budget of Industry Projects",
       value: Number(totalIndustryBudget.toFixed(2)),
       type: "industry",
       metric: "budget",
-      colorClass: "border-l-amber-600",
     },
     {
       title: "Total Budget of Foreign Projects",
       value: Number(totalForeignBudget.toFixed(2)),
       type: "foreign",
       metric: "budget",
-      colorClass: "border-l-emerald-600",
     },
   ];
 

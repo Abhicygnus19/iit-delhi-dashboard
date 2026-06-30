@@ -54,10 +54,10 @@ function GrpBarchart({ grpData, projectType, barColor }) {
   const chartHeightGrp = Math.max(350, displayedGrpData.length * 35);
 
   return (
-    <div className="relative text-xs border rounded-xl p-4 w-full group">
+    <div className="relative text-xs border-2 rounded-md p-4 w-full group">
       {/* Dynamic Instruction Banner */}
       <div className="flex justify-between items-center mb-2 px-2 text-xs  ">
-        <h4 className="text-sm font-semibold capitalize">
+        <h4 className="text-base font-semibold capitalize">
           {projectType} Projects
         </h4>
 
@@ -81,8 +81,11 @@ function GrpBarchart({ grpData, projectType, barColor }) {
           <YAxis
             dataKey="name"
             type="category"
-            width={90}
+            width={100}
             tick={{ fontSize: 11, fill: "#4b5563" }}
+            tickFormatter={(value) =>
+              value.length > 28 ? `${value.substring(0, 28)}...` : value
+            }
           />
           <Tooltip
             formatter={(value) => [`${value} Projects`, "Total"]}

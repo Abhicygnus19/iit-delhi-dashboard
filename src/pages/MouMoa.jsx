@@ -1,13 +1,32 @@
-import React, { useMemo, useState } from "react";
-import MouMoaFilter from "../dashboards/mou-moa/MouMoaFilter";
+import React, { useEffect, useMemo, useState } from "react";
+import MouMoaFilter from "../dashboards/mou_moa/MouMoaFilter";
+import MouTableData from "../dashboards/mou_moa/MouTableData";
+import MoaTableData from "../dashboards/mou_moa/MoaTableData";
 
-import { moaData, mouData } from "./../lib/mouMoaData";
-import MouTableData from "./../dashboards/mou-moa/MouTableData";
-import MoaTableData from "../dashboards/mou-moa/MoaTableData";
+// import { moaData, mouData } from "./../lib/mouMoaData";
+import { fetchMouData, fetchMoaData } from "./../lib/mouMoaData";
+import { LuLoaderCircle } from "react-icons/lu";
 
 function MouMoa() {
+  const [mouData, setMouData] = useState([]);
+  const [moaData, setMoaData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedMOUCategories, setSelectedMOUCategories] = useState([]);
   const [selectedMOACountry, setSelectedMOACountry] = useState([]);
+
+  useEffect(() => {
+    const getMOUMOAData = async () => {
+      setLoading(true);
+
+      const apiMouData = await fetchMouData();
+      const apiMoaData = await fetchMoaData();
+      setMouData(apiMouData || []);
+      setMoaData(apiMoaData || []);
+
+      setLoading(false);
+    };
+    getMOUMOAData();
+  }, []);
 
   // 2. Dynamically extract unique categories for the filter dropdown options
   const filterMouOptions = useMemo(() => {
@@ -16,7 +35,7 @@ function MouMoa() {
       label: cat.charAt(0).toUpperCase() + cat.slice(1), // Capitalize label text cleanly
       value: cat,
     }));
-  }, []);
+  }, [mouData]);
 
   const filterMoaOptions = useMemo(() => {
     const uniqueCountries = [...new Set(moaData.map((item) => item.country))];
@@ -24,20 +43,29 @@ function MouMoa() {
       label: country.charAt(0).toUpperCase() + country.slice(1), // Capitalize label text cleanly
       value: country,
     }));
-  }, []);
+  }, [moaData]);
 
-  // 3. Filter the data based on selection. If nothing is selected, show all data.
+  //   Filter the data based on selection. If nothing is selected, show all data.
   const filteredMouData = useMemo(() => {
     if (selectedMOUCategories.length === 0) return mouData;
     return mouData.filter((item) =>
       selectedMOUCategories.includes(item.category),
     );
-  }, [selectedMOUCategories]);
+  }, [selectedMOUCategories, mouData]);
 
   const filteredMoaData = useMemo(() => {
     if (selectedMOACountry.length === 0) return moaData;
     return moaData.filter((item) => selectedMOACountry.includes(item.country));
-  }, [selectedMOACountry]);
+  }, [selectedMOACountry, moaData]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
+        <LuLoaderCircle className="animate-spin text-blue-900" size={60} />
+        <span className="text-slate-700 font-medium">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <>

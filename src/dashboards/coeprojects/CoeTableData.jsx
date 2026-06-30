@@ -24,10 +24,8 @@ function CoeTableData({ data }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="w-20 p-3 text-center font-semibold text-gray-700">
-                  Logo
-                </th>
+              <tr className="border-b">
+                {/* <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap"></th> */}
                 <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
                   Title
                 </th>
@@ -56,30 +54,33 @@ function CoeTableData({ data }) {
                 </tr>
               ) : (
                 currentData.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-border/50 cursor-pointer hover:bg-gray-100 transition-colors"
-                  >
-                    <td className="text-center">
-                      <div className="flex justify-center">
-                        <img
-                          src={drdoimg}
-                          alt="DRDO"
-                          className="w-12 object-contain bg-white "
-                        />
-                      </div>
-                    </td>
-                    <td className="p-2 flex gap-2 items-center">
-                      {item.title}
-                    </td>
+                  <tr key={index}>
+                    {/* <td className="p-2">
+                        <div className="w-10 overflow-hidden">
+                          <img
+                            src={item.logo}
+                            alt={item.sponsoringAgency}
+                            className="w-full object-contain bg-white"
+                          />
+                        </div>
+                      </td> */}
+                    <td className="p-2">{item.title}</td>
                     <td className="p-2 font-medium">
                       {item.category.charAt(0).toUpperCase() +
                         item.category.slice(1)}
                     </td>
-                    <td className="p-2 text-blue-600 hover:text-blue-900">
-                      <a href={item.sponsoringAgencyLink} target="_blank">
-                        {item.sponsoringAgency}
-                      </a>
+                    <td className="p-2 text-blue-600 hover:text-blue-900 cursor-pointer">
+                      {item.sponsoringAgencyLink ? (
+                        <a
+                          href={item.sponsoringAgencyLink}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {item.sponsoringAgency}
+                        </a>
+                      ) : (
+                        <span>{item.sponsoringAgency}</span>
+                      )}
                     </td>
                     <td className="p-2">{item.coordinatorAndDepartment}</td>
                   </tr>
