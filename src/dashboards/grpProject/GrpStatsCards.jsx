@@ -13,7 +13,7 @@ function GrpStatsCards({ grpStatsData }) {
   }, [grpStatsData]);
 
   return (
-    <div className="px-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 my-6 max-w-[1500px] mx-auto">
+    <div className="px-2 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4  max-w-[1500px] mx-auto">
       {Object.entries(stats).map(([type, total]) => (
         <StatsCard key={type} title={`Total ${type} Projects`} value={total} />
       ))}

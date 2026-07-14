@@ -33,37 +33,37 @@ function SponsorStats({
 
   const allCards = [
     {
-      title: "Total Government Projects",
+      title: "Total Government Projects (In Number)",
       value: totalGovtProject,
       type: "government",
       metric: "project",
     },
     {
-      title: "Total Industry Projects",
+      title: "Total Industry Projects (In Number)",
       value: totalIndustryProject,
       type: "industry",
       metric: "project",
     },
     {
-      title: "Total Foreign Projects",
+      title: "Total Foreign Projects (In Number)",
       value: totalForeignProject,
       type: "foreign",
       metric: "project",
     },
     {
-      title: "Total Budget of Government Projects",
+      title: "Total Budget (In Crore) of Government Projects",
       value: Number(totalGovBudget.toFixed(2)),
       type: "government",
       metric: "budget",
     },
     {
-      title: "Total Budget of Industry Projects",
+      title: "Total Budget (In Crore) of Industry Projects",
       value: Number(totalIndustryBudget.toFixed(2)),
       type: "industry",
       metric: "budget",
     },
     {
-      title: "Total Budget of Foreign Projects",
+      title: "Total Budget (In Crore) of Foreign Projects",
       value: Number(totalForeignBudget.toFixed(2)),
       type: "foreign",
       metric: "budget",

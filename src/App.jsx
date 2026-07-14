@@ -9,34 +9,42 @@ import GrpProjects from "./pages/GrpProjects";
 import MouMoa from "./pages/MouMoa";
 import Publications from "./pages/Publications";
 import StudentsSchemes from "./pages/StudentsSchemes";
+import { useEffect } from "react";
 
 function App() {
   return (
-    <BrowserRouter basename="/iitd-rnd-dashboard-demo/v4/">
+    <BrowserRouter basename="/iitd/react-dashboard/">
       <Header />
+      <div className="md:mt-20">
+        <Routes>
+          <Route
+            path="/"
+            element={<Navigate to="/sponsor-research-project" replace />}
+          />
 
-      <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/sponsor-research-project" replace />}
-        />
+          <Route
+            path="/sponsor-research-project"
+            element={<SponsorProjects />}
+          />
 
-        <Route path="/sponsor-research-project" element={<SponsorProjects />} />
+          <Route
+            path="/consultancy-project"
+            element={<ConsultancyProjects />}
+          />
 
-        <Route path="/consultancy-project" element={<ConsultancyProjects />} />
+          <Route path="/publication" element={<Publications />} />
 
-        <Route path="/publication" element={<Publications />} />
+          <Route path="/patent-iit-delhi" element={<PatentsIITDelhi />} />
 
-        <Route path="/patent-iit-delhi" element={<PatentsIITDelhi />} />
+          <Route path="/coe-projects" element={<CoeProjects />} />
 
-        <Route path="/coe-projects" element={<CoeProjects />} />
+          <Route path="/grp-projects" element={<GrpProjects />} />
 
-        <Route path="/grp-projects" element={<GrpProjects />} />
+          <Route path="/mou-moa" element={<MouMoa />} />
 
-        <Route path="/mou-moa" element={<MouMoa />} />
-
-        <Route path="/students-scheme" element={<StudentsSchemes />} />
-      </Routes>
+          <Route path="/students-scheme" element={<StudentsSchemes />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }

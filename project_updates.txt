@@ -1,7 +1,6 @@
-1. completed from api
-Sponsor project data pull , Sanctioned proeject data fromSponsro project tab in sheet provided by client 
+Dashboard data fetching from api
+1. Sponsor project data pull , Sanctioned proeject data fromSponsro project tab in sheet provided by client 
 sheet link :  https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=440863101#gid=440863101
-
 
 2. Consultancy project data pull
 Consultancy project data pull ,Consultancy Academic unit wise proejct data from sheet provided by client 
@@ -16,14 +15,24 @@ Sheet link -   https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU
 FY,	Patents Filed, Patents Granted, Technology License Deal
 sheet link -  https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1297300024#gid=1297300024
 
-5. COE proeject data pull
+5. COE project data pull
 Title, Category, Sponsoring Agency,	Coordinator & Department, website 
 sheet link - https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1385536001#gid=1385536001
 
+6. GRP project data pull
+Total International Projects , Total National Projects
+sheet link - https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=413213800#gid=413213800
+ 
+7. mou-moa data pull
+MOU - MoU signed with, Category, Date of MoU Signing
+MOA - University/Organization, Country, Region, Continent
+sheet link - https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=598022842#gid=598022842
 
+8. Student Schemes data pull
+With yearly data of Student Startup Action, Discover & Learn, SURA
+sheet link - https://docs.google.com/spreadsheets/d/1Qg7L6tOFM7pCVHwX89E5nwUqU-pFZLuRBCTWxoTD3Kw/edit?gid=1368558772#gid=1368558772
 
-
-
+ 
 
 
 2. to push in existing repo
@@ -32,4 +41,5 @@ git branch -M main
 git push -u origin main
 
 
-3. in lib folder static object datas are present for testing purpose when calling api just comment the statci object
+*** In lib folder static object datas are present for testing purpose 
+When calling api just comment the static object

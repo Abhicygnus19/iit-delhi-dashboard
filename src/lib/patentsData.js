@@ -1,6 +1,35 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
+export const fetchPatentsData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/patents`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+
+    console.log("patentsData from api", jsonResponse.data);
+
+    return (jsonResponse.data || []).map((year) => ({
+      ...year,
+      patentTypes: year.patentTypes.map((ptype) => ({
+        ...ptype,
+        patentNumbers: Number(ptype.patentNumbers),
+      })),
+    }));
+  } catch (error) {
+    console.log("Error while fetching patents data", error);
+  }
+};
+
 // export const patentsData = [
 //   {
 //     year: "2016-17",
@@ -83,32 +112,3 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 //     ],
 //   },
 // ];
-
-export const fetchPatentsData = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/patents`, {
-      method: "GET",
-      headers: {
-        "X-API-KEY": API_KEY,
-        "Content-type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonResponse = await response.json();
-
-    console.log("patentsData from api", jsonResponse.data);
-
-    return (jsonResponse.data || []).map((year) => ({
-      ...year,
-      patentTypes: year.patentTypes.map((ptype) => ({
-        ...ptype,
-        patentNumbers: Number(ptype.patentNumbers),
-      })),
-    }));
-  } catch (error) {
-    console.log("Error while fetching patents data", error);
-  }
-};

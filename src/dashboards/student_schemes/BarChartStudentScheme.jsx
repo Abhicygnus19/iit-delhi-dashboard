@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const BAR_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
 
@@ -107,6 +108,7 @@ function BarChartStudentScheme({ schemeData = [] }) {
               dataKey="year"
               interval={0}
               stroke="#4b5563"
+              reversed={true}
             />
             <Tooltip
               cursor={{ fill: "#f3f4f6", opacity: 0.4 }}
@@ -139,9 +141,10 @@ function BarChartStudentScheme({ schemeData = [] }) {
                     Math.min(prev + 15, StuentSchemeChartData.length),
                   )
                 }
-                className="px-3 py-1 text-sm text-white bg-blue-900 rounded-full"
+                className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
               >
                 Show More
+                <FaArrowDown className="animate-bounce" size={18} />
               </button>
             )}
 
@@ -150,9 +153,10 @@ function BarChartStudentScheme({ schemeData = [] }) {
               onClick={() =>
                 setMaxStudentSchemeBarsCount((prev) => Math.max(prev - 15, 15))
               }
-              className="px-3 py-1 text-sm border border-gray-500 rounded-full"
+              className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
             >
               Show Less
+              <FaArrowUp className="animate-bounce" size={18} />
             </button>
           )}
         </div>

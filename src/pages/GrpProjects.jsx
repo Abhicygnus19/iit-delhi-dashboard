@@ -97,7 +97,7 @@ function GrpProjects() {
       <GrpStatsCards grpStatsData={filteredData} />
 
       {/* Grid adjusting layout dynamically based on how many charts are showing */}
-      <div className="px-4 py-6 max-w-[1500px] mx-auto grid grid-cols-1 gap-8">
+      <div className="px-2 pb-12 mt-6 max-w-[1500px] mx-auto grid grid-cols-1 gap-8">
         {Object.entries(groupedData).map(([type, data]) => (
           <GrpBarchart key={type} grpData={data} projectType={type} />
         ))}

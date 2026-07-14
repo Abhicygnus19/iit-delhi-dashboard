@@ -1,20 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-// export const yearlyPublicationsdata = [
-//   { year: 2015, total: 1970, foreign: 426 },
-//   { year: 2016, total: 2259, foreign: 487 },
-//   { year: 2017, total: 2654, foreign: 507 },
-//   { year: 2018, total: 2729, foreign: 515 },
-//   { year: 2019, total: 2923, foreign: 652 },
-//   { year: 2020, total: 3293, foreign: 753 },
-//   { year: 2021, total: 3609, foreign: 929 },
-//   { year: 2022, total: 3994, foreign: 1100 },
-//   { year: 2023, total: 4260, foreign: 1109 },
-//   { year: 2024, total: 4146, foreign: 1183 },
-//   { year: 2025, total: 3869, foreign: 1213 },
-// ];
-
 export const fetchYearlyPublications = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/yearlypublications`, {
@@ -40,6 +26,71 @@ export const fetchYearlyPublications = async () => {
     }));
   } catch (error) {
     console.error("Error fetching publication data:", error);
+  }
+};
+
+// export const yearlyPublicationsdata = [
+//   { year: 2015, total: 1970, foreign: 426 },
+//   { year: 2016, total: 2259, foreign: 487 },
+//   { year: 2017, total: 2654, foreign: 507 },
+//   { year: 2018, total: 2729, foreign: 515 },
+//   { year: 2019, total: 2923, foreign: 652 },
+//   { year: 2020, total: 3293, foreign: 753 },
+//   { year: 2021, total: 3609, foreign: 929 },
+//   { year: 2022, total: 3994, foreign: 1100 },
+//   { year: 2023, total: 4260, foreign: 1109 },
+//   { year: 2024, total: 4146, foreign: 1183 },
+//   { year: 2025, total: 3869, foreign: 1213 },
+// ];
+
+export const fetchPublicationData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/publicationData`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const jsonResponse = await response.json();
+    const data = jsonResponse.data;
+
+    if (!data || !Array.isArray(data)) return [];
+    console.log("Publication data", data);
+
+    return data.map((item) => {
+      const cleanPublications = (item.publications || []).map((pub) => ({
+        year: Number(pub.year),
+        value:
+          typeof pub.value === "string"
+            ? parseInt(pub.value.replace(/,/g, ""), 10) || "No data"
+            : Number(pub.value || 0),
+      }));
+
+      // Dynamically calculate cumulative total if missing from API root
+      const computedTotal = cleanPublications.reduce(
+        (sum, p) => sum + p.value,
+        0,
+      );
+
+      return {
+        code: item.code || "Unknown",
+        name: item.name || "Unknown Department",
+        orgType: item.orgType || "department",
+        publications: cleanPublications,
+        total: computedTotal || "",
+        citations: item.citations || 0, // Fallback safe default
+        avgLast5Years: item.avgLast5Years || 0,
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching publication data:", error);
+    return [];
   }
 };
 
@@ -428,57 +479,6 @@ export const fetchYearlyPublications = async () => {
 //     avgLast5Years: 3.75,
 //   },
 // ];
-
-export const fetchPublicationData = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/publicationData`, {
-      method: "GET",
-      headers: {
-        "X-API-KEY": API_KEY,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const jsonResponse = await response.json();
-    const data = jsonResponse.data;
-
-    if (!data || !Array.isArray(data)) return [];
-    console.log("Publication data", data);
-
-    return data.map((item) => {
-      const cleanPublications = (item.publications || []).map((pub) => ({
-        year: Number(pub.year),
-        value:
-          typeof pub.value === "string"
-            ? parseInt(pub.value.replace(/,/g, ""), 10) || "No data"
-            : Number(pub.value || 0),
-      }));
-
-      // Dynamically calculate cumulative total if missing from API root
-      const computedTotal = cleanPublications.reduce(
-        (sum, p) => sum + p.value,
-        0,
-      );
-
-      return {
-        code: item.code || "Unknown",
-        name: item.name || "Unknown Department",
-        orgType: item.orgType || "department",
-        publications: cleanPublications,
-        total: computedTotal || "",
-        citations: item.citations || 0, // Fallback safe default
-        avgLast5Years: item.avgLast5Years || 0,
-      };
-    });
-  } catch (error) {
-    console.error("Error fetching publication data:", error);
-    return [];
-  }
-};
 
 // export const internationalPublicationData = [
 //   {

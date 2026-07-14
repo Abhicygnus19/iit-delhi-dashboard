@@ -11,6 +11,7 @@ import {
 } from "recharts";
 
 import { fetchIntenationalPublication } from "../../lib/publicationData";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 export default function InternationalPublicationBarchart() {
   const [internationalPublicationData, setInternationalPublicationData] =
@@ -140,22 +141,24 @@ export default function InternationalPublicationBarchart() {
         </BarChart>
       </ResponsiveContainer>
 
-      <div className="flex justify-center gap-2 mt-4 font-semibold">
+      <div className="flex justify-center gap-2 my-4 font-semibold">
         {visibleCount < internationalChartData.length && (
           <button
             onClick={() => setVisibleCount((prev) => prev + 20)}
-            className="px-4 py-2 bg-blue-900 text-white border-2 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show More
+            <FaArrowDown className="animate-bounce" size={18} />
           </button>
         )}
 
         {visibleCount > 20 && (
           <button
             onClick={() => setVisibleCount(20)}
-            className="px-4 py-2 border-2 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show Less
+            <FaArrowUp className="animate-bounce" size={18} />
           </button>
         )}
       </div>

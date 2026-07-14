@@ -1,6 +1,39 @@
 import React, { useEffect, useState } from "react";
 
-function MouTableData({ Moudata }) {
+// Helper function to generate truncated pagination range (e.g., [1, 2, '...', 14, 15])
+const getPaginationRange = (currentPage, totalPages) => {
+  const delta = 1;
+  const range = [];
+  const rangeWithDots = [];
+  let l;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - delta && i <= currentPage + delta)
+    ) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l > 2) {
+        rangeWithDots.push("...");
+      }
+    }
+    rangeWithDots.push(i);
+    l = i;
+  }
+
+  return rangeWithDots;
+};
+
+function MouTableData({ Moudata = [] }) {
+  // Safe default parameter fallback
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
@@ -11,9 +44,13 @@ function MouTableData({ Moudata }) {
     startIndex,
     startIndex + itemsPerPage,
   );
+
   useEffect(() => {
     setCurrentPage(1);
   }, [Moudata]);
+
+  // Compute the smart truncated range array
+  const paginationRange = getPaginationRange(currentPage, totalPages);
 
   return (
     <>
@@ -43,7 +80,7 @@ function MouTableData({ Moudata }) {
               {Moudata.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={3} // Adjusted colSpan to match 3 standard columns
                     className="p-8 text-center text-gray-500 font-medium"
                   >
                     No records found matching the selected criteria.
@@ -55,10 +92,14 @@ function MouTableData({ Moudata }) {
                     key={index}
                     className="border-b border-border/50 cursor-pointer hover:bg-gray-100 transition-colors"
                   >
-                    <td className="p-2">{item.mouSignedOrganization}</td>
+                    <td className="p-2">
+                      {item.mouSignedOrganization || "--"}
+                    </td>
                     <td className="p-2 font-medium">
-                      {item.category.charAt(0).toUpperCase() +
-                        item.category.slice(1)}
+                      {item.category
+                        ? item.category.charAt(0).toUpperCase() +
+                          item.category.slice(1)
+                        : "--"}
                     </td>
                     <td className="p-2 text-blue-600 hover:text-blue-900">
                       {item.mouSigningDate || "--"}
@@ -68,36 +109,53 @@ function MouTableData({ Moudata }) {
               )}
             </tbody>
           </table>
+
+          {/* Clean Smart Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
+            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 border rounded disabled:opacity-50"
+                className="px-3 py-1 border rounded disabled:opacity-50 text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 Prev
               </button>
 
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`w-8 h-8 flex items-center justify-center border rounded-full  ${
-                    currentPage === index + 1
-                      ? "bg-blue-600 text-white"
-                      : "bg-white border-2"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+              {paginationRange.map((page, index) => {
+                // Render the static dots indicator
+                if (page === "...") {
+                  return (
+                    <span
+                      key={`dots-${index}`}
+                      className="px-2 font-medium text-gray-400 text-sm"
+                    >
+                      ...
+                    </span>
+                  );
+                }
+
+                // Render active/inactive interactive buttons
+                return (
+                  <button
+                    key={`page-${page}`}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-8 h-8 flex items-center justify-center font-medium text-sm border rounded-full transition-all ${
+                      currentPage === page
+                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
 
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 border rounded disabled:opacity-50"
+                className="px-3 py-1 border rounded disabled:opacity-50 text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 Next
               </button>

@@ -81,7 +81,7 @@ function MouMoa() {
         </div>
       </div>
 
-      <div className="px-2 max-w-[1500px] mx-auto flex flex-col gap-8 pb-20">
+      <div className="px-2 max-w-[1500px] mx-auto flex flex-col gap-8 pb-12">
         {/* Pass the dynamic filtered array instead of reading hardcoded data inside */}
         <MouTableData Moudata={filteredMouData} />
 

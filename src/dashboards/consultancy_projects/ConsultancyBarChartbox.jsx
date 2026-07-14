@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const COLOR_PALETTE = {
   government: "#1e4a8d",
@@ -37,6 +38,9 @@ function ConsultancyBarChartbox({
       });
       return dataRow;
     });
+
+    transformed.sort((a, b) => a.year.localeCompare(b.year));
+
     return { fullChartData: transformed, uniqueKeys: Array.from(keysSet) };
   }, [activeData]);
 
@@ -70,6 +74,12 @@ function ConsultancyBarChartbox({
     }
   };
 
+  const latestYear = useMemo(() => {
+    if (!fullChartData.length) return "";
+
+    return fullChartData[fullChartData.length - 1].year;
+  }, [fullChartData]);
+
   // Adjust height calculation smoothly based on chunk size
   const chartHeight = Math.max(350, displayedChartData.length * 35);
 
@@ -93,6 +103,11 @@ function ConsultancyBarChartbox({
         )}
       </div>
 
+      <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
+        <span>Click {latestYear} to view Consutancy Projects </span>
+        <FaArrowDown className="animate-bounce" size={16} />
+      </button>
+
       <ResponsiveContainer width="100%" height={chartHeight}>
         <BarChart
           data={displayedChartData}
@@ -101,7 +116,13 @@ function ConsultancyBarChartbox({
           // barCategoryGap={activeConsultancyYear ? "35%" : "20%"}
         >
           <XAxis type="number" />
-          <YAxis dataKey="year" type="category" tickLine={false} width={60} />
+          <YAxis
+            dataKey="year"
+            type="category"
+            tickLine={false}
+            width={60}
+            reversed={true}
+          />
           <Tooltip cursor={{ fill: "#f3f4f6" }} />
           <Legend />
 
@@ -122,7 +143,7 @@ function ConsultancyBarChartbox({
       {/* Hide controls if an activeConsultancyYear filter simplifies the dataset to 1 */}
       {!activeConsultancyYear && (
         <>
-          <div className="flex justify-center mt-4 gap-2">
+          <div className="flex justify-center mt-6 gap-4">
             {maxConsultancyCount < fullChartData.length && (
               <button
                 onClick={() =>
@@ -130,9 +151,10 @@ function ConsultancyBarChartbox({
                     Math.min(prev + 15, fullChartData.length),
                   )
                 }
-                className="px-3 py-1 text-xs font-medium text-white bg-blue-900 hover:bg-blue-800 rounded-full transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
               >
                 Show More
+                <FaArrowDown className="animate-bounce" />
               </button>
             )}
 
@@ -141,9 +163,10 @@ function ConsultancyBarChartbox({
                 onClick={() =>
                   setMaxConsultancyCount((prev) => Math.max(prev - 15, 15))
                 }
-                className="px-3 py-1 text-xs font-medium border border-gray-400 text-gray-700 hover:bg-gray-50 rounded-full transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
               >
                 Show Less
+                <FaArrowUp className="animate-bounce" size={18} />
               </button>
             )}
           </div>

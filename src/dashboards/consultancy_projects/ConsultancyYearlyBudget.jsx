@@ -26,7 +26,7 @@ function ConsultancyYearlyBudget({ activeData }) {
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs bg-white">
       <h3 className="mb-4 font-semibold text-sm">
-        Budget Comparison (Year wise)
+        Budget Comparison Year wise (In Crore)
       </h3>
 
       <ResponsiveContainer width="100%" height={320}>

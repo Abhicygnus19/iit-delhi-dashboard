@@ -10,6 +10,7 @@ import {
   Cell,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 function GrpBarchart({ grpData, projectType, barColor }) {
   // State to track the active/clicked university's full name
@@ -81,10 +82,10 @@ function GrpBarchart({ grpData, projectType, barColor }) {
           <YAxis
             dataKey="name"
             type="category"
-            width={100}
+            width={150} // Increase from 100
             tick={{ fontSize: 11, fill: "#4b5563" }}
             tickFormatter={(value) =>
-              value.length > 28 ? `${value.substring(0, 28)}...` : value
+              value.length > 35 ? `${value.substring(0, 35)}...` : value
             }
           />
           <Tooltip
@@ -113,9 +114,10 @@ function GrpBarchart({ grpData, projectType, barColor }) {
                 Math.min(prev + 15, grpChartData.length),
               )
             }
-            className="px-3 py-1 text-sm text-white bg-blue-900 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show More
+            <FaArrowDown className="animate-bounce" size={18} />
           </button>
         )}
 
@@ -124,9 +126,10 @@ function GrpBarchart({ grpData, projectType, barColor }) {
             onClick={() =>
               setMaxGrpBarsCount((prev) => Math.max(prev - 15, 15))
             }
-            className="px-3 py-1 text-sm border border-gray-500 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show Less
+            <FaArrowUp className="animate-bounce" size={18} />
           </button>
         )}
       </div>

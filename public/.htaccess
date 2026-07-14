@@ -1,6 +1,10 @@
-RewriteEngine On
-RewriteBase /iitd-rnd-dashboard-demo/v2/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /iitd/react-dashboard/
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.html [L]
+    RewriteRule ^index\.html$ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /iitd/react-dashboard/index.html [L]
+</IfModule>

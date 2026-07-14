@@ -1,6 +1,36 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
+export const fetchGrpProjectData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/grp`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+
+    console.log("GRP projects from api", jsonResponse.data);
+
+    return (jsonResponse.data || []).map((item) => ({
+      ...item,
+      universityName: item.universityName || "",
+      country: item.country || "",
+      totalProjects: item.totalProjects || "",
+      grpType: item.grpType || "",
+      collaborationType: item.collaborationType || "",
+    }));
+  } catch (error) {
+    console.log("error fetching GRP project data", error);
+  }
+};
+
 // export const grpProjectData = [
 //   {
 //     universityName: "University College of London; UCL",
@@ -52,33 +82,3 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 //     grpType: "National",
 //   },
 // ];
-
-export const fetchGrpProjectData = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/grp`, {
-      method: "GET",
-      headers: {
-        "X-API-KEY": API_KEY,
-        "Content-type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonResponse = await response.json();
-
-    console.log("GRP projects from api", jsonResponse.data);
-
-    return (jsonResponse.data || []).map((item) => ({
-      ...item,
-      universityName: item.universityName || "",
-      country: item.country || "",
-      totalProjects: item.totalProjects || "",
-      grpType: item.grpType || "",
-      collaborationType: item.collaborationType || "",
-    }));
-  } catch (error) {
-    console.log("error fetching GRP project data", error);
-  }
-};

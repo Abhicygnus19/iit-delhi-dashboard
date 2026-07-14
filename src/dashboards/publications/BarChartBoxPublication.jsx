@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 export default function BarChartBoxPublications({
   entities = [],
@@ -98,9 +99,10 @@ export default function BarChartBoxPublications({
                   Math.min(prev + 12, fullPublicationBarsData.length),
                 )
               }
-              className="px-3 py-1 text-xs font-medium text-white bg-blue-900 hover:bg-blue-800 rounded-full transition-colors"
+              className="flex items-center gap-2 px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
             >
               Show More
+              <FaArrowDown className="animate-bounce" size={18} />
             </button>
           )}
 
@@ -109,9 +111,10 @@ export default function BarChartBoxPublications({
               onClick={() =>
                 setMaxPublicationBarCount((prev) => Math.max(prev - 12, 12))
               }
-              className="px-3 py-1 text-xs font-medium border border-gray-400 text-gray-700 hover:bg-gray-50 rounded-full transition-colors"
+              className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
             >
               Show Less
+              <FaArrowUp className="animate-bounce" size={18} />
             </button>
           )}
         </div>

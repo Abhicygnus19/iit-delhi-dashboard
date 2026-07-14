@@ -12,38 +12,85 @@ function StudentsSchemes() {
   const [loading, setLoading] = useState(true);
   const [selectedSchemes, setSelectedSchemes] = useState([]);
 
-  // start range as null. If null, we use absolute min/max.
+  // Initialize range as null; populated explicitly on API response
   const [studentSchemeYearRange, setStudentSchemeYearRange] = useState(null);
 
-  const getYearBounds = (data) => {
-    if (!Array.isArray(data) || data.length === 0) {
-      return { minYear: 2000, maxYear: new Date().getFullYear() };
+  // Helper function to safely extract the start year from formats like "2016-17" or standard numbers
+  const getStartYear = (yearVal) => {
+    if (!yearVal) return null;
+    const yearStr = String(yearVal);
+    const match = yearStr.match(/^(\d{4})/);
+    return match ? Number(match[1]) : null;
+  };
+
+  // Helper function to extract the 4-digit end year from formats like "2016-17" -> 2017 or standard numbers
+  const getEndYear = (yearVal) => {
+    if (!yearVal) return null;
+    const yearStr = String(yearVal);
+    const match = yearStr.match(/^(\d{2})(\d{2})-(\d{2})$/);
+    if (match) {
+      const century = match[1]; // "20"
+      const endDecade = match[3]; // "17"
+      return Number(century + endDecade); // 2017
     }
-    const allYears = data.flatMap((scheme) =>
+    return getStartYear(yearVal);
+  };
+
+  // Compute absolute minimum and maximum years dynamically
+  const [minYear, maxYear] = useMemo(() => {
+    if (studentSchemeData.length === 0) return [0, 0];
+
+    const allYears = studentSchemeData.flatMap((scheme) =>
       Array.isArray(scheme.yearlyData)
         ? scheme.yearlyData.map((d) => d.year)
         : [],
     );
-    if (allYears.length === 0) {
-      return { minYear: 2000, maxYear: new Date().getFullYear() };
-    }
-    return { minYear: Math.min(...allYears), maxYear: Math.max(...allYears) };
-  };
 
+    const startYears = allYears
+      .map((y) => getStartYear(y))
+      .filter((y) => y !== null && !isNaN(y));
+    const endYears = allYears
+      .map((y) => getEndYear(y))
+      .filter((y) => y !== null && !isNaN(y));
+
+    if (startYears.length === 0 || endYears.length === 0) return [0, 0];
+
+    return [Math.min(...startYears), Math.max(...endYears)];
+  }, [studentSchemeData]);
+
+  // API loading and range initialization technique
   useEffect(() => {
     const getStudentSchemeData = async () => {
       setLoading(true);
       const apiStudentSchemeData = await fetchStudentSchemeData();
-      setStudentSchemeData(apiStudentSchemeData || []);
+      const data = apiStudentSchemeData || [];
+      setStudentSchemeData(data);
+
+      if (data.length > 0) {
+        const allYears = data.flatMap((scheme) =>
+          Array.isArray(scheme.yearlyData)
+            ? scheme.yearlyData.map((d) => d.year)
+            : [],
+        );
+
+        const startYears = allYears
+          .map((y) => getStartYear(y))
+          .filter((y) => y !== null);
+        const endYears = allYears
+          .map((y) => getEndYear(y))
+          .filter((y) => y !== null);
+
+        if (startYears.length > 0 && endYears.length > 0) {
+          setStudentSchemeYearRange([
+            Math.min(...startYears),
+            Math.max(...endYears),
+          ]);
+        }
+      }
       setLoading(false);
     };
     getStudentSchemeData();
   }, []);
-
-  const { minYear, maxYear } = useMemo(
-    () => getYearBounds(studentSchemeData),
-    [studentSchemeData],
-  );
 
   const filterSchemeOptions = useMemo(() => {
     if (!Array.isArray(studentSchemeData)) return [];
@@ -53,17 +100,9 @@ function StudentsSchemes() {
     }));
   }, [studentSchemeData]);
 
-  // Simplified filtering
+  // Dynamically filter data tree based on configurations
   const filteredSchemesData = useMemo(() => {
     if (!Array.isArray(studentSchemeData)) return [];
-
-    // Use selected range if user moved slider, otherwise fall back to the absolute data limits
-    const startYear = studentSchemeYearRange
-      ? studentSchemeYearRange[0]
-      : minYear;
-    const endYear = studentSchemeYearRange
-      ? studentSchemeYearRange[1]
-      : maxYear;
 
     return studentSchemeData
       .filter((scheme) => {
@@ -76,18 +115,23 @@ function StudentsSchemes() {
         if (!Array.isArray(scheme.yearlyData)) return scheme;
 
         const filteredYearlyData = scheme.yearlyData.filter((item) => {
-          return item.year >= startYear && item.year <= endYear;
+          const itemStart = getStartYear(item.year);
+          const itemEnd = getEndYear(item.year);
+
+          if (studentSchemeYearRange) {
+            return (
+              itemStart &&
+              itemEnd &&
+              itemStart >= studentSchemeYearRange[0] &&
+              itemEnd <= studentSchemeYearRange[1]
+            );
+          }
+          return true;
         });
 
         return { ...scheme, yearlyData: filteredYearlyData };
       });
-  }, [
-    studentSchemeData,
-    selectedSchemes,
-    studentSchemeYearRange,
-    minYear,
-    maxYear,
-  ]);
+  }, [studentSchemeData, selectedSchemes, studentSchemeYearRange]);
 
   if (loading) {
     return (
@@ -99,7 +143,7 @@ function StudentsSchemes() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 pb-10">
+    <div className="w-full min-h-screen bg-gray-50 pb-12">
       <StudentSchemeFilter
         options={filterSchemeOptions}
         selected={selectedSchemes}

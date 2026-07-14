@@ -1,6 +1,34 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
+export const fetchMouData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/mou`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+
+    // console.log("MOU data from api", jsonResponse.data);
+
+    return (jsonResponse.data || []).map((item) => ({
+      ...item,
+      mouSignedOrganization: item.mouSignedOrganization,
+      category: item.category,
+      mouSigningDate: item.mouSigningDate,
+    }));
+  } catch (error) {
+    console.log("error fetching MOU data", error);
+  }
+};
+
 // export const mouData = [
 //   {
 //     mouSignedOrganization:
@@ -36,9 +64,9 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 //   },
 // ];
 
-export const fetchMouData = async () => {
+export const fetchMoaData = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/mou`, {
+    const response = await fetch(`${API_BASE_URL}/moa`, {
       method: "GET",
       headers: {
         "X-API-KEY": API_KEY,
@@ -51,16 +79,17 @@ export const fetchMouData = async () => {
     }
     const jsonResponse = await response.json();
 
-    console.log("MOU data from api", jsonResponse.data);
+    // console.log("MOA data from api", jsonResponse.data);
 
     return (jsonResponse.data || []).map((item) => ({
       ...item,
-      mouSignedOrganization: item.mouSignedOrganization,
-      category: item.category,
-      mouSigningDate: item.mouSigningDate,
+      universityAndOrganization: item.universityAndOrganization,
+      country: item.country,
+      region: item.region,
+      continent: item.continent,
     }));
   } catch (error) {
-    console.log("error fetching MOU data", error);
+    console.log("error fetching MOA data", error);
   }
 };
 
@@ -86,32 +115,3 @@ export const fetchMouData = async () => {
 //     continent: "Australia",
 //   },
 // ];
-
-export const fetchMoaData = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/moa`, {
-      method: "GET",
-      headers: {
-        "X-API-KEY": API_KEY,
-        "Content-type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonResponse = await response.json();
-
-    console.log("MOA data from api", jsonResponse.data);
-
-    return (jsonResponse.data || []).map((item) => ({
-      ...item,
-      universityAndOrganization: item.universityAndOrganization,
-      country: item.country,
-      region: item.region,
-      continent: item.continent,
-    }));
-  } catch (error) {
-    console.log("error fetching MOA data", error);
-  }
-};

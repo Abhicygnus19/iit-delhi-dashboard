@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const COLOR_PALETTE = [
   "#3b82f6",
@@ -73,6 +74,7 @@ function PatentsBarChartBox({
             type="category"
             tick={{ fill: "#666", fontSize: 11 }}
             tickLine={false}
+            reversed={true}
           />
           <Tooltip
             contentStyle={{ backgroundColor: "#fff", borderRadius: "6px" }}
@@ -97,18 +99,20 @@ function PatentsBarChartBox({
                 Math.min(prev + 15, visiblePatentData.length),
               )
             }
-            className="px-3 py-1 text-sm text-white bg-blue-900 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show More
+            <FaArrowDown className="animate-bounce" size={18} />
           </button>
         )}
 
         {maxPatentCount > 15 && (
           <button
             onClick={() => setMaxPatentCount((prev) => Math.max(prev - 15, 15))}
-            className="px-3 py-1 text-sm border border-gray-500 rounded-full"
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
           >
             Show Less
+            <FaArrowUp className="animate-bounce" size={18} />
           </button>
         )}
       </div>

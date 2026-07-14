@@ -2,6 +2,38 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 import drdoimg from "../assets/drdo_logo.png";
 
+export const fetchCoeProjectData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/coe`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+
+    // console.log("COE project data from api", jsonResponse.data);
+
+    return (jsonResponse.data || []).map((item) => ({
+      ...item,
+      title: item.title,
+      category: item.category,
+      sponsoringAgency: item.sponsoringAgency,
+      sponsoringAgencyLink: item.sponsoringAgencyLink,
+      coordinatorAndDepartment: item.coordinatorAndDepartment,
+      logo: item.logo,
+    }));
+    // return jsonResponse.data;
+  } catch (error) {
+    console.log("error fetching COE project data", error);
+  }
+};
+
 // export const coeProjectData = [
 //   {
 //     title: "DRDO Industry Academia - Centre of Excellence (DIA-CoE)",
@@ -46,35 +78,3 @@ import drdoimg from "../assets/drdo_logo.png";
 //       "Prof. Neetu Singh, Centre of Biomedical Engineering",
 //   },
 // ];
-
-export const fetchCoeProjectData = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/coe`, {
-      method: "GET",
-      headers: {
-        "X-API-KEY": API_KEY,
-        "Content-type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonResponse = await response.json();
-
-    // console.log("COE project data from api", jsonResponse.data);
-
-    return (jsonResponse.data || []).map((item) => ({
-      ...item,
-      title: item.title,
-      category: item.category,
-      sponsoringAgency: item.sponsoringAgency,
-      sponsoringAgencyLink: item.sponsoringAgencyLink,
-      coordinatorAndDepartment: item.coordinatorAndDepartment,
-      logo: item.logo,
-    }));
-    // return jsonResponse.data;
-  } catch (error) {
-    console.log("error fetching COE project data", error);
-  }
-};
