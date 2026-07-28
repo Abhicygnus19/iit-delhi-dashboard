@@ -4,6 +4,7 @@ import CoeFilters from "../dashboards/coeprojects/CoeFilters";
 import { fetchCoeProjectData } from "../lib/coeProjectData";
 
 import { LuLoaderCircle } from "react-icons/lu";
+import Heading from "../components/ui/Heading";
 
 function CoeProjects() {
   const [coeProjectData, setCoeProjectData] = useState([]);
@@ -49,7 +50,8 @@ function CoeProjects() {
   }
 
   return (
-    <div>
+    <>
+      <Heading pageheading={"COE Projects"} />
       {/* Pass filter controls and available options down */}
       <CoeFilters
         options={filterOptions}
@@ -60,7 +62,7 @@ function CoeProjects() {
         {/* Pass the dynamic filtered array instead of reading hardcoded data inside */}
         <CoeTableData data={filteredData} />
       </div>
-    </div>
+    </>
   );
 }
 

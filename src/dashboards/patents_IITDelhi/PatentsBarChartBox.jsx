@@ -12,20 +12,19 @@ import {
 import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
+// Updated color palette to use only 4 specific colors
 const COLOR_PALETTE = [
-  "#3b82f6",
-  "#10b981",
-  "#f59e0b",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
+  "#1e4a8d", // Dark Navy
+  "#3b82f6", // Normal Blue
+  "#82877f", // Dark Gray
+  "#ef4444", // Red
 ];
 
 function PatentsBarChartBox({
   visiblePatentData,
   PatentNames,
-  isFiltered, // Updated prop
-  clearFilter, // Updated handler
+  isFiltered,
+  clearFilter,
   onYearClick,
 }) {
   const [maxPatentCount, setMaxPatentCount] = useState(15);
@@ -41,7 +40,7 @@ function PatentsBarChartBox({
   const chartHeight = Math.max(350, displayedPatentData.length * 35);
 
   return (
-    <div className="border border-gray-200 bg-white p-4 rounded-md shadow-sm text-xs w-full  ">
+    <div className="border border-gray-200 bg-white p-4 rounded-md shadow-sm text-xs w-full">
       <div className="flex justify-between items-center gap-2 mb-4">
         <h3 className="font-semibold text-gray-800 text-sm">
           Data of Patents & Technology deals{" "}
@@ -91,6 +90,7 @@ function PatentsBarChartBox({
           ))}
         </BarChart>
       </ResponsiveContainer>
+
       <div className="flex justify-center mt-2 gap-2">
         {maxPatentCount < visiblePatentData.length && (
           <button
@@ -99,7 +99,7 @@ function PatentsBarChartBox({
                 Math.min(prev + 15, visiblePatentData.length),
               )
             }
-            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl animate-pulse"
           >
             Show More
             <FaArrowDown className="animate-bounce" size={18} />
@@ -109,7 +109,7 @@ function PatentsBarChartBox({
         {maxPatentCount > 15 && (
           <button
             onClick={() => setMaxPatentCount((prev) => Math.max(prev - 15, 15))}
-            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl animate-pulse"
           >
             Show Less
             <FaArrowUp className="animate-bounce" size={18} />

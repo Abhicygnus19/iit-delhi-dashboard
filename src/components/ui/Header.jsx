@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const navItems = [
   {
     label: "Sponsor Research Projects",
-    link: "/sponsor-research-project",
+    link: "/sponsored-research-project",
   },
   {
     label: "Consultancy Projects",

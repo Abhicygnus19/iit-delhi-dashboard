@@ -42,7 +42,7 @@ function YearlyProjects({ activeData }) {
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card">
       <h3 className="text-sm font-semibold mb-4 font-sans">
-        Yearly Projects of each Organization
+        Fund Support (Category-wise)
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">

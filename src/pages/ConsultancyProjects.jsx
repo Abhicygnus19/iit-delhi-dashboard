@@ -14,6 +14,7 @@ import OptionSelect from "../components/ui/OptionSelect";
 
 import { LuLoaderCircle } from "react-icons/lu";
 import YearChartBlock from "./../components/YearChartBlock";
+import Heading from "../components/ui/Heading";
 
 function ConsultancyProjects() {
   const [consultancyProjectData, setConsultancyProjectData] = useState([]);
@@ -181,6 +182,7 @@ function ConsultancyProjects() {
   // }, [activeConsultancyYear, consultancyProjectData]);
 
   // Filter SRP types exclusively based on the selected year's data array
+
   const inlineCrpTypeOptions = useMemo(() => {
     if (!activeConsultancyYear) return [];
     const targetedYearObj = consultancyProjectData.find(
@@ -240,7 +242,8 @@ function ConsultancyProjects() {
 
   return (
     <>
-      {/* 1. Global Filter Dashboard bar */}
+      <Heading pageheading={" Consultancy Research Projects"} />
+
       <ConsultancyProjectFilter
         selectedFunding={selectedFunding}
         setSelectedFunding={setSelectedFunding}

@@ -38,13 +38,13 @@ function SponsorProjectFilter({
     <div className="border-t border-b px-2 py-4 mb-2 text-sm bg-gray-50">
       <div className="flex flex-wrap items-center gap-6 max-w-[1500px] mx-auto">
         <CustomSelect
-          label="Projects of Each Units"
+          label="Category for No. of Projects"
           options={fundingOptionsSponsorProject}
           selected={selectedFunding}
           onChange={setSelectedFunding}
         />
         <CustomSelect
-          label="Total budget of Units"
+          label="Category for Sanctioned Funds"
           options={fundingOptionsSponsorProject}
           selected={selectedUnits}
           onChange={setSelectedUnits}

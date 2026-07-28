@@ -7,6 +7,7 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
+  Label,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
 
@@ -33,7 +34,6 @@ function SponsorLineChartbox({
     });
   }, [activeData, selectedFundingTypes]);
 
-  // Click handler for clicking on empty spaces/grid segments of the chart
   const handleChartClick = (state) => {
     if (state && state.activeLabel) {
       onSponsorYearClick(state.activeLabel);
@@ -53,28 +53,59 @@ function SponsorLineChartbox({
           </button>
         )}
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData} onClick={handleChartClick}>
+
+      {/* Adjusted margins so axis labels aren't cut off */}
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart
+          data={chartData}
+          onClick={handleChartClick}
+          margin={{ top: 10, right: 20, left: 20, bottom: 35 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#cacaca" />
+
           <XAxis
             dataKey="year"
             angle={-20}
             tick={{ fontSize: 11 }}
             textAnchor="end"
             tickLine={false}
-          />
-          <YAxis tickLine={false} />
+          >
+            <Label
+              value="Yearly data"
+              offset={-25}
+              position="insideBottom"
+              style={{
+                fontSize: "14px",
+                fill: "#1e4a8d",
+                fontWeight: "bold",
+              }}
+            />
+          </XAxis>
+
+          <YAxis tickLine={false}>
+            <Label
+              value="Number of Projects"
+              angle={-90}
+              position="insideLeft"
+              style={{
+                textAnchor: "middle",
+                fontSize: "12px",
+                fill: "#1e4a8d",
+                fontWeight: "bold",
+              }}
+            />
+          </YAxis>
+
           <Tooltip formatter={(value) => [`${value} Projects`, "Projects"]} />
+
           <Line
             type="monotone"
             dataKey="projects"
             stroke="#2563eb"
             strokeWidth={3}
-            // Custom dot logic handles explicit click capture on individual nodes
             dot={(props) => {
               const { cx, cy, payload } = props;
 
-              // If a year is active and this point isn't it, vanish it!
               if (activeSponsorYear && payload.year !== activeSponsorYear) {
                 return null;
               }
@@ -83,15 +114,14 @@ function SponsorLineChartbox({
                 <circle
                   cx={cx}
                   cy={cy}
-                  r={5} // Slightly increased target radius for easier clicking
+                  r={5}
                   fill={"#2563eb"}
                   stroke="#fff"
                   strokeWidth={2}
                   style={{ cursor: "pointer" }}
                   key={`dot-${payload.year}`}
-                  // Captures direct point clicks and explicitly forces state changes
                   onClick={(e) => {
-                    e.stopPropagation(); // Stops Recharts parent handlers from conflicting
+                    e.stopPropagation();
                     onSponsorYearClick(payload.year);
                   }}
                 />

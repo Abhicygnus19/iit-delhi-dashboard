@@ -4,6 +4,7 @@ import GrpBarchart from "./../dashboards/grpProject/GrpBarchart";
 import GrpStatsCards from "../dashboards/grpProject/GrpStatsCards";
 import { fetchGrpProjectData } from "./../lib/GrpProjectData";
 import { LuLoaderCircle } from "react-icons/lu";
+import Heading from "../components/ui/Heading";
 
 function GrpProjects() {
   const [grpProjectData, setGrpProjectData] = useState([]);
@@ -86,6 +87,7 @@ function GrpProjects() {
 
   return (
     <>
+      <Heading pageheading={"GRP Projects"} />
       <GrpFilters
         grpTypeOptions={grpTypeOptions}
         selectedGrpTypes={selectedGrpTypes}

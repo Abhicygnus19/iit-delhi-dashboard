@@ -5,6 +5,7 @@ import PatentsBarChartBox from "../dashboards/patents_IITDelhi/PatentsBarChartBo
 import YearlyPatentsTable from "../dashboards/patents_IITDelhi/YearlyPatentsTable";
 import { LuLoaderCircle } from "react-icons/lu";
 import { fetchPatentsData } from "./../lib/patentsData";
+import Heading from "./../components/ui/Heading";
 
 function PatentsIITDelhi() {
   const [patentsData, setPatentsData] = useState([]);
@@ -171,6 +172,7 @@ function PatentsIITDelhi() {
 
   return (
     <div className="bg-gray-100 min-h-screen pb-12">
+      <Heading pageheading={"IP & Technology Transfer Dashboard"} />
       <FiltersPatents
         options={filterPatentOptions}
         selected={selectedPatentTypes}

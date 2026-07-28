@@ -12,7 +12,12 @@ import {
 import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
-const BAR_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+const BAR_COLORS = [
+  "#1e4a8d",
+  "#3b82f6",
+  "#9c5156", // Dark Gray
+  "#ef4444",
+];
 
 function BarChartStudentScheme({ schemeData = [] }) {
   const [selectedBarYear, setSelectedBarYear] = useState(null);

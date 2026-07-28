@@ -19,11 +19,11 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Navigate to="/sponsor-research-project" replace />}
+            element={<Navigate to="/sponsored-research-project" replace />}
           />
 
           <Route
-            path="/sponsor-research-project"
+            path="/sponsored-research-project"
             element={<SponsorProjects />}
           />
 

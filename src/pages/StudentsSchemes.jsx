@@ -6,6 +6,7 @@ import StatsStudentSchemes from "../dashboards/student_schemes/StatsStudentSchem
 
 import { fetchStudentSchemeData } from "./../lib/studentSchemeData";
 import { LuLoaderCircle } from "react-icons/lu";
+import Heading from "../components/ui/Heading";
 
 function StudentsSchemes() {
   const [studentSchemeData, setStudentSchemeData] = useState([]);
@@ -144,6 +145,8 @@ function StudentsSchemes() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pb-12">
+      <Heading pageheading={"Students Schemes"} />
+
       <StudentSchemeFilter
         options={filterSchemeOptions}
         selected={selectedSchemes}

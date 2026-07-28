@@ -14,7 +14,7 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 const COLOR_PALETTE = {
   government: "#1e4a8d",
   industry: "#3b82f6",
-  foreign: "#f59e0b",
+  foreign: "red",
 };
 
 function SponsorBarChartbox({
@@ -70,12 +70,35 @@ function SponsorBarChartbox({
     }
   };
 
-  const latestYear = useMemo(() => {
-    if (!fullChartData.length) return "";
+  // const latestYear = useMemo(() => {
+  //   if (!fullChartData.length) return "";
 
-    // Since it's sorted ascending (2016-17 -> 2025-26)
-    return fullChartData[fullChartData.length - 1].year;
-  }, [fullChartData]);
+  //   // Since it's sorted ascending (2016-17 -> 2025-26)
+  //   return fullChartData[fullChartData.length - 1].year;
+  // }, [fullChartData]);
+
+  const latestSrpYear = useMemo(() => {
+    const yearsWithSrp = activeData
+      .filter(
+        (item) =>
+          item.sanctionedProjectsSRP && item.sanctionedProjectsSRP.length > 0,
+      )
+      .map((item) => item.year);
+
+    if (!yearsWithSrp.length) return "";
+
+    // fullChartData is already sorted chronologically
+    const orderedYears = fullChartData
+      .map((item) => item.year)
+      .filter((year) => yearsWithSrp.includes(year));
+
+    return orderedYears[orderedYears.length - 1] || "";
+  }, [activeData, fullChartData]);
+
+  // is LatestSrp Year Visible
+  const isLatestSrpYearVisible = useMemo(() => {
+    return displayedChartData.some((item) => item.year === latestSrpYear);
+  }, [displayedChartData, latestSrpYear]);
 
   const chartHeight = Math.max(350, displayedChartData.length * 35);
 
@@ -99,10 +122,14 @@ function SponsorBarChartbox({
         )}
       </div>
 
-      <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
-        <span>Click {latestYear} to view Sanctioned Research Projects </span>
-        <FaArrowDown className="animate-bounce" size={16} />
-      </button>
+      {latestSrpYear && isLatestSrpYearVisible && (
+        <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
+          <span>
+            Click {latestSrpYear} Bar to view academic unit-wise project details
+          </span>
+          <FaArrowDown className="animate-bounce" size={16} />
+        </button>
+      )}
 
       <ResponsiveContainer width="100%" height={chartHeight}>
         <BarChart
@@ -120,7 +147,13 @@ function SponsorBarChartbox({
             reversed={true}
           />
 
-          <Tooltip cursor={{ fill: "#f3f4f6" }} />
+          <Tooltip
+            cursor={{ fill: "#f3f4f6" }}
+            formatter={(value, name) => [
+              `₹${value.toLocaleString("en-IN")} Cr`,
+              name,
+            ]}
+          />
           <Legend />
 
           {visibleKeys.map((key) => (

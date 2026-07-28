@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Legend,
+  Label,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
 import {
@@ -65,8 +66,11 @@ export default function LineChartBoxPublications({
           </button>
         )}
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 20, bottom: 35 }}
+        >
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="#cacaca"
@@ -79,8 +83,30 @@ export default function LineChartBoxPublications({
             tick={{ fontSize: 11 }}
             textAnchor="end"
             tickLine={false}
+          />{" "}
+          <Label
+            value="Yearly data"
+            offset={-55}
+            position="insideBottom"
+            style={{
+              fontSize: "14px",
+              fill: "#1e4a8d",
+              fontWeight: "bold",
+            }}
           />
-          <YAxis tickLine={false} />
+          <YAxis tickLine={false} />{" "}
+          <Label
+            value="Number of Projects"
+            angle={-90}
+            position="insideLeft"
+            offset={-55}
+            style={{
+              textAnchor: "middle",
+              fontSize: "12px",
+              fill: "#1e4a8d",
+              fontWeight: "bold",
+            }}
+          />
           <Tooltip />
           <Legend verticalAlign="top" height={36} iconType="square" />{" "}
           <Line

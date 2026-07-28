@@ -11,6 +11,7 @@ import InternationalPublicationBarchart from "./../dashboards/publications/Inter
 import { fetchPublicationData } from "../lib/publicationData";
 
 import { LuLoaderCircle } from "react-icons/lu";
+import Heading from "../components/ui/Heading";
 
 export default function Publications() {
   const [apiPublications, setApiPublications] = useState([]);
@@ -155,6 +156,8 @@ export default function Publications() {
 
   return (
     <>
+      <Heading pageheading={"Publications"} />
+
       <FiltersPublications
         categories={categoryLabels}
         activeCategory={activeCategories}

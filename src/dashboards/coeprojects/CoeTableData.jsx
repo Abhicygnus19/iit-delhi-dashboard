@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { FiSearch, FiExternalLink } from "react-icons/fi";
 
-// Helper function to generate truncated pagination ranges (e.g., [1, 2, '...', 14, 15])
+// Helper function to generate truncated pagination ranges
 const getPaginationRange = (currentPage, totalPages) => {
-  const delta = 1; // Number of page buttons to show on either side of the active page
+  const delta = 1;
   const range = [];
   const rangeWithDots = [];
   let l;
@@ -34,51 +35,76 @@ const getPaginationRange = (currentPage, totalPages) => {
 
 function CoeTableData({ data = [] }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 20;
 
-  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  // Search filter
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return data || [];
+    const query = searchQuery.toLowerCase();
+    return (data || []).filter(
+      (item) =>
+        item.title?.toLowerCase().includes(query) ||
+        item.category?.toLowerCase().includes(query) ||
+        item.sponsoringAgency?.toLowerCase().includes(query) ||
+        item.coordinatorAndDepartment?.toLowerCase().includes(query),
+    );
+  }, [data, searchQuery]);
+
+  const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = (data || []).slice(startIndex, startIndex + itemsPerPage);
+  const currentData = (filteredData || []).slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [data]);
+  }, [data, searchQuery]);
 
-  // Compute the smart truncated range array
   const paginationRange = getPaginationRange(currentPage, totalPages);
 
   return (
     <div>
-      <div className="border-2 p-4 rounded-md shadow-sm w-100">
-        <div className="flex items-center justify-between mb-3 gap-3">
-          <h3 className="text-base font-semibold">COE-Projects Data</h3>
+      <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
+        {/* Table Top Header */}
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
+          <h3 className="text-base font-semibold text-gray-900">
+            COE-Projects Data
+          </h3>
+
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-64">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
+            <input
+              type="text"
+              placeholder="Search records..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            />
+          </div>
         </div>
 
+        {/* Table Content */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b">
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Title
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Category
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Sponsoring Agency
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Coordinator & Department
-                </th>
+              <tr className="border-b border-gray-100 bg-slate-50/80   font-medium uppercase tracking-wider">
+                <th className="p-3 w-10 text-center">#</th>
+                <th className="p-3 min-w-[200px]">Title</th>
+                <th className="p-3">Category</th>
+                <th className="p-3 min-w-[180px]">Sponsoring Agency</th>
+                <th className="p-3 min-w-[200px]">Coordinator & Department</th>
               </tr>
             </thead>
 
-            <tbody>
-              {!data || data.length === 0 ? (
+            <tbody className="divide-y divide-gray-100 text-gray-700 ">
+              {!filteredData || filteredData.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
-                    className="p-8 text-center text-gray-500 font-medium"
+                    colSpan={5}
+                    className="p-8 text-center text-gray-400 font-medium"
                   >
                     No records found
                   </td>
@@ -87,36 +113,49 @@ function CoeTableData({ data = [] }) {
                 currentData.map((item, index) => (
                   <tr
                     key={index}
-                    className="border-b hover:bg-gray-50 transition-colors"
+                    className="hover:bg-slate-50/80 transition-colors"
                   >
-                    <td className="p-2">{item.title}</td>
-                    <td className="p-2 font-medium">
-                      {item.category
-                        ? item.category.charAt(0).toUpperCase() +
-                          item.category.slice(1)
-                        : "—"}
+                    <td className="p-3 text-center  font-medium">
+                      {startIndex + index + 1}
                     </td>
-                    <td className="p-2 text-blue-600 hover:text-blue-900 cursor-pointer">
+                    <td className="p-3 font-semibold text-gray-900">
+                      {item.title}
+                    </td>
+                    <td className="p-3 whitespace-nowrap">
+                      {item.category ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {item.category.charAt(0).toUpperCase() +
+                            item.category.slice(1)}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="p-3 font-medium">
                       {item.sponsoringAgencyLink ? (
                         <a
                           href={item.sponsoringAgencyLink}
                           target="_blank"
                           rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 hover:underline"
                         >
                           {item.sponsoringAgency}
+                          <FiExternalLink className="size-3" />
                         </a>
                       ) : (
-                        <span>{item.sponsoringAgency}</span>
+                        <span>{item.sponsoringAgency || "—"}</span>
                       )}
                     </td>
-                    <td className="p-2">{item.coordinatorAndDepartment}</td>
+                    <td className="p-3 ">
+                      {item.coordinatorAndDepartment || "—"}
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
 
-          {/* Refactored Pagination Controls */}
+          {/* EXACT UNCHANGED Pagination Controls */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none">
               <button
@@ -166,13 +205,18 @@ function CoeTableData({ data = [] }) {
             </div>
           )}
         </div>
+
+        {/* EXACT UNCHANGED Showing results count */}
+        <div className="text-center text-gray-800 text-xs mt-2 pb-4">
+          Showing {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+          {filteredData.length} records
+        </div>
       </div>
     </div>
   );
 }
 
 export default CoeTableData;
-
 // import React, { useState, useEffect } from "react";
 
 // function CoeTableData({ data }) {

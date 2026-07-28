@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { FiSearch } from "react-icons/fi";
 
 const getPaginationRange = (currentPage, totalPages) => {
   const delta = 1;
@@ -32,77 +33,106 @@ const getPaginationRange = (currentPage, totalPages) => {
 };
 
 function MoaTableData({ MoaData = [] }) {
-  // Safely fallback to empty array if undefined
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 20;
-  const totalPages = Math.ceil(MoaData.length / itemsPerPage);
 
+  // Search filter
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return MoaData || [];
+    const query = searchQuery.toLowerCase();
+    return (MoaData || []).filter(
+      (item) =>
+        item.universityAndOrganization?.toLowerCase().includes(query) ||
+        item.country?.toLowerCase().includes(query) ||
+        item.region?.toLowerCase().includes(query) ||
+        item.continent?.toLowerCase().includes(query),
+    );
+  }, [MoaData, searchQuery]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  const currentDataMoaData = MoaData.slice(
+  const currentDataMoaData = filteredData.slice(
     startIndex,
     startIndex + itemsPerPage,
   );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [MoaData]);
+  }, [MoaData, searchQuery]);
 
-  // Compute the smart truncated range array
   const paginationRange = getPaginationRange(currentPage, totalPages);
 
   return (
-    <>
-      <div className="w-100">
+    <div>
+      <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
+        {/* Table Header Toolbar */}
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
+          <h3 className="text-base font-semibold text-gray-900">MOA Data</h3>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-64">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
+            <input
+              type="text"
+              placeholder="Search records..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Table Content */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm ">
+          <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  University/Organization
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Country
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Region
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Continent
-                </th>
+              <tr className="border-b border-gray-100 bg-slate-50/80   font-medium  uppercase tracking-wider">
+                <th className="p-3 w-10 text-center">#</th>
+                <th className="p-3 min-w-[220px]">University/Organization</th>
+                <th className="p-3 min-w-[120px]">Country</th>
+                <th className="p-3 min-w-[140px]">Region</th>
+                <th className="p-3 min-w-[140px]">Continent</th>
               </tr>
             </thead>
 
-            <tbody>
-              {/* Fallback to show an empty state cleanly if everything is filtered out */}
-              {MoaData.length === 0 ? (
+            <tbody className="divide-y divide-gray-100 ">
+              {filteredData.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
-                    className="p-8 text-center text-gray-700 font-medium"
+                    colSpan={5}
+                    className="p-8 text-center text-gray-400 font-medium"
                   >
                     No records found matching the selected criteria.
                   </td>
                 </tr>
               ) : (
-                currentDataMoaData?.map((item, index) => (
+                currentDataMoaData.map((item, index) => (
                   <tr
                     key={index}
-                    className="border-b border-border/50 cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="hover:bg-slate-50/80 transition-colors"
                   >
-                    <td className="p-2">
+                    <td className="p-3 text-center text-gray-400 font-medium">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="p-3 font-semibold text-gray-900">
                       {item.universityAndOrganization || "--"}
                     </td>
-                    <td className="p-2 font-medium">
-                      {item.country
-                        ? item.country.charAt(0).toUpperCase() +
-                          item.country.slice(1)
-                        : "--"}
+                    <td className="p-3 whitespace-nowrap">
+                      {item.country ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {item.country.charAt(0).toUpperCase() +
+                            item.country.slice(1)}
+                        </span>
+                      ) : (
+                        "--"
+                      )}
                     </td>
-                    <td className="p-2 text-blue-600 hover:text-blue-900">
+                    <td className="p-3 font-medium text-gray-700">
                       {item.region || "--"}
                     </td>
-                    <td className="p-2 text-blue-600 hover:text-blue-900">
+                    <td className="p-3 font-medium text-gray-700">
                       {item.continent || "--"}
                     </td>
                   </tr>
@@ -111,9 +141,9 @@ function MoaTableData({ MoaData = [] }) {
             </tbody>
           </table>
 
-          {/* Refactored Pagination Controls */}
+          {/* Unchanged Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none">
+            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none pb-4">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -123,7 +153,6 @@ function MoaTableData({ MoaData = [] }) {
               </button>
 
               {paginationRange.map((page, index) => {
-                // If it's a string dots placeholder, render static span
                 if (page === "...") {
                   return (
                     <span
@@ -135,7 +164,6 @@ function MoaTableData({ MoaData = [] }) {
                   );
                 }
 
-                // Render page interactive action item button
                 return (
                   <button
                     key={`page-${page}`}
@@ -164,12 +192,11 @@ function MoaTableData({ MoaData = [] }) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 export default MoaTableData;
-
 // import React, { useEffect, useState } from "react";
 
 // function MoaTableData({ MoaData }) {

@@ -7,6 +7,7 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
+  Label,
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
 
@@ -40,7 +41,7 @@ function ConsultancyLineChartbox({
   };
 
   return (
-    <div className="border-2 p-4 rounded-md shadow-sm text-sm">
+    <div className="border-2 p-4 rounded-md shadow-sm text-sm bg-white">
       <div className="flex justify-between items-center gap-2 mb-4">
         <h3 className="font-semibold">Projects Over Time</h3>
         {activeConsultancyYear && (
@@ -52,28 +53,61 @@ function ConsultancyLineChartbox({
           </button>
         )}
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData} onClick={handleLineClick}>
+
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart
+          data={chartData}
+          onClick={handleLineClick}
+          margin={{ top: 10, right: 20, left: 30, bottom: 35 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#cacaca" />
+
+          {/* XAxis with child Label */}
           <XAxis
             dataKey="year"
             angle={-20}
             tick={{ fontSize: 11 }}
             textAnchor="end"
             tickLine={false}
-          />
-          <YAxis tickLine={false} />
+          >
+            <Label
+              value="Yearly data"
+              offset={-25}
+              position="insideBottom"
+              style={{
+                fontSize: "14px",
+                fill: "#1e4a8d",
+                fontWeight: "bold",
+              }}
+            />
+          </XAxis>
+
+          {/* YAxis with child Label */}
+          <YAxis tickLine={false}>
+            <Label
+              value="Number of Projects"
+              angle={-90}
+              position="insideLeft"
+              offset={-15}
+              style={{
+                textAnchor: "middle",
+                fontSize: "12px",
+                fill: "#1e4a8d",
+                fontWeight: "bold",
+              }}
+            />
+          </YAxis>
+
           <Tooltip formatter={(value) => [`${value} Projects`, "Projects"]} />
+
           <Line
             type="monotone"
             dataKey="projects"
             stroke="#2563eb"
             strokeWidth={3}
-            // Custom dot logic to vanish unselected points completely
             dot={(props) => {
               const { cx, cy, payload } = props;
 
-              // If a year is active and this point isn't it, vanish it!
               if (
                 activeConsultancyYear &&
                 payload.year !== activeConsultancyYear
@@ -85,7 +119,7 @@ function ConsultancyLineChartbox({
                 <circle
                   cx={cx}
                   cy={cy}
-                  r={4} // Active dot becomes thick
+                  r={4}
                   fill={"#2563eb"}
                   stroke="#fff"
                   style={{ cursor: "pointer" }}

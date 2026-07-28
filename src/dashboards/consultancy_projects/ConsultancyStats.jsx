@@ -54,18 +54,21 @@ function ConsultancyStats({
     {
       title: "Total Budget(In Crore) of Government Projects",
       value: Number(totalGovBudget.toFixed(2)),
+      symbol: "₹",
       type: "government",
       metric: "budget",
     },
     {
       title: "Total Budget(In Crore) of Industry Projects",
       value: Number(totalIndustryBudget.toFixed(2)),
+      symbol: "₹",
       type: "industry",
       metric: "budget",
     },
     {
       title: "Total Budget(In Crore) of Foreign Projects",
       value: Number(totalForeignBudget.toFixed(2)),
+      symbol: "₹",
       type: "foreign",
       metric: "budget",
     },
@@ -95,10 +98,15 @@ function ConsultancyStats({
     <div>
       {/* Changed grid layout columns dynamically to adjust nicely based on how many cards are visible */}
       <div
-        className={`px-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 my-6 max-w-[1500px] mx-auto`}
+        className={`px-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6 max-w-[1500px] mx-auto`}
       >
         {visibleCards.map((item, index) => (
-          <StatsCard key={index} title={item.title} value={item.value} />
+          <StatsCard
+            key={index}
+            title={item.title}
+            value={item.value}
+            symbol={item.symbol}
+          />
         ))}
       </div>
     </div>

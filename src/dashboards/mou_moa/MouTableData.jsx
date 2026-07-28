@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { FiSearch } from "react-icons/fi";
 
-// Helper function to generate truncated pagination range (e.g., [1, 2, '...', 14, 15])
+// Helper function to generate truncated pagination range
 const getPaginationRange = (currentPage, totalPages) => {
   const delta = 1;
   const range = [];
@@ -33,55 +34,74 @@ const getPaginationRange = (currentPage, totalPages) => {
 };
 
 function MouTableData({ Moudata = [] }) {
-  // Safe default parameter fallback
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 20;
 
-  const totalPages = Math.ceil(Moudata.length / itemsPerPage);
+  // Search filter
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return Moudata || [];
+    const query = searchQuery.toLowerCase();
+    return (Moudata || []).filter(
+      (item) =>
+        item.mouSignedOrganization?.toLowerCase().includes(query) ||
+        item.category?.toLowerCase().includes(query) ||
+        item.mouSigningDate?.toLowerCase().includes(query),
+    );
+  }, [Moudata, searchQuery]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  const currentDataMoudata = Moudata.slice(
+  const currentDataMoudata = filteredData.slice(
     startIndex,
     startIndex + itemsPerPage,
   );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [Moudata]);
+  }, [Moudata, searchQuery]);
 
-  // Compute the smart truncated range array
   const paginationRange = getPaginationRange(currentPage, totalPages);
 
   return (
-    <>
-      <div className="border-2 p-4 rounded-md shadow-sm w-100">
-        <div className="flex items-center justify-between mb-3 gap-3">
-          <h3 className="text-base font-semibold">MOU</h3>
+    <div>
+      <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
+        {/* Table Top Header */}
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
+          <h3 className="text-base font-semibold text-gray-900">MOU</h3>
+
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-64">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
+            <input
+              type="text"
+              placeholder="Search MOUs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            />
+          </div>
         </div>
 
+        {/* Table Content */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  MoU signed with
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Category
-                </th>
-                <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Date of MoU Signing
-                </th>
+              <tr className="border-b border-gray-100 bg-slate-50/80 font-medium  uppercase tracking-wider">
+                <th className="p-3 w-10 text-center">#</th>
+                <th className="p-3 min-w-[220px]">MoU signed with</th>
+                <th className="p-3 min-w-[140px]">Category</th>
+                <th className="p-3 min-w-[160px]">Date of MoU Signing</th>
               </tr>
             </thead>
 
-            <tbody>
-              {/* Fallback to show an empty state cleanly if everything is filtered out */}
-              {Moudata.length === 0 ? (
+            <tbody className="divide-y divide-gray-100 ">
+              {filteredData.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={3} // Adjusted colSpan to match 3 standard columns
-                    className="p-8 text-center text-gray-500 font-medium"
+                    colSpan={4}
+                    className="p-8 text-center text-gray-400 font-medium"
                   >
                     No records found matching the selected criteria.
                   </td>
@@ -90,18 +110,25 @@ function MouTableData({ Moudata = [] }) {
                 currentDataMoudata.map((item, index) => (
                   <tr
                     key={index}
-                    className="border-b border-border/50 cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="hover:bg-slate-50/80 transition-colors"
                   >
-                    <td className="p-2">
+                    <td className="p-3 text-center text-gray-400 font-medium">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="p-3 font-semibold text-gray-900">
                       {item.mouSignedOrganization || "--"}
                     </td>
-                    <td className="p-2 font-medium">
-                      {item.category
-                        ? item.category.charAt(0).toUpperCase() +
-                          item.category.slice(1)
-                        : "--"}
+                    <td className="p-3 whitespace-nowrap">
+                      {item.category ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {item.category.charAt(0).toUpperCase() +
+                            item.category.slice(1)}
+                        </span>
+                      ) : (
+                        "--"
+                      )}
                     </td>
-                    <td className="p-2 text-blue-600 hover:text-blue-900">
+                    <td className="p-3 font-medium text-blue-600">
                       {item.mouSigningDate || "--"}
                     </td>
                   </tr>
@@ -110,9 +137,9 @@ function MouTableData({ Moudata = [] }) {
             </tbody>
           </table>
 
-          {/* Clean Smart Pagination Controls */}
+          {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none">
+            <div className="flex justify-center items-center gap-2 mt-4 flex-wrap select-none pb-4">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -122,7 +149,6 @@ function MouTableData({ Moudata = [] }) {
               </button>
 
               {paginationRange.map((page, index) => {
-                // Render the static dots indicator
                 if (page === "...") {
                   return (
                     <span
@@ -134,7 +160,6 @@ function MouTableData({ Moudata = [] }) {
                   );
                 }
 
-                // Render active/inactive interactive buttons
                 return (
                   <button
                     key={`page-${page}`}
@@ -163,7 +188,7 @@ function MouTableData({ Moudata = [] }) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -6,6 +6,7 @@ import MoaTableData from "../dashboards/mou_moa/MoaTableData";
 // import { moaData, mouData } from "./../lib/mouMoaData";
 import { fetchMouData, fetchMoaData } from "./../lib/mouMoaData";
 import { LuLoaderCircle } from "react-icons/lu";
+import Heading from "../components/ui/Heading";
 
 function MouMoa() {
   const [mouData, setMouData] = useState([]);
@@ -69,6 +70,7 @@ function MouMoa() {
 
   return (
     <>
+      <Heading pageheading={"MOU/MOA"} />
       {/* Pass filter controls and available options down */}
       <div className="px-2 py-4 mb-4 text-sm border-t border-b bg-gray-50">
         <div className="max-w-[1500px] mx-auto">

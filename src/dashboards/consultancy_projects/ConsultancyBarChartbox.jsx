@@ -14,7 +14,7 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 const COLOR_PALETTE = {
   government: "#1e4a8d",
   industry: "#3b82f6",
-  foreign: "#f59e0b",
+  foreign: "red",
 };
 
 function ConsultancyBarChartbox({
@@ -80,6 +80,32 @@ function ConsultancyBarChartbox({
     return fullChartData[fullChartData.length - 1].year;
   }, [fullChartData]);
 
+  const latestConsultancyUnitYear = useMemo(() => {
+    const yearsWithUnits = activeData
+      .filter(
+        (item) =>
+          item.consultancyUnitWiseProjects &&
+          item.consultancyUnitWiseProjects.length > 0,
+      )
+      .map((item) => item.year);
+
+    if (!yearsWithUnits.length) return "";
+
+    // fullChartData is already sorted chronologically
+    const orderedYears = fullChartData
+      .map((item) => item.year)
+      .filter((year) => yearsWithUnits.includes(year));
+
+    return orderedYears[orderedYears.length - 1] || "";
+  }, [activeData, fullChartData]);
+
+  // is LatestSrp Year Visible
+  const isLatestUnitYearVisible = useMemo(() => {
+    return displayedChartData.some(
+      (item) => item.year === latestConsultancyUnitYear,
+    );
+  }, [displayedChartData, latestConsultancyUnitYear]);
+
   // Adjust height calculation smoothly based on chunk size
   const chartHeight = Math.max(350, displayedChartData.length * 35);
 
@@ -103,10 +129,20 @@ function ConsultancyBarChartbox({
         )}
       </div>
 
-      <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
+      {/* <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
         <span>Click {latestYear} to view Consutancy Projects </span>
         <FaArrowDown className="animate-bounce" size={16} />
-      </button>
+      </button> */}
+
+      {latestConsultancyUnitYear && isLatestUnitYearVisible && (
+        <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
+          <span>
+            Click {latestConsultancyUnitYear} to view Sanctioned Research
+            Projects
+          </span>
+          <FaArrowDown className="animate-bounce" size={16} />
+        </button>
+      )}
 
       <ResponsiveContainer width="100%" height={chartHeight}>
         <BarChart
