@@ -41,7 +41,8 @@ function SponsorProjectFilter({
       {/* <Heading pageheading={" Sponsored Research Projects"} /> */}
       <div className="max-w-[1500px] mx-auto">
         <h3 className="mb-2 text-base font-medium">
-          Select a category to explore project counts and sanctioned funding.
+          Select a Category to explore Project counts and Sanctioned
+          funding.{" "}
         </h3>
         <div className="flex flex-wrap items-center gap-6 ">
           <CustomSelect

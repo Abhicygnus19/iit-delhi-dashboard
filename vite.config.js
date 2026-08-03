@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   // base: "/",
   base: "/iitd/react-dashboard/",
-  // base: "/iitd-rnd-dashboard-demo/v4/",
+  // base: "/iitd-rnd-dashboard-demo/v2/",
 });
 
 // import { defineConfig } from "vite";
