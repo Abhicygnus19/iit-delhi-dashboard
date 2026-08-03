@@ -26,9 +26,12 @@ function SponsorYearlyBudget({ activeData }) {
 
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs bg-white">
-      <h3 className="mb-4 font-semibold text-sm">
-        Budget Comparison Year wise (In Crore)
+      <h3 className=" font-semibold text-sm">
+        Year-wise Total Budget Allocation (₹ Crore)
       </h3>
+      <p className="text-sm mb-4 text-gray-700">
+        Hover over a bar to view the total budget for the selected yea
+      </p>
 
       <ResponsiveContainer width="100%" height={340}>
         <BarChart

@@ -1,4 +1,7 @@
 import StatsCard from "../../components/ui/StatsCard";
+import { LuBookText } from "react-icons/lu";
+import { BsChatRightQuoteFill } from "react-icons/bs";
+import { LiaUniversitySolid } from "react-icons/lia";
 
 function StatsPublications({
   entities = [],
@@ -28,35 +31,6 @@ function StatsPublications({
     0,
   );
 
-  // const renderFilterBadge = () => {
-  //   const parts = [];
-
-  //   if (activeCategories.length > 0) {
-  //     parts.push(`Org Type: ${activeCategories.join(", ")}`);
-  //   }
-
-  //   if (yearRange?.length === 2) {
-  //     parts.push(`Year: ${yearRange[0]}–${yearRange[1]}`);
-  //   }
-
-  //   if (!entities.length) {
-  //     return null;
-  //   }
-
-  //   return (
-  //     <div className="px-2 flex flex-wrap gap-2 mb-4 max-w-[1500px] mx-auto">
-  //       {parts.map((label) => (
-  //         <span
-  //           key={label}
-  //           className="rounded-full bg-blue-50 text-blue-700 px-3 py-1 text-xs font-medium border border-blue-100"
-  //         >
-  //           {label}
-  //         </span>
-  //       ))}
-  //     </div>
-  //   );
-  // };
-
   const publicationTitleValues = [
     {
       title: "Total Publications",
@@ -67,7 +41,7 @@ function StatsPublications({
       value: totalCitations.toLocaleString(),
     },
     {
-      title: "Org Units included",
+      title: "Academic Units included",
       value: totalOrgUnits,
     },
   ];
@@ -76,15 +50,36 @@ function StatsPublications({
     <>
       {/* {renderFilterBadge()} */}
       <div className="px-2 grid grid-cols-1 md:grid-cols-4 gap-4 my-6 max-w-[1500px] mx-auto">
-        {publicationTitleValues?.map((item, index) => (
+        {/* {publicationTitleValues?.map((item, index) => (
           <StatsCard key={index} title={item.title} value={item.value} />
-        ))}
-
-        {/* <StatsCard
-          title="High Impact"
-          value="1,333"
-          color="border-orange-500"
-        /> */}
+        ))} */}
+        <StatsCard
+          title={"Total Research Publications"}
+          value={totalPublications.toLocaleString()}
+          icon={LuBookText}
+        />{" "}
+        <StatsCard
+          title="Total Research Citations"
+          value={totalCitations.toLocaleString()}
+          icon={BsChatRightQuoteFill}
+          bgClass="bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700"
+          borderClass="border-l-emerald-900"
+          iconBgClass="bg-emerald-800"
+          iconClass="text-white"
+          titleClass="text-white"
+          textClass="text-white"
+        />
+        <StatsCard
+          title="Participating Academic Units"
+          value={totalOrgUnits}
+          icon={LiaUniversitySolid}
+          bgClass="bg-gradient-to-r from-neutral-200  to-neutral-300"
+          borderClass="border-l-neutral-800"
+          iconBgClass="bg-neutral-600"
+          iconClass="text-white"
+          textClass="text-black"
+          titleClass="text-black"
+        />
       </div>
     </>
   );

@@ -39,10 +39,30 @@ function YearlyProjects({ activeData }) {
     };
   };
 
+  const getCellClass = (org, value) => {
+    if (value === 0) {
+      return "bg-gray-50 text-gray-400";
+    }
+
+    switch (org.toLowerCase()) {
+      case "government":
+        return "bg-green-600 text-white";
+
+      case "industry":
+        return "bg-blue-600 text-white";
+
+      case "foreign":
+        return "bg-violet-900 text-white";
+
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
+
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card">
       <h3 className="text-sm font-semibold mb-4 font-sans">
-        Fund Support (Category-wise)
+        Year-wise Project Count by Category
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">
@@ -72,10 +92,18 @@ function YearlyProjects({ activeData }) {
                   const cellStyle = getcellcolorStyle(count);
 
                   return (
+                    // <td
+                    //   key={`${org}-${year}`}
+                    //   className="text-center rounded-md font-semibold transition-all duration-200 p-2"
+                    // >
+                    //   {count}
+                    // </td>
                     <td
                       key={`${org}-${year}`}
-                      style={cellStyle}
-                      className="text-center rounded-md font-semibold transition-all duration-200 p-2"
+                      className={`text-center rounded-md font-semibold transition-all duration-200 p-2 ${getCellClass(
+                        org,
+                        count,
+                      )}`}
                     >
                       {count}
                     </td>

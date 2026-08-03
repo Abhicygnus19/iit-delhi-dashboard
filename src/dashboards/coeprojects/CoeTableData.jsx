@@ -90,11 +90,11 @@ function CoeTableData({ data = [] }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 bg-slate-50/80   font-medium uppercase tracking-wider">
-                <th className="p-3 w-10 text-center">#</th>
-                <th className="p-3 min-w-[200px]">Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3 min-w-[180px]">Sponsoring Agency</th>
+              <tr className="border-b border-gray-100 bg-slate-50/80   font-medium   tracking-wider">
+                <th className="p-3 w-10 text-center"></th>
+                <th className="p-3 min-w-[200px]">Centre Name</th>
+                <th className="p-3">Funding Category</th>
+                <th className="p-3 min-w-[180px]"> Funding Agency</th>
                 <th className="p-3 min-w-[200px]">Coordinator & Department</th>
               </tr>
             </thead>

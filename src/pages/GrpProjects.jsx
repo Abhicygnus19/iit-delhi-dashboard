@@ -4,6 +4,7 @@ import GrpBarchart from "./../dashboards/grpProject/GrpBarchart";
 import GrpStatsCards from "../dashboards/grpProject/GrpStatsCards";
 import { fetchGrpProjectData } from "./../lib/GrpProjectData";
 import { LuLoaderCircle } from "react-icons/lu";
+import WorldMap from "./../components/WorldMap";
 import Heading from "../components/ui/Heading";
 
 function GrpProjects() {
@@ -23,7 +24,7 @@ function GrpProjects() {
     getGrpProjectData();
   }, []);
 
-  // 1. Dynamic GRP type options (Handles any new type added to data)
+  // 1. Dynamic GRP type options
   const grpTypeOptions = useMemo(() => {
     const types = [
       ...new Set(grpProjectData.map((d) => d.grpType).filter(Boolean)),
@@ -66,7 +67,6 @@ function GrpProjects() {
   // 4. DYNAMIC GROUPING: Group data by grpType dynamically
   const groupedData = useMemo(() => {
     return filteredData.reduce((groups, item) => {
-      // Fallback to "Unknown" if grpType is missing in a record
       const type = item.grpType ? item.grpType.toLowerCase() : "unknown";
       if (!groups[type]) {
         groups[type] = [];
@@ -87,7 +87,8 @@ function GrpProjects() {
 
   return (
     <>
-      <Heading pageheading={"GRP Projects"} />
+      <Heading pageheading={"Global Research Partnership (GRP) Programme"} />
+
       <GrpFilters
         grpTypeOptions={grpTypeOptions}
         selectedGrpTypes={selectedGrpTypes}
@@ -98,11 +99,56 @@ function GrpProjects() {
       />
       <GrpStatsCards grpStatsData={filteredData} />
 
-      {/* Grid adjusting layout dynamically based on how many charts are showing */}
+      {/* Dynamic Grid Container */}
       <div className="px-2 pb-12 mt-6 max-w-[1500px] mx-auto grid grid-cols-1 gap-8">
-        {Object.entries(groupedData).map(([type, data]) => (
-          <GrpBarchart key={type} grpData={data} projectType={type} />
-        ))}
+        {Object.entries(groupedData).map(([type, data]) => {
+          const isInternational = type === "international";
+          const nationalData = data.filter(
+            (item) => item.grpType?.toLowerCase() === "national",
+          );
+
+          // Transform API fields to match WorldMap expectation
+          const formattedMapData = isInternational
+            ? data
+                .filter((item) => item.country && item.country.trim() !== "")
+                .map((item) => ({
+                  country: item.country,
+                  universityAndOrganization: item.universityName,
+                  value: Number(item.totalProjects || 1),
+                }))
+            : [];
+
+          return (
+            <div key={type}>
+              {/* Card wrapper for Chart + Map to group them nicely */}
+              <div className="flex flex-col gap-4 rounded-xl bg-white p-2 shadow-sm">
+                {nationalData.length > 0 && (
+                  <GrpBarchart grpData={nationalData} projectType={type} />
+                )}
+
+                {/* World map only renders under International Projects */}
+                {isInternational && formattedMapData.length > 0 && (
+                  <div className="mt-2 border-2 p-2 rounded-xl">
+                    <div className="p-2">
+                      {" "}
+                      <h3 className="text-base font-semibold">
+                        Worldwide Collaboration Network
+                      </h3>
+                      <p className="text-gray-700 text-sm">
+                        Select a Country to view details
+                      </p>
+                    </div>
+
+                    <WorldMap
+                      mapData={formattedMapData}
+                      maptooltiptext="Total Projects"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );

@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { GoChevronDown } from "react-icons/go";
 import {
   BarChart,
   Bar,
@@ -8,15 +6,17 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from "recharts";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 import { fetchIntenationalPublication } from "../../lib/publicationData";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import WorldMap from "../../components/WorldMap";
+import { CustomSelect } from "../../components/selectDropdown/CustomSelect";
 
 export default function InternationalPublicationBarchart() {
   const [internationalPublicationData, setInternationalPublicationData] =
     useState([]);
-
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(20);
   const [selectedYears, setSelectedYears] = useState([]);
@@ -25,9 +25,8 @@ export default function InternationalPublicationBarchart() {
     const getInternationalPublicationData = async () => {
       setLoading(true);
       const apiDataInternationalPub = await fetchIntenationalPublication();
-      setInternationalPublicationData(apiDataInternationalPub);
+      setInternationalPublicationData(apiDataInternationalPub || []);
 
-      // Auto-select the loaded year array once data arrives
       if (apiDataInternationalPub && apiDataInternationalPub[0]) {
         setSelectedYears([apiDataInternationalPub[0].year]);
       }
@@ -42,7 +41,6 @@ export default function InternationalPublicationBarchart() {
   }));
 
   const { internationalChartData, displayYear } = useMemo(() => {
-    // Return empty placeholders if data hasn't loaded yet
     if (internationalPublicationData.length === 0) {
       return { internationalChartData: [], displayYear: "" };
     }
@@ -60,17 +58,21 @@ export default function InternationalPublicationBarchart() {
       );
       if (!yearData) return;
 
-      // Find the array containing country statistics dynamically
+      // Dynamically locate the array containing publication stats regardless of property name
       const arrayKey = Object.keys(yearData).find((key) =>
         Array.isArray(yearData[key]),
       );
       if (!arrayKey) return;
 
       yearData[arrayKey].forEach((item) => {
-        if (countryTotals[item.country]) {
-          countryTotals[item.country] += item.publications;
+        if (!item.country) return;
+        const countryName = item.country.trim();
+        const pubs = parseInt(item.publications || 0, 10);
+
+        if (countryTotals[countryName]) {
+          countryTotals[countryName] += pubs;
         } else {
-          countryTotals[item.country] = item.publications;
+          countryTotals[countryName] = pubs;
         }
       });
     });
@@ -97,6 +99,14 @@ export default function InternationalPublicationBarchart() {
     setVisibleCount(20);
   }, [selectedYears]);
 
+  const handleShowLess = () => {
+    setVisibleCount((prev) => Math.max(prev - 20, 20));
+    containerRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   if (loading) {
     return (
       <div className="p-4 text-xs font-semibold text-gray-700">
@@ -106,12 +116,13 @@ export default function InternationalPublicationBarchart() {
   }
 
   return (
-    <div className="border-2 rounded-md shadow-sm text-xs">
+    <div className="border-2 rounded-md shadow-sm text-xs ">
       <div className="flex justify-between gap-2 items-center mb-4 p-4 bg-gray-100 border-b-2">
-        <h3 className="font-semibold text-base ">
-          International Publications from ({displayYear})
+        <h3 className="font-semibold text-base">
+          Country-wise Research Publications by IIT Delhi ({displayYear})
         </h3>
-        <div className="text-sm">
+
+        {/* <div className="text-sm">
           <CustomSelect
             label="Select Year"
             options={yearOptions}
@@ -119,10 +130,9 @@ export default function InternationalPublicationBarchart() {
             onChange={setSelectedYears}
             multiple={true}
           />
-        </div>{" "}
+        </div> */}
       </div>
-
-      <ResponsiveContainer
+      {/* <ResponsiveContainer
         width="100%"
         height={Math.max(visibleData.length * 35, 350)}
       >
@@ -131,138 +141,58 @@ export default function InternationalPublicationBarchart() {
           <YAxis
             type="category"
             dataKey="name"
-            width={80}
+            width={150}
             tickFormatter={(value) =>
               value.length > 20 ? `${value.slice(0, 20)}...` : value
             }
           />
-          <Tooltip />
+          <Label
+            value="Countries"
+            angle={-45}
+            position="insideLeft"
+            offset={-125}
+            style={{
+              textAnchor: "middle",
+              fontSize: "15px",
+              fill: "#1e4a8d",
+              fontWeight: "bold",
+            }}
+          />
+          <Tooltip
+            formatter={(value) => [value, "Number of Publications"]}
+            labelFormatter={(label) => `Country: ${label}`}
+          />
           <Bar dataKey="value" fill="#1e4a8d" barSize={24} />
         </BarChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> */}
+
+      {/* <h3 className="text-base mt-4 font-medium pl-4">
+        Click on a pin to view total publication for that country
+      </h3> */}
+
+      <div className="relative z-0">
+        <WorldMap mapData={visibleData} maptooltiptext="Total Publication" />
+      </div>
 
       <div className="flex justify-center gap-2 my-4 font-semibold">
         {visibleCount < internationalChartData.length && (
           <button
             onClick={() => setVisibleCount((prev) => prev + 20)}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+            className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02]"
           >
             Show More
-            <FaArrowDown className="animate-bounce" size={18} />
           </button>
         )}
 
         {visibleCount > 20 && (
           <button
-            onClick={() => setVisibleCount(20)}
-            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+            onClick={handleShowLess}
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02]"
           >
             Show Less
-            <FaArrowUp className="animate-bounce" size={18} />
           </button>
         )}
       </div>
     </div>
   );
 }
-
-const CustomSelect = ({
-  label,
-  options,
-  selected = [],
-  onChange,
-  multiple = false,
-  searchEnabled = false,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
-
-  const handleSelect = (value) => {
-    if (multiple) {
-      const next = selected.includes(value)
-        ? selected.filter((item) => item !== value)
-        : [...selected, value];
-
-      onChange(next);
-      return;
-    }
-
-    onChange(value);
-    setIsOpen(false);
-  };
-
-  const filteredOptions = useMemo(() => {
-    const lowerSearch = search.toLowerCase();
-    return searchEnabled
-      ? options.filter((opt) => opt.label.toLowerCase().includes(lowerSearch))
-      : options;
-  }, [options, searchEnabled, search]);
-
-  // CHANGE: Display "All Selected" if array contains everything, or "Select Year" if empty
-  const displayLabel = multiple
-    ? selected.length === options.length
-      ? `All ${label}s`
-      : selected.length > 0
-        ? selected.join(", ")
-        : label
-    : selected || label;
-
-  return (
-    <div className="relative w-56">
-      <div
-        className="flex items-center justify-between border p-2 rounded-md bg-white cursor-pointer hover:border-gray-400"
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
-        <span className="truncate text-gray-700 font-medium">
-          {displayLabel}
-        </span>
-        <GoChevronDown
-          size={16}
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
-      </div>
-
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-
-          <div className="absolute z-20 mt-1 w-full bg-white border rounded-md shadow-lg max-h-72 overflow-y-auto">
-            {searchEnabled && (
-              <div className="relative">
-                <input
-                  type="search"
-                  placeholder="Search..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full py-2 px-3 border-b bg-gray-50 outline-none"
-                />
-                <CiSearch className="absolute right-3 top-3" />
-              </div>
-            )}
-
-            {filteredOptions.map((option) => (
-              <label
-                key={option.value}
-                className="flex items-center gap-2 px-3 py-2 hover:bg-blue-50 cursor-pointer"
-              >
-                <input
-                  type={multiple ? "checkbox" : "radio"}
-                  checked={
-                    multiple
-                      ? selected.includes(option.value)
-                      : selected === option.value
-                  }
-                  onChange={() => handleSelect(option.value)}
-                />
-                <span>{option.label}</span>
-              </label>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-};

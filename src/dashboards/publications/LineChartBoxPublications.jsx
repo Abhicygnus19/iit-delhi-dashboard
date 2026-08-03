@@ -54,7 +54,15 @@ export default function LineChartBoxPublications({
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs">
       <div className="flex items-center justify-between gap-2 mb-4">
-        <h3 className="font-semibold text-sm">No. of Publications Over Time</h3>
+        <div>
+          <h3 className="font-semibold text-sm">
+            Research Publication Trends over the years
+          </h3>
+          <p className="text-sm text-gray-700">
+            Click/Hover a data point to view the Total and Foreign Publications
+            for the selected year
+          </p>
+        </div>
 
         {showReset && (
           <button
@@ -85,7 +93,7 @@ export default function LineChartBoxPublications({
             tickLine={false}
           />{" "}
           <Label
-            value="Yearly data"
+            value="Analysis Period"
             offset={-55}
             position="insideBottom"
             style={{
@@ -96,7 +104,7 @@ export default function LineChartBoxPublications({
           />
           <YAxis tickLine={false} />{" "}
           <Label
-            value="Number of Projects"
+            value="Number of Publications"
             angle={-90}
             position="insideLeft"
             offset={-55}

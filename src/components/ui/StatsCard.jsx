@@ -1,11 +1,40 @@
-export default function StatsCard({ title, value, symbol }) {
+import React from "react";
+
+export default function StatsCard({
+  title,
+  para,
+  value,
+  symbol,
+  icon: Icon,
+  bgClass = "bg-gradient-to-r from-blue-50  to-blue-100",
+  borderClass = "border-l-blue-900",
+  textClass = "text-blue-800",
+  titleClass = "text-black",
+  paraClass = "text-gray-600",
+  iconBgClass = "bg-blue-100",
+  iconClass = "text-blue-600",
+}) {
   return (
     <div
-      className={`p-4 rounded-md border border-gray-200 border-l-4 border-l-blue-500  bg-white shadow-md`}
+      className={`${bgClass} flex   justify-between items-center gap-3 rounded-xl border border-gray-200 border-l-4 ${borderClass} p-4 shadow-md`}
     >
-      <p className="text-sm text-gray-500 font-medium">{title}</p>
-      <h2 className="text-2xl font-bold mt-1 text-gray-800">
-        {symbol || ""}
+      <div className="flex items-center gap-4">
+        {Icon && (
+          <div
+            className={`flex h-14 w-14 items-center justify-center rounded-full shrink-0 ${iconBgClass}`}
+          >
+            <Icon className={`text-2xl ${iconClass}`} />
+          </div>
+        )}
+
+        <div>
+          <p className={`text-base font-medium ${titleClass}`}>{title}</p>
+          <p className={`text-sm font-medium ${paraClass}`}>{para} </p>
+        </div>
+      </div>
+
+      <h2 className={`mb-0 text-2xl font-bold ${textClass}`}>
+        {symbol}
         {value}
       </h2>
     </div>

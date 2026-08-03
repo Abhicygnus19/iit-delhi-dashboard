@@ -4,8 +4,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   // base: "/",
-  // base: "/iitd-rnd-dashboard-demo/v4/",
   base: "/iitd/react-dashboard/",
+  // base: "/iitd-rnd-dashboard-demo/v4/",
 });
 
 // import { defineConfig } from "vite";

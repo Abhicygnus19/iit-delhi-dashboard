@@ -16,7 +16,7 @@ export const fetchMouData = async () => {
     }
     const jsonResponse = await response.json();
 
-    // console.log("MOU data from api", jsonResponse.data);
+    console.log("MOU data from api", jsonResponse.data);
 
     return (jsonResponse.data || []).map((item) => ({
       ...item,
@@ -79,7 +79,7 @@ export const fetchMoaData = async () => {
     }
     const jsonResponse = await response.json();
 
-    // console.log("MOA data from api", jsonResponse.data);
+    console.log("MOA data from api", jsonResponse.data);
 
     return (jsonResponse.data || []).map((item) => ({
       ...item,

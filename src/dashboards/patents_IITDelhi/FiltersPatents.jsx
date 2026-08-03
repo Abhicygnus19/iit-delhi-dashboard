@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import { Range } from "react-range";
 import { CustomSelect } from "./../../components/selectDropdown/CustomSelect";
+import Heading from "./../../components/ui/Heading";
 
 function FiltersPatents({
   options,
@@ -13,7 +14,8 @@ function FiltersPatents({
   onPatentsYearRangeChange,
 }) {
   return (
-    <div className="border-t border-b px-2 py-4 mb-2 text-sm bg-gray-50">
+    <div className="border-t border-b px-2 py-3 mb-2 text-sm bg-gray-50">
+      {/* <Heading pageheading={"IP & Technology Transfer Dashboard"} /> */}
       <div className="flex flex-wrap items-center gap-6 max-w-[1500px] mx-auto">
         <CustomSelect
           label="Select type of Patents"
@@ -21,11 +23,10 @@ function FiltersPatents({
           selected={selected}
           onChange={onChange}
         />
-        <div className="border p-3 rounded-md bg-white ">
+        <div className="border p-3 h-11 rounded-md bg-white ">
           <div className="flex items-center gap-4 w-[340px] md:w-[400px]">
             {" "}
             <div className="flex items-center gap-2">
-              <p className="text-xs text-gray-500">Year:</p>
               <p className="text-xs font-medium text-gray-800 whitespace-nowrap">
                 {patentsYearRange[0]} – {patentsYearRange[1]}
               </p>

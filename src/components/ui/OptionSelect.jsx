@@ -58,7 +58,7 @@ const OptionSelect = ({
   return (
     <div className="relative w-56">
       <div
-        className="flex items-center justify-between border-2 p-2 rounded-md bg-white cursor-pointer hover:border-gray-300"
+        className="flex items-center justify-between border-2 p-3 rounded-md bg-white cursor-pointer hover:border-gray-300"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <span className="truncate text-gray-700 font-medium">

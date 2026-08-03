@@ -12,9 +12,9 @@ import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const COLOR_PALETTE = {
-  government: "#1e4a8d",
-  industry: "#3b82f6",
-  foreign: "red",
+  government: "#16a44a",
+  industry: "#2664ec",
+  foreign: "#4c1d96",
 };
 
 function SponsorBarChartbox({
@@ -105,10 +105,15 @@ function SponsorBarChartbox({
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs w-full bg-white">
       <div className="flex justify-between items-center gap-2 mb-4">
-        <h3 className="font-semibold text-sm">
-          Yearly budget of each Organizations (In Crore){" "}
-          {activeSponsorYear ? `- ${activeSponsorYear}` : ""}
-        </h3>
+        <div>
+          <h3 className="font-semibold text-sm">
+            Year-wise Sponsored Research Funding (In Crore){" "}
+            {activeSponsorYear ? `- ${activeSponsorYear}` : ""}
+          </h3>
+          <p className="text-sm text-gray-700">
+            Click/Hover a bar to explore budget details by category
+          </p>
+        </div>
         {(selectedBudgetTypes.length > 0 || activeSponsorYear) && (
           <button
             onClick={() => {

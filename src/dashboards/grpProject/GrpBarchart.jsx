@@ -30,6 +30,14 @@ function GrpBarchart({ grpData, projectType, barColor }) {
     );
   }
 
+  // Determine dynamic bar color based on projectType / grpType
+  const isNational =
+    projectType?.toLowerCase() === "national" ||
+    grpData[0]?.grpType?.toLowerCase() === "national";
+
+  const defaultBarColor = isNational ? "brown" : "#1e4a8d"; // Red for National, Blue for International
+  const activeBarColor = barColor || defaultBarColor;
+
   // 1. Format raw data safely
   const formattedData = grpData.map((item) => ({
     name: item.universityName,
@@ -58,9 +66,15 @@ function GrpBarchart({ grpData, projectType, barColor }) {
     <div className="relative text-xs border-2 rounded-md p-4 w-full group">
       {/* Dynamic Instruction Banner */}
       <div className="flex justify-between items-center mb-2 px-2 text-xs  ">
-        <h4 className="text-base font-semibold capitalize">
-          {projectType} Projects
-        </h4>
+        <div>
+          <h3 className="text-base font-semibold capitalize">
+            {projectType} Projects
+          </h3>
+          <p className="text-gray-700 text-sm">
+            Click/Hover over a bar to view the Total Number of Projects for the
+            Selected Institute
+          </p>
+        </div>
 
         <div className="flex justify-between items-center gap-2 mb-2 px-2 text-xs ">
           {selectedUniversity && (
@@ -96,7 +110,7 @@ function GrpBarchart({ grpData, projectType, barColor }) {
             {displayedGrpData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={barColor || "#1e4a8d"}
+                fill={activeBarColor}
                 // Attach the click handler inside the Cell component context
                 onClick={() => handleBarClick(entry)}
                 className="transition-opacity duration-200 hover:opacity-80"

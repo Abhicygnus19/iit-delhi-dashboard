@@ -17,7 +17,7 @@ export const fetchYearlyPublications = async () => {
     const jsonResponse = await response.json();
     const data = jsonResponse.data || [];
 
-    // console.log("yearly publication data from api", data);
+    console.log("yearly publication data from api", data);
 
     return data.map((item) => ({
       year: parseInt(item.year, 10),
@@ -99,10 +99,14 @@ export const fetchPublicationData = async () => {
 //     code: "AM",
 //     name: "Department of Applied Mechanics",
 //     orgType: "department",
+//     // total: 8,
+//     citations: 14020,
+//     avgLast5Years: 4.63,
 //     publications: [
 //       {
 //         year: 2015,
 //         value: 52,
+
 //         // domain: "Structural Engineering",
 //         // professor: "Prof. R. Bhat",
 //       },
@@ -147,15 +151,13 @@ export const fetchPublicationData = async () => {
 //         value: 107,
 //       },
 //     ],
-//     // total: 8,
-//     citations: 14020,
-//     avgLast5Years: 4.63,
 //   },
 //   {
 //     code: "DBEB",
 //     name: "Biochemical Engineering and Biotechnology",
 //     orgType: "department",
-
+//     citations: 21719,
+//     avgLast5Years: 7.7,
 //     publications: [
 //       {
 //         year: 2015,
@@ -202,13 +204,13 @@ export const fetchPublicationData = async () => {
 //         value: 109,
 //       },
 //     ],
-//     citations: 21719,
-//     avgLast5Years: 7.7,
 //   },
 //   {
 //     code: "CHE",
 //     name: "Department of Chemical Engineering",
 //     orgType: "department",
+//     citations: 43529,
+//     avgLast5Years: 8.33,
 //     publications: [
 //       {
 //         year: 2015,
@@ -255,250 +257,126 @@ export const fetchPublicationData = async () => {
 //         value: 196,
 //       },
 //     ],
-//     citations: 43529,
-//     avgLast5Years: 8.33,
-//   },
-
-//   {
-//     code: "CHY",
-//     name: "Department of Chemistry",
-//     orgType: "department",
-//     publications: [
-//       {
-//         year: 2015,
-//         value: 106,
-//       },
-//       {
-//         year: 2016,
-//         value: 137,
-//       },
-//       {
-//         year: 2017,
-//         value: 159,
-//       },
-//       {
-//         year: 2018,
-//         value: 122,
-//       },
-//       {
-//         year: 2019,
-//         value: 157,
-//       },
-//       {
-//         year: 2020,
-//         value: 165,
-//       },
-//       {
-//         year: 2021,
-//         value: 200,
-//       },
-//       {
-//         year: 2022,
-//         value: 245,
-//       },
-//       {
-//         year: 2023,
-//         value: 261,
-//       },
-//       {
-//         year: 2024,
-//         value: 291,
-//       },
-//       {
-//         year: 2025,
-//         value: 312,
-//       },
-//     ],
-//     citations: 43529,
-//     avgLast5Years: 8.33,
-//   },
-
-//   {
-//     code: "CARE",
-//     name: "Centre for Applied Research in Electronics",
-//     orgType: "centre",
-
-//     publications: [
-//       {
-//         year: 2015,
-//         value: 46,
-//       },
-//       {
-//         year: 2016,
-//         value: 51,
-//       },
-//       {
-//         year: 2017,
-//         value: 106,
-//       },
-//       {
-//         year: 2018,
-//         value: 78,
-//       },
-//       {
-//         year: 2019,
-//         value: 105,
-//       },
-//       {
-//         year: 2020,
-//         value: 84,
-//       },
-//       {
-//         year: 2021,
-//         value: 119,
-//       },
-//       {
-//         year: 2022,
-//         value: 150,
-//       },
-//       {
-//         year: 2023,
-//         value: 112,
-//       },
-//       {
-//         year: 2024,
-//         value: 105,
-//       },
-//       {
-//         year: 2025,
-//         value: 85,
-//         domain: "Microelectronics",
-//         professor: "Prof. D. Reddy",
-//       },
-//     ],
-//     citations: 11557,
-//     avgLast5Years: 10.5,
-//   },
-
-//   {
-//     code: "CAS",
-//     name: "Centre for Atmospheric Sciences",
-//     orgType: "centre",
-
-//     publications: [
-//       {
-//         year: 2015,
-//         value: 34,
-//       },
-//       {
-//         year: 2016,
-//         value: 35,
-//       },
-//       {
-//         year: 2017,
-//         value: 29,
-//       },
-//       {
-//         year: 2018,
-//         value: 48,
-//       },
-//       {
-//         year: 2019,
-//         value: 52,
-//       },
-//       {
-//         year: 2020,
-//         value: 54,
-//       },
-//       {
-//         year: 2021,
-//         value: 65,
-//       },
-//       {
-//         year: 2022,
-//         value: 79,
-//       },
-//       {
-//         year: 2023,
-//         value: 54,
-//       },
-//       {
-//         year: 2024,
-//         value: 70,
-//       },
-//       {
-//         year: 2025,
-//         value: 82,
-//       },
-//     ],
-//     citations: 12759,
-//     avgLast5Years: 5.19,
-//   },
-
-//   {
-//     code: "SBS",
-//     name: "Kusuma School of Biological Sciences",
-//     orgType: "school",
-//     publications: [
-//       {
-//         year: 2015,
-//         value: 38,
-//       },
-//       {
-//         year: 2016,
-//         value: 46,
-//       },
-//       {
-//         year: 2017,
-//         value: 47,
-//       },
-//       {
-//         year: 2018,
-//         value: 49,
-//       },
-//       {
-//         year: 2019,
-//         value: 60,
-//       },
-//       {
-//         year: 2020,
-//         value: 53,
-//       },
-//       {
-//         year: 2021,
-//         value: 69,
-//       },
-//       {
-//         year: 2022,
-//         value: 62,
-//       },
-//       {
-//         year: 2023,
-//         value: 77,
-//       },
-//       {
-//         year: 2024,
-//         value: 67,
-//       },
-//       {
-//         year: 2025,
-//         value: 69,
-//       },
-//     ],
-//     citations: 9821,
-//     avgLast5Years: 3.75,
 //   },
 // ];
 
-// export const internationalPublicationData = [
+export const fetchYearlyCitationHindex = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/yearlycitations`, {
+      method: "GET",
+      headers: {
+        "X-API-KEY": API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error backend! status: ${response.status}`);
+    }
+    const jsonResponse = await response.json();
+    const data = jsonResponse.data || [];
+
+    console.log("yearly  Citation Hindex data from api", data);
+
+    return data.map((item) => ({
+      year: parseInt(item.year, 10),
+      TotalPublications: parseInt(item.total),
+      citation: parseInt(item.citation),
+      hindex: parseInt(item.hindex),
+    }));
+  } catch (error) {
+    console.error("Error fetching Yearly Citation H-index data:", error);
+  }
+};
+
+// export const yearlyCitationHindex = [
 //   {
-//     year: "2015-2025",
-//     internationalYear_2015to2025: [
-//       { country: "United States", publications: 2592 },
-//       { country: "United Kingdom", publications: 1225 },
-//       { country: "Germany", publications: 938 },
-//       { country: "Australia", publications: 700 },
-//       { country: "Canada", publications: 534 },
-//       { country: "China", publications: 495 },
-//       { country: "France", publications: 474 },
-//       { country: "Japan", publications: 466 },
-//       { country: "South Korea", publications: 440 },
-//       { country: "Saudi Arabia", publications: 363 },
-//       { country: "Taiwan", publications: 361 },
-//       { country: "Singapore", publications: 330 },
-//     ],
+//     Year: 2015,
+//     totalPublications: 1971,
+//     citation: 53061,
+//     hindex: 99,
+//   },
+//   {
+//     Year: 2016,
+//     totalPublications: 2620,
+//     citation: 62417,
+//     hindex: 110,
+//   },
+//   {
+//     Year: 2017,
+//     totalPublications: 2656,
+//     citation: 67356,
+//     hindex: 105,
+//   },
+//   {
+//     Year: 2018,
+//     totalPublications: 2733,
+//     citation: 75958,
+//     hindex: 112,
+//   },
+//   {
+//     Year: 2019,
+//     totalPublications: 2928,
+//     citation: 67979,
+//     hindex: 104,
+//   },
+//   {
+//     Year: 2020,
+//     totalPublications: 3301,
+//     citation: 75710,
+//     hindex: 104,
+//   },
+//   {
+//     Year: 2021,
+//     totalPublications: 3619,
+//     citation: 87017,
+//     hindex: 109,
+//   },
+//   {
+//     Year: 2022,
+//     totalPublications: 4011,
+//     citation: 66481,
+//     hindex: 87,
+//   },
+//   {
+//     Year: 2023,
+//     totalPublications: 4270,
+//     citation: 55479,
+//     hindex: 76,
+//   },
+//   {
+//     Year: 2024,
+//     totalPublications: 4151,
+//     citation: 31623,
+//     hindex: 55,
+//   },
+//   {
+//     Year: 2025,
+//     totalPublications: 4147,
+//     citation: 13829,
+//     hindex: 32,
 //   },
 // ];
+
+export const internationalPublicationData = [
+  {
+    year: "2015-2025",
+    internationalYear_2015to2025: [
+      { country: "United States", publications: 2592 },
+      { country: "United Kingdom", publications: 1225 },
+      { country: "Germany", publications: 938 },
+      { country: "Australia", publications: 700 },
+      { country: "Canada", publications: 534 },
+      { country: "China", publications: 495 },
+      { country: "France", publications: 474 },
+      { country: "Japan", publications: 466 },
+      { country: "South Korea", publications: 440 },
+      { country: "Saudi Arabia", publications: 363 },
+      { country: "Taiwan", publications: 361 },
+      { country: "Singapore", publications: 330 },
+    ],
+  },
+];
 
 export const fetchIntenationalPublication = async () => {
   try {
@@ -518,7 +396,9 @@ export const fetchIntenationalPublication = async () => {
     const data = jsonResponse.data; // This is the object containing { year, countries }
 
     if (!data || !Array.isArray(data)) return [];
-    // console.log("international publication", data);
+
+    console.log("international publication", data);
+
     return data.map((item) => ({
       year: item.year, // "2015-2025" then "2023-2026"
       countries: (item.countries || []).map((item) => ({

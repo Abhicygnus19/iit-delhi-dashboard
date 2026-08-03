@@ -6,7 +6,8 @@ import MoaTableData from "../dashboards/mou_moa/MoaTableData";
 // import { moaData, mouData } from "./../lib/mouMoaData";
 import { fetchMouData, fetchMoaData } from "./../lib/mouMoaData";
 import { LuLoaderCircle } from "react-icons/lu";
-import Heading from "../components/ui/Heading";
+import MoaWorldMap from "../dashboards/mou_moa/MoaWorldMap";
+import Heading from "./../components/ui/Heading";
 
 function MouMoa() {
   const [mouData, setMouData] = useState([]);
@@ -70,9 +71,11 @@ function MouMoa() {
 
   return (
     <>
-      <Heading pageheading={"MOU/MOA"} />
+      <Heading
+        pageheading={"Memorandum of Understanding/ Memorandum of Agreement"}
+      />
       {/* Pass filter controls and available options down */}
-      <div className="px-2 py-4 mb-4 text-sm border-t border-b bg-gray-50">
+      <div className="px-2 py-3 mb-4 text-sm border-t border-b bg-gray-50">
         <div className="max-w-[1500px] mx-auto">
           <MouMoaFilter
             options={filterMouOptions}
@@ -88,8 +91,10 @@ function MouMoa() {
         <MouTableData Moudata={filteredMouData} />
 
         <div className="border-2 p-4 rounded-md shadow-sm ">
-          <div className="flex items-center justify-between mb-3 gap-3">
-            <h3 className="text-base font-semibold">MOA</h3>
+          <div className="flex items-center justify-between flex-wrap mb-3 gap-3">
+            <h3 className="text-base font-semibold">
+              MOA with Foreign Universities/Institutions
+            </h3>
 
             <MouMoaFilter
               options={filterMoaOptions}
@@ -98,7 +103,11 @@ function MouMoa() {
               optionValue={"Select Country"}
             />
           </div>
-          <MoaTableData MoaData={filteredMoaData} />
+          {/* <MoaTableData MoaData={filteredMoaData} /> */}
+
+          <div className="relative z-0 mt-6">
+            <MoaWorldMap MoaData={filteredMoaData} />
+          </div>
         </div>
       </div>
     </>

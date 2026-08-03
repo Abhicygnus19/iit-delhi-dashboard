@@ -9,13 +9,12 @@ import GrpProjects from "./pages/GrpProjects";
 import MouMoa from "./pages/MouMoa";
 import Publications from "./pages/Publications";
 import StudentsSchemes from "./pages/StudentsSchemes";
-import { useEffect } from "react";
 
 function App() {
   return (
     <BrowserRouter basename="/iitd/react-dashboard/">
       <Header />
-      <div className="md:mt-20">
+      <div className="md:mt-0">
         <Routes>
           <Route
             path="/"

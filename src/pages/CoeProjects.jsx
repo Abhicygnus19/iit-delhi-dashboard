@@ -51,7 +51,7 @@ function CoeProjects() {
 
   return (
     <>
-      <Heading pageheading={"COE Projects"} />
+      <Heading pageheading={"Centres of Excellence"} />
       {/* Pass filter controls and available options down */}
       <CoeFilters
         options={filterOptions}

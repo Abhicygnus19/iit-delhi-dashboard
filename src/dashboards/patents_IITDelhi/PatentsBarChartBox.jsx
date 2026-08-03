@@ -16,7 +16,7 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 const COLOR_PALETTE = [
   "#1e4a8d", // Dark Navy
   "#3b82f6", // Normal Blue
-  "#82877f", // Dark Gray
+  "#33cc33", // green
   "#ef4444", // Red
 ];
 
@@ -42,9 +42,15 @@ function PatentsBarChartBox({
   return (
     <div className="border border-gray-200 bg-white p-4 rounded-md shadow-sm text-xs w-full">
       <div className="flex justify-between items-center gap-2 mb-4">
-        <h3 className="font-semibold text-gray-800 text-sm">
-          Data of Patents & Technology deals{" "}
-        </h3>
+        <div>
+          <h3 className="font-semibold text-gray-800 text-sm">
+            Annual Patent & Technology Transfer Performance
+          </h3>{" "}
+          <p className="text-sm text-gray-700">
+            Click/Hover over a bar to view the Yearly Breakdown of Patents
+            Filed, Patents Granted, and Technology Licensing Deals
+          </p>
+        </div>
         {isFiltered && (
           <button
             onClick={clearFilter}

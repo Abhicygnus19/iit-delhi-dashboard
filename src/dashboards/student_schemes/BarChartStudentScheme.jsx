@@ -13,10 +13,10 @@ import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const BAR_COLORS = [
-  "#1e4a8d",
-  "#3b82f6",
-  "#9c5156", // Dark Gray
-  "#ef4444",
+  "#2563EB", // Blue
+  "#059669", // Emerald
+  "#F59E0B", // Amber
+  "#8B5CF6", // Violet
 ];
 
 function BarChartStudentScheme({ schemeData = [] }) {
@@ -83,23 +83,31 @@ function BarChartStudentScheme({ schemeData = [] }) {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-0">
-      <div className="border border-gray-200 p-2 rounded-md shadow-sm text-xs w-full h-[500px]">
-        {selectedBarYear && (
-          <div className="flex justify-between items-center gap-2 text-blue-700 px-3 py-2 rounded-md text-xs font-medium">
-            <span>
-              Showing data only for year: <strong>{selectedBarYear}</strong>
-            </span>
-            <button
-              onClick={() => setSelectedBarYear(null)}
-              className="bg-blue-50 hover:bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs flex gap-2 items-center"
-            >
-              <span className="whitespace-nowrap">Reset Chart</span>{" "}
-              <RxCross1 />
-            </button>
+    <>
+      <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full h-[500px]">
+        <div className="flex justify-between gap-2 items-center">
+          <div>
+            <h3 className="text-base font-semibold">
+              Programme-wise Annual Participation
+            </h3>
+            <p className="text-sm text-gray-700">
+              Click/Hover over a bar to view the Yearly Count for the Selected
+              Student Scheme
+            </p>
           </div>
-        )}
 
+          {selectedBarYear && (
+            <div className="flex justify-between items-center gap-2 text-blue-700 px-3 py-2 rounded-md text-xs font-medium">
+              <button
+                onClick={() => setSelectedBarYear(null)}
+                className="bg-blue-50 hover:bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs flex gap-2 items-center"
+              >
+                <span className="whitespace-nowrap">Reset Chart</span>{" "}
+                <RxCross1 />
+              </button>
+            </div>
+          )}
+        </div>
         <ResponsiveContainer width="100%" height={chartHeightStudentScheme}>
           <BarChart
             layout="vertical"
@@ -166,7 +174,7 @@ function BarChartStudentScheme({ schemeData = [] }) {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

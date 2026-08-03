@@ -213,7 +213,6 @@ function SponsorProjects() {
   return (
     <>
       <Heading pageheading={" Sponsored Research Projects"} />
-
       <SponsorProjectFilter
         selectedFunding={selectedFunding}
         setSelectedFunding={setSelectedFunding}
@@ -237,7 +236,7 @@ function SponsorProjects() {
       />
 
       <div className="px-2 min-h-screen max-w-[1500px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto mb-12">
           <SponsorLineChartbox
             activeData={filteredData}
             selectedFundingTypes={selectedFunding}
@@ -257,9 +256,15 @@ function SponsorProjects() {
         {activeYearDataMatch && (
           <div className="border-2 rounded-md mb-12 bg-white shadow-sm">
             <div className="px-4 py-3 bg-gray-100 border-b-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <h2 className="font-semibold text-sm text-gray-800">
-                Sanctioned Research Projects in IRD for {activeSponsorYear}
-              </h2>
+              <div>
+                <h2 className="font-semibold">
+                  Sanctioned Research Projects in IRD for {activeSponsorYear}
+                </h2>{" "}
+                <p className="text-sm">
+                  Click/Hover over a bar to view project and funding details in
+                  a Pi-chart format{" "}
+                </p>
+              </div>
               <div className="flex gap-2 flex-wrap text-[14px]">
                 <OptionSelect
                   label="Select SRP type"
@@ -281,7 +286,7 @@ function SponsorProjects() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto pb-12">
           <SponsorYearlyBudget activeData={filteredData} />
           <YearlyProjects activeData={filteredData} />
         </div>

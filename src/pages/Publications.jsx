@@ -8,10 +8,16 @@ import FiltersPublications from "./../dashboards/publications/FiltersPublication
 import LineChartBoxPublications from "./../dashboards/publications/LineChartBoxPublications";
 import InternationalPublicationBarchart from "./../dashboards/publications/InternationalPublicationBarchart";
 
-import { fetchPublicationData } from "../lib/publicationData";
+import {
+  fetchPublicationData,
+  fetchYearlyCitationHindex,
+} from "../lib/publicationData";
 
 import { LuLoaderCircle } from "react-icons/lu";
+
+import LinechartCitiatonPub from "../dashboards/publications/LinechartCitiatonPub";
 import Heading from "../components/ui/Heading";
+// import { yearlyCitationHindex } from "../lib/publicationData";
 
 export default function Publications() {
   const [apiPublications, setApiPublications] = useState([]);
@@ -21,6 +27,8 @@ export default function Publications() {
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedOrgType, setSelectedOrgType] = useState(null);
   const [search, setSearch] = useState("");
+
+  const [yearlyCitationHindex, setYearlyCitationHindex] = useState([]);
 
   // Compute true labels dynamically from the real parsed API state
   const categoryLabels = useMemo(() => {
@@ -63,6 +71,40 @@ export default function Publications() {
     };
     getPublicationData();
   }, []);
+
+  useEffect(() => {
+    const getYearlyCitationHindex = async () => {
+      setLoading(true);
+
+      const apiDataYearlyCitationHindex = await fetchYearlyCitationHindex();
+      setYearlyCitationHindex(apiDataYearlyCitationHindex);
+
+      setLoading(false);
+    };
+    getYearlyCitationHindex();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+
+  //     try {
+  //       const [apiPubliationData, apiDataYearlyCitationHindex] = await Promise.all([
+  //         fetchPublicationData(),
+  //         fetchYearlyCitationHindex(),
+  //       ]);
+
+  //       setApiPublications(apiPubliationData);
+  //       setYearlyCitationHindex(apiDataYearlyCitationHindex);
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   // Process filters directly against the flat dynamic array
   const categoryEntities = useMemo(() => {
@@ -188,7 +230,7 @@ export default function Publications() {
           activeCategories={activeCategories}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto mb-12">
           <LineChartBoxPublications
             yearRange={yearRange}
             selectedYear={selectedYear}
@@ -206,27 +248,35 @@ export default function Publications() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 mx-auto">
-          <MetricComparisonPublications
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-12 mx-auto">
+          {/* <MetricComparisonPublications
             entities={selectedData}
             yearRange={yearRange}
             selectedOrgType={selectedOrgType}
-          />
-
+          /> */}
           <HeatmapYearPublications
             selectedYear={selectedYear}
             selectedOrgType={selectedOrgType}
             onYearSelect={handleYearSelect}
             entities={selectedData}
-          />
+            yearlyStatsData={yearlyCitationHindex}
+          />{" "}
+          {/* <LinechartCitiatonPub
+            entities={selectedData}
+            yearRange={yearRange}
+            selectedYear={selectedYear}
+            onYearSelect={handleYearSelect}
+            onReset={resetFilters}
+            showReset={hasActiveFilters}
+          /> */}
         </div>
 
-        <div className="mb-12">
+        {/* <div className="mb-12">
           <TableDataPublications
             entities={selectedData}
             yearRange={yearRange}
           />
-        </div>
+        </div> */}
 
         <div className="pb-20">
           <InternationalPublicationBarchart />

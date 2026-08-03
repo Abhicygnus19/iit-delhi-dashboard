@@ -3,6 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import { Range } from "react-range";
 import { GoChevronDown } from "react-icons/go";
 import { CustomSelect } from "./../../components/selectDropdown/CustomSelect";
+import Heading from "../../components/ui/Heading";
 
 export default function FiltersPublications({
   categories = [],
@@ -40,7 +41,8 @@ export default function FiltersPublications({
   const safeRange = [yearRange[0] ?? minYear, yearRange[1] ?? maxYear];
 
   return (
-    <div className="border-t border-b px-2 py-4 mb-2 text-sm bg-gray-50">
+    <div className="border-t border-b px-2 py-3 mb-2 text-sm bg-gray-50">
+      {/* <Heading pageheading={"Publications"} /> */}
       <div className="flex flex-wrap items-center gap-6 max-w-[1500px] mx-auto">
         <CustomSelect
           label="Org Type"
@@ -59,10 +61,9 @@ export default function FiltersPublications({
           searchEnabled
         />
 
-        <div className="border p-3 rounded-md bg-white ">
+        <div className="border p-3 h-11 rounded-md bg-white ">
           <div className="flex items-center gap-4 w-[340px] md:w-[400px]">
             <div className="flex items-center gap-2">
-              <p className="text-xs text-gray-500">Year:</p>
               <p className="text-xs font-medium text-gray-800 whitespace-nowrap">
                 {safeRange[0]} – {safeRange[1]}
               </p>

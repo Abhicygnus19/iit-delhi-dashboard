@@ -4,8 +4,9 @@ import StatCardsPatents from "../dashboards/patents_IITDelhi/StatCardsPatents";
 import PatentsBarChartBox from "../dashboards/patents_IITDelhi/PatentsBarChartBox";
 import YearlyPatentsTable from "../dashboards/patents_IITDelhi/YearlyPatentsTable";
 import { LuLoaderCircle } from "react-icons/lu";
+import { FiArrowUpRight } from "react-icons/fi";
 import { fetchPatentsData } from "./../lib/patentsData";
-import Heading from "./../components/ui/Heading";
+import Heading from "../components/ui/Heading";
 
 function PatentsIITDelhi() {
   const [patentsData, setPatentsData] = useState([]);
@@ -172,7 +173,8 @@ function PatentsIITDelhi() {
 
   return (
     <div className="bg-gray-100 min-h-screen pb-12">
-      <Heading pageheading={"IP & Technology Transfer Dashboard"} />
+      <Heading pageheading={"IP & Technology Transfer"} />
+
       <FiltersPatents
         options={filterPatentOptions}
         selected={selectedPatentTypes}
@@ -192,7 +194,7 @@ function PatentsIITDelhi() {
       />
 
       <div className="px-4 max-w-[1500px] mx-auto">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <PatentsBarChartBox
             visiblePatentData={visiblePatentChartData}
             PatentNames={visiblePatentNames}
@@ -208,6 +210,32 @@ function PatentsIITDelhi() {
             isFiltered={isFiltered}
             clearFilter={handleResetAllFilters}
           />
+        </div>
+
+        <div className="buttons mt-10 flex flex-wrap justify-center gap-5">
+          <div className="group  shadow-lg rounded-full bg-white border border-gray-200 overflow-hidden font-semibold ">
+            {" "}
+            <a
+              href="https://fitt-iitd.in/web/latest-filed-ip"
+              target="_blank"
+              className="flex items-center gap-3 hover:bg-red-800  hover:text-white w-full h-full px-6 py-3 transition-all duration-300 "
+            >
+              Latest Filed IP
+              <FiArrowUpRight className="text-xl transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </a>
+          </div>
+
+          <div className="group  shadow-lg rounded-full bg-white border border-gray-200 overflow-hidden  font-semibold ">
+            {" "}
+            <a
+              href="https://fitt-iitd.in/web/licensing"
+              target="_blank"
+              className="flex items-center gap-3  hover:bg-red-800 hover:text-white w-full h-full px-6 py-3 transition-all duration-300"
+            >
+              Technology Licensing
+              <FiArrowUpRight className="text-xl transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </a>
+          </div>
         </div>
       </div>
     </div>

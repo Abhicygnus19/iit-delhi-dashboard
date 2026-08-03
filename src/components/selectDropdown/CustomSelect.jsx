@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
+import { BiCategory } from "react-icons/bi";
 
 export const CustomSelect = ({
   label,
@@ -60,15 +61,18 @@ export const CustomSelect = ({
 
   return (
     <div
-      className="relative w-64"
+      className="relative w-[266px] "
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Select */}
       <div
         onClick={handleClick}
-        className="flex items-center justify-between rounded-md border bg-white p-2 cursor-pointer select-none hover:border-gray-400"
+        className="flex items-center justify-between rounded-md border bg-white p-2 h-11 cursor-pointer select-none hover:border-gray-400"
       >
+        {/* <div className="w-10 h-10 flex justify-center items-center bg-blue-50 rounded-full ">
+          <BiCategory className="text-sm" />
+        </div> */}
         <span className="truncate font-medium text-gray-700">
           {displayLabel}
         </span>

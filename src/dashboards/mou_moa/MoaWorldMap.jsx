@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { geocodeCountries } from "../../lib/geocodeCountry";
 
-export default function WorldMap({ MoaData = [] }) {
+export default function MoaWorldMap({ MoaData = [] }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markersLayerRef = useRef(null);
@@ -40,7 +40,7 @@ export default function WorldMap({ MoaData = [] }) {
     };
   }, []);
 
-  // 2. Whenever API data changes: group by country, geocode dynamically, plot
+  // 2. Group by country, geocode dynamically, plot markers with popups
   useEffect(() => {
     if (!mapRef.current || !markersLayerRef.current) return;
 
@@ -67,28 +67,19 @@ export default function WorldMap({ MoaData = [] }) {
         (c) => c.displayName,
       );
 
-      console.log("[WorldMap] Countries to plot:", uniqueCountryNames); // TEMP debug line
-
-      if (uniqueCountryNames.length === 0) {
-        console.warn(
-          "[WorldMap] No countries found in MoaData — nothing to plot.",
-        );
-        return;
-      }
+      if (uniqueCountryNames.length === 0) return;
 
       setResolving(true);
       const coordsByCountry = await geocodeCountries(uniqueCountryNames);
       setResolving(false);
-
-      console.log("[WorldMap] Resolved coordinates:", coordsByCountry); // TEMP debug line
 
       if (cancelled) return;
 
       const glowingIcon = L.divIcon({
         className: "glowing-marker",
         html: `<div class="pin-glow-outer"></div><div class="pin-glow"></div><div class="pin-core"></div>`,
-        iconSize: [44, 44], // was [34, 34] — bigger to fit the deeper pulse
-        iconAnchor: [22, 22], // half of iconSize
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
       });
 
       Object.keys(aggregatedCountries).forEach((countryKey) => {
@@ -99,24 +90,35 @@ export default function WorldMap({ MoaData = [] }) {
         const count = countryInfo.institutions.length;
 
         const institutionListHtml = countryInfo.institutions
-          .slice(0, 3)
-          .map((inst) => `<li>• ${inst}</li>`)
+          .map(
+            (inst) =>
+              `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
+                 <span class="text-blue-500">•</span> 
+                 <span class="hover:text-blue-600 transition-colors cursor-pointer">${inst}</span>
+               </li>`,
+          )
           .join("");
-        const remainder =
-          count > 3 ? `<li>• ...and ${count - 3} more</li>` : "";
 
         const marker = L.marker(coordinates, {
           icon: glowingIcon,
           zIndexOffset: 1000,
         });
 
-        marker.bindTooltip(
-          `<div class="p-1">
-            <strong class="text-sm text-blue-600">${countryInfo.displayName}</strong>
-            <div class="text-xs text-gray-500 font-semibold mt-0.5">Active Programs: ${count}</div>
-            <ul class="text-xs text-gray-700 mt-1.5 list-none p-0">${institutionListHtml}${remainder}</ul>
+        // Configured options to ensure only 1 popup stays open at a time
+        marker.bindPopup(
+          `<div class="">
+            <strong class="text-sm text-blue-600 font-bold block">${countryInfo.displayName}</strong>
+            <div class="text-xs text-gray-500 font-semibold mt-0.5 border-b pb-1">Active Programs: ${count}</div>
+            <ul class="text-xs text-gray-700 mt-1.5 list-none p-0 max-h-52 overflow-y-auto pr-1">
+              ${institutionListHtml}
+            </ul>
           </div>`,
-          { direction: "top", offset: [0, -10] },
+          {
+            closeButton: true,
+            autoClose: true, // Closes other open popups automatically
+            closeOnClick: true, // Closes popup when clicking outside on the map
+            offset: [0, -10],
+          },
         );
 
         markersLayerRef.current.addLayer(marker);
@@ -132,12 +134,14 @@ export default function WorldMap({ MoaData = [] }) {
 
   return (
     <div className="w-full bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-6">
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center flex-wrap mb-3">
         <h3 className="text-base font-semibold text-gray-900">
-          Global Operational MOAs
+          Global Collaboration Network (Select a country)
         </h3>
         <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">
-          {resolving ? "Resolving locations…" : "Live Map Pins Active"}
+          {resolving
+            ? "Resolving locations…"
+            : "Select Countries to view details"}
         </span>
       </div>
       <div
@@ -145,9 +149,6 @@ export default function WorldMap({ MoaData = [] }) {
         className="w-full h-[450px] rounded-lg overflow-hidden bg-[#f8fafc]"
       />
 
-      {/* Leaflet injects marker HTML outside React's tree, so these classes
-          MUST be plain global CSS — Tailwind classes here would be silently
-          dropped since this DOM is never processed by React/Tailwind's JIT. */}
       <style>{`
         .glowing-marker {
           background: transparent;
@@ -165,6 +166,7 @@ export default function WorldMap({ MoaData = [] }) {
           transform: translate(-50%, -50%);
           box-shadow: 0 0 8px 2px rgba(37, 99, 235, 0.9);
           z-index: 2;
+          cursor: pointer;
         }
         .pin-glow {
           position: absolute;

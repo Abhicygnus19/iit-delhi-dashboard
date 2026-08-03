@@ -226,6 +226,34 @@ function ConsultancyProjects() {
     );
   }, [activeConsultancyYear, consultancyProjectData]);
 
+  // Dynamic Title Generator based on selected funding/sponsor types
+  const dynamicTitle = useMemo(() => {
+    // 1. Default title when no specific funding type is selected
+    if (!selectedFunding || selectedFunding.length === 0) {
+      return "";
+    }
+
+    // 2. Map and format selected values for proper grammar & capitalization
+    const formattedTypes = selectedFunding.map((type) => {
+      // Standardizes word casing (e.g., "industry" -> "Industry")
+      return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    });
+
+    // 3. Format multiple selections naturally with commas and 'and'
+    let formattedList = "";
+    if (formattedTypes.length === 1) {
+      formattedList = formattedTypes[0];
+    } else if (formattedTypes.length === 2) {
+      formattedList = `${formattedTypes[0]} and ${formattedTypes[1]}`;
+    } else {
+      formattedList = `${formattedTypes.slice(0, -1).join(", ")}, and ${
+        formattedTypes[formattedTypes.length - 1]
+      }`;
+    }
+
+    return `Total Number of Consultancy Projects Funded by ${formattedList}`;
+  }, [selectedFunding]);
+
   // Reset the type filter whenever the active year is switched or reset
   useEffect(() => {
     setSelectedSrpTypes([]);
@@ -242,7 +270,7 @@ function ConsultancyProjects() {
 
   return (
     <>
-      <Heading pageheading={" Consultancy Research Projects"} />
+      <Heading pageheading={" Consultancy Projects"} />
 
       <ConsultancyProjectFilter
         selectedFunding={selectedFunding}
@@ -255,7 +283,9 @@ function ConsultancyProjects() {
         maxYear={maxYear}
         onConsultancyProjectYearRangeChange={setConsultancyProjectYearRange}
       />
-
+      <h2 className="text-center text-xl font-semibold my-3 text-red-900">
+        {dynamicTitle}
+      </h2>
       {/* 2. Interactive Stats Metric Cards */}
       <ConsultancyStats
         activeData={filteredData}
@@ -265,7 +295,7 @@ function ConsultancyProjects() {
 
       <div className="px-2 min-h-screen max-w-[1500px] mx-auto">
         {/* 3. Primary Chart Grids */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto mb-12">
           <ConsultancyLineChartbox
             activeData={filteredData}
             selectedFundingTypes={selectedFunding}
@@ -311,7 +341,7 @@ function ConsultancyProjects() {
         )}
 
         {/* Heatmaps & Secondary Panels */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto mb-12">
           <ConsultancyYearlyBudget activeData={filteredData} />
           <ConsultancyYearlyProjects activeData={filteredData} />
         </div>

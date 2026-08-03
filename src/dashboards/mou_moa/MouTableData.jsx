@@ -69,14 +69,16 @@ function MouTableData({ Moudata = [] }) {
       <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
         {/* Table Top Header */}
         <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
-          <h3 className="text-base font-semibold text-gray-900">MOU</h3>
+          <h3 className="text-base font-semibold text-gray-900">
+            MOU with Foreign Universities/Institutions
+          </h3>
 
           {/* Search Bar */}
           <div className="relative w-full sm:w-64">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
             <input
               type="text"
-              placeholder="Search MOUs..."
+              placeholder="Search Collaborations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
@@ -89,10 +91,13 @@ function MouTableData({ Moudata = [] }) {
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-100 bg-slate-50/80 font-medium  uppercase tracking-wider">
-                <th className="p-3 w-10 text-center">#</th>
-                <th className="p-3 min-w-[220px]">MoU signed with</th>
-                <th className="p-3 min-w-[140px]">Category</th>
-                <th className="p-3 min-w-[160px]">Date of MoU Signing</th>
+                <th className="p-3 w-10 text-center"></th>
+                <th className="p-3 min-w-[220px]">
+                  {" "}
+                  Collaborating Organization{" "}
+                </th>
+                <th className="p-3 min-w-[140px]">Collaboration Type </th>
+                <th className="p-3 min-w-[160px]"> Date of Execution </th>
               </tr>
             </thead>
 
@@ -112,7 +117,7 @@ function MouTableData({ Moudata = [] }) {
                     key={index}
                     className="hover:bg-slate-50/80 transition-colors"
                   >
-                    <td className="p-3 text-center text-gray-400 font-medium">
+                    <td className="p-3 text-center font-medium">
                       {startIndex + index + 1}
                     </td>
                     <td className="p-3 font-semibold text-gray-900">

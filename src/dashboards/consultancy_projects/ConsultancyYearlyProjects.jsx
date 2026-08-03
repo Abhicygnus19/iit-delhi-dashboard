@@ -25,23 +25,43 @@ function ConsultancyYearlyProjects({ activeData }) {
   );
 
   // Helper to generate heatmap background colors dynamically
-  const getcellcolorStyle = (value) => {
-    if (value === 0) return { backgroundColor: "transparent" };
+  // const getcellcolorStyle = (value) => {
+  //   if (value === 0) return { backgroundColor: "transparent" };
 
-    const minOpacity = 0.08;
-    const maxOpacity = 0.85;
-    const ratio = value / maxProjectCount;
-    const opacity = minOpacity + ratio * (maxOpacity - minOpacity);
+  //   const minOpacity = 0.08;
+  //   const maxOpacity = 0.85;
+  //   const ratio = value / maxProjectCount;
+  //   const opacity = minOpacity + ratio * (maxOpacity - minOpacity);
 
-    return {
-      backgroundColor: `rgba(59, 130, 246, ${opacity})`,
-    };
+  //   return {
+  //     backgroundColor: `rgba(59, 130, 246, ${opacity})`,
+  //   };
+  // };
+
+  const getCellClass = (org, value) => {
+    if (value === 0) {
+      return "bg-gray-50 text-gray-400";
+    }
+
+    switch (org.toLowerCase()) {
+      case "government":
+        return "bg-green-600 text-white";
+
+      case "industry":
+        return "bg-blue-600 text-white";
+
+      case "foreign":
+        return "bg-violet-900 text-white";
+
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
   };
 
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card">
       <h3 className="text-sm font-semibold mb-4 font-sans">
-        Yearly Projects of each Organization
+        Year-wise Project Count by Category
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">
@@ -68,13 +88,23 @@ function ConsultancyYearlyProjects({ activeData }) {
                 </td>
                 {yearsRange.map((year) => {
                   const count = getProjectCount(year, org);
-                  const cellStyle = getcellcolorStyle(count);
+                  // const cellStyle = getcellcolorStyle(count);
 
                   return (
+                    // <td
+                    //   key={`${org}-${year}`}
+                    //   style={cellStyle}
+                    //   className="text-center rounded-md font-semibold transition-all duration-200 p-2"
+                    // >
+                    //   {count}
+                    // </td>
+
                     <td
                       key={`${org}-${year}`}
-                      style={cellStyle}
-                      className="text-center rounded-md font-semibold transition-all duration-200 p-2"
+                      className={`text-center rounded-md font-semibold transition-all duration-200 p-2 ${getCellClass(
+                        org,
+                        count,
+                      )}`}
                     >
                       {count}
                     </td>

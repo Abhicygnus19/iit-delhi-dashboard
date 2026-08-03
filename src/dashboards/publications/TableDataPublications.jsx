@@ -112,7 +112,7 @@ function TableDataPublications({ entities = [], yearRange }) {
       <div className="border-2 p-4 rounded-md shadow-sm text-xs w-100">
         <div className="flex items-center justify-between mb-3 gap-3">
           <h3 className="text-sm font-semibold">
-            Publication Data ({tableData.length} rows)
+            Yearly Publication Data of Academic Units ({tableData.length} rows)
           </h3>
         </div>
 
@@ -133,7 +133,7 @@ function TableDataPublications({ entities = [], yearRange }) {
                   Year
                 </th>
                 <th className="text-left p-2 text-muted-foreground font-medium whitespace-nowrap">
-                  Value
+                  Publication
                 </th>
               </tr>
             </thead>
