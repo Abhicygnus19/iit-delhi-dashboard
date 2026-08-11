@@ -14,8 +14,8 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const ORG_TYPE_COLORS = {
   department: "#1e4a8d", // Blue
-  centre: "#0d9488", // Teal
-  school: "#7c3aed", // Purple
+  centre: "rgb(48, 110, 255)", // Teal
+  school: "rgb(147, 157, 250)", // Purple
 };
 
 const DEFAULT_BAR_COLOR = "#64748b";
@@ -121,6 +121,7 @@ export default function BarChartBoxPublications({
             barSize={isSingleSelection ? 200 : 20}
             cursor="pointer"
             onClick={(data) => onEntitySelect?.(data?.payload?.code)}
+            radius={[0, 6, 6, 0]}
           >
             {displayedPublicationBarData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getBarColor(entry.orgType)} />

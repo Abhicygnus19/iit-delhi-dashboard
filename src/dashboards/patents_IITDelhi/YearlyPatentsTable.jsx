@@ -31,8 +31,8 @@ function YearlyPatentsTable({
       case "Patents Granted":
         return "bg-blue-600 text-white font-semibold";
 
-      case "Technology License Deal":
-        return "bg-emerald-600 text-white font-semibold";
+      case "Technology License":
+        return "bg-blue-400 text-white font-semibold";
 
       default:
         return "bg-gray-100";
@@ -44,11 +44,8 @@ function YearlyPatentsTable({
       <div className="flex justify-between items-center mb-3">
         <div>
           <h3 className="text-sm font-semibold">
-            Annual Patent Portfolio by Category{" "}
+            Patents and Technology Transfer{" "}
           </h3>
-          <p className="text-sm text-gray-700">
-            Annual Patent Counts by Category
-          </p>
         </div>
         {/* Reset Filter Action */}
         {isFiltered && (

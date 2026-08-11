@@ -5,6 +5,7 @@ export default function StatsCard({
   para,
   value,
   symbol,
+  text,
   icon: Icon,
   bgClass = "bg-gradient-to-r from-blue-50  to-blue-100",
   borderClass = "border-l-blue-900",
@@ -34,8 +35,7 @@ export default function StatsCard({
       </div>
 
       <h2 className={`mb-0 text-2xl font-bold ${textClass}`}>
-        {symbol}
-        {value}
+        {symbol} {value} {text}
       </h2>
     </div>
   );

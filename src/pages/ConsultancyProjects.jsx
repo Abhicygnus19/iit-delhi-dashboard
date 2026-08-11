@@ -15,6 +15,7 @@ import OptionSelect from "../components/ui/OptionSelect";
 import { LuLoaderCircle } from "react-icons/lu";
 import YearChartBlock from "./../components/YearChartBlock";
 import Heading from "../components/ui/Heading";
+import { CustomSelect } from "../components/selectDropdown/CustomSelect";
 
 function ConsultancyProjects() {
   const [consultancyProjectData, setConsultancyProjectData] = useState([]);
@@ -319,7 +320,7 @@ function ConsultancyProjects() {
                 Consutancy Projects in IRD for {activeConsultancyYear}
               </h2>
               <div className="flex gap-2 flex-wrap text-[14px]">
-                <OptionSelect
+                <CustomSelect
                   label="Select SRP type"
                   options={inlineCrpTypeOptions}
                   selected={selectedSrpTypes}

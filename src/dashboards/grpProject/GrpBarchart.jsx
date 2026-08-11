@@ -106,7 +106,7 @@ function GrpBarchart({ grpData, projectType, barColor }) {
             formatter={(value) => [`${value} Projects`, "Total"]}
             labelFormatter={(label, items) => items[0]?.payload?.name || label}
           />
-          <Bar dataKey="Projects" cursor="pointer">
+          <Bar dataKey="Projects" cursor="pointer" radius={[0, 6, 6, 0]}>
             {displayedGrpData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}

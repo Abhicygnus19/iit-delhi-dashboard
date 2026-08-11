@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -11,21 +11,23 @@ import {
 } from "recharts";
 import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { RoundedStackBar } from "../../components/ui/RoundedStackBar";
 
 const BAR_COLORS = [
-  "#2563EB", // Blue
-  "#059669", // Emerald
-  "#F59E0B", // Amber
-  "#8B5CF6", // Violet
+  "#3261a9", // Navy
+  "#3b82f6", // Blue
+  "#86a6e5", // Light Blue
 ];
 
-function BarChartStudentScheme({ schemeData = [] }) {
+function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
   const [selectedBarYear, setSelectedBarYear] = useState(null);
   const [maxStudentSchemeBarsCount, setMaxStudentSchemeBarsCount] =
-    useState(15); // for limit of bars
+    useState(15);
 
-  // Parse raw data safely
-  const { fullChartData, schemeNames } = useMemo(() => {
+  const masterKeyRegistry = useRef([]);
+  const colorMapRef = useRef({});
+
+  const { fullChartData, activeSchemeNames } = useMemo(() => {
     const yearsMap = {};
     const names = new Set();
 
@@ -44,35 +46,56 @@ function BarChartStudentScheme({ schemeData = [] }) {
       }
     });
 
+    const activeNames = Array.from(names);
+
+    activeNames.forEach((name) => {
+      if (!masterKeyRegistry.current.includes(name)) {
+        masterKeyRegistry.current.push(name);
+        const colorIndex =
+          (masterKeyRegistry.current.length - 1) % BAR_COLORS.length;
+        colorMapRef.current[name] = BAR_COLORS[colorIndex];
+      }
+    });
+
+    Object.values(yearsMap).forEach((row) => {
+      masterKeyRegistry.current.forEach((name) => {
+        if (row[name] == null) {
+          row[name] = 0;
+        }
+      });
+    });
+
     const sortedChartData = Object.values(yearsMap).sort(
       (a, b) => a.year - b.year,
     );
 
     return {
       fullChartData: sortedChartData,
-      schemeNames: Array.from(names),
+      activeSchemeNames: activeNames,
     };
   }, [schemeData]);
 
-  // Handle drilldown filter
-  const StuentSchemeChartData = useMemo(() => {
+  // Determine which keys should actually display based on dropdown selection
+  const effectiveSelectedSchemes =
+    selectedSchemes.length > 0 ? selectedSchemes : activeSchemeNames;
+
+  const StudentSchemeChartData = useMemo(() => {
     if (selectedBarYear) {
       return fullChartData.filter((item) => item.year === selectedBarYear);
     }
     return fullChartData;
   }, [fullChartData, selectedBarYear]);
 
-  const displayedStuentSchemeChartData = StuentSchemeChartData.slice(
+  const displayedStudentSchemeChartData = StudentSchemeChartData.slice(
     0,
     maxStudentSchemeBarsCount,
   );
 
   const chartHeightStudentScheme = Math.max(
     350,
-    displayedStuentSchemeChartData.length * 35,
+    displayedStudentSchemeChartData.length * 35,
   );
 
-  // Fix: Safe payload tracking for vertical layout systems
   const handleChartClick = (state) => {
     if (state && state.activePayload && state.activePayload.length > 0) {
       const clickedYear = state.activePayload[0].payload.year;
@@ -83,99 +106,309 @@ function BarChartStudentScheme({ schemeData = [] }) {
   };
 
   return (
-    <>
-      <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full h-[500px]">
-        <div className="flex justify-between gap-2 items-center">
-          <div>
-            <h3 className="text-base font-semibold">
-              Programme-wise Annual Participation
-            </h3>
-            <p className="text-sm text-gray-700">
-              Click/Hover over a bar to view the Yearly Count for the Selected
-              Student Scheme
-            </p>
-          </div>
-
-          {selectedBarYear && (
-            <div className="flex justify-between items-center gap-2 text-blue-700 px-3 py-2 rounded-md text-xs font-medium">
-              <button
-                onClick={() => setSelectedBarYear(null)}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs flex gap-2 items-center"
-              >
-                <span className="whitespace-nowrap">Reset Chart</span>{" "}
-                <RxCross1 />
-              </button>
-            </div>
-          )}
+    <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full h-[500px]">
+      <div className="flex justify-between gap-2 items-center mb-3">
+        <div>
+          <h3 className="text-base font-semibold">
+            Programme-wise Annual Participation
+          </h3>
+          <p className="text-sm text-gray-700">
+            Click/Hover over a bar to view the Yearly Count for the Selected
+            Student Scheme
+          </p>
         </div>
-        <ResponsiveContainer width="100%" height={chartHeightStudentScheme}>
-          <BarChart
-            layout="vertical"
-            data={displayedStuentSchemeChartData}
-            onClick={handleChartClick}
-          >
-            <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
-            <XAxis type="number" stroke="#6b7280" />
-            <YAxis
-              type="category"
-              dataKey="year"
-              interval={0}
-              stroke="#4b5563"
-              reversed={true}
-            />
-            <Tooltip
-              cursor={{ fill: "#f3f4f6", opacity: 0.4 }}
-              contentStyle={{
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                border: "1px solid #e5e7eb",
-              }}
-            />
-            <Legend verticalAlign="top" height={36} iconType="circle" />
 
-            {schemeNames.map((name, index) => (
+        {selectedBarYear && (
+          <div className="flex justify-between items-center gap-2 text-blue-700 px-3 py-2 rounded-md text-xs font-medium">
+            <button
+              onClick={() => setSelectedBarYear(null)}
+              className="bg-blue-50 hover:bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs flex gap-2 items-center"
+            >
+              <span className="whitespace-nowrap">Reset Chart</span>
+              <RxCross1 />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <ResponsiveContainer width="100%" height={chartHeightStudentScheme}>
+        <BarChart
+          layout="vertical"
+          data={displayedStudentSchemeChartData}
+          onClick={handleChartClick}
+        >
+          <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+          <XAxis type="number" stroke="#6b7280" />
+          <YAxis
+            type="category"
+            dataKey="year"
+            interval={0}
+            stroke="#4b5563"
+            reversed={true}
+          />
+          <Tooltip
+            cursor={{ fill: "#f3f4f6", opacity: 0.4 }}
+            contentStyle={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          />
+
+          <Legend />
+
+          {masterKeyRegistry.current.map((name) => {
+            const isSelected = effectiveSelectedSchemes.includes(name);
+
+            return (
               <Bar
                 key={name}
                 dataKey={name}
-                fill={BAR_COLORS[index % BAR_COLORS.length]}
                 stackId="a"
                 className="cursor-pointer"
+                fill={colorMapRef.current[name]}
+                hide={!isSelected}
+                shape={(props) => (
+                  <RoundedStackBar
+                    {...props}
+                    dataKey={name}
+                    allKeys={activeSchemeNames}
+                  />
+                )}
               />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+            );
+          })}
+        </BarChart>
+      </ResponsiveContainer>
 
-        <div className="flex justify-center mt-2 gap-2">
-          {!selectedBarYear &&
-            maxStudentSchemeBarsCount < StuentSchemeChartData.length && (
-              <button
-                onClick={() =>
-                  setMaxStudentSchemeBarsCount((prev) =>
-                    Math.min(prev + 15, StuentSchemeChartData.length),
-                  )
-                }
-                className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
-              >
-                Show More
-                <FaArrowDown className="animate-bounce" size={18} />
-              </button>
-            )}
-
-          {maxStudentSchemeBarsCount > 15 && (
+      <div className="flex justify-center mt-2 gap-2">
+        {!selectedBarYear &&
+          maxStudentSchemeBarsCount < StudentSchemeChartData.length && (
             <button
               onClick={() =>
-                setMaxStudentSchemeBarsCount((prev) => Math.max(prev - 15, 15))
+                setMaxStudentSchemeBarsCount((prev) =>
+                  Math.min(prev + 15, StudentSchemeChartData.length),
+                )
               }
-              className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+              className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl animate-pulse"
             >
-              Show Less
-              <FaArrowUp className="animate-bounce" size={18} />
+              Show More
+              <FaArrowDown className="animate-bounce" size={18} />
             </button>
           )}
-        </div>
+
+        {maxStudentSchemeBarsCount > 15 && (
+          <button
+            onClick={() =>
+              setMaxStudentSchemeBarsCount((prev) => Math.max(prev - 15, 15))
+            }
+            className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl animate-pulse"
+          >
+            Show Less
+            <FaArrowUp className="animate-bounce" size={18} />
+          </button>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 
 export default BarChartStudentScheme;
+// import React, { useMemo, useState } from "react";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
+//   ResponsiveContainer,
+// } from "recharts";
+// import { RxCross1 } from "react-icons/rx";
+// import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+// import { RoundedStackBar } from "../../components/ui/RoundedStackBar";
+
+// const BAR_COLORS = [
+//   "#2563EB", // Blue discover & learn
+//   "#86a6e5", //lightblue startup action
+//   "#699bff", // midblue sura
+// ];
+
+// function BarChartStudentScheme({ schemeData = [] }) {
+//   const [selectedBarYear, setSelectedBarYear] = useState(null);
+//   const [maxStudentSchemeBarsCount, setMaxStudentSchemeBarsCount] =
+//     useState(15); // for limit of bars
+
+//   // Parse raw data safely
+//   const { fullChartData, schemeNames } = useMemo(() => {
+//     const yearsMap = {};
+//     const names = new Set();
+
+//     schemeData.forEach((scheme) => {
+//       const name = scheme.schemeName;
+//       if (!name) return;
+//       names.add(name);
+
+//       if (Array.isArray(scheme.yearlyData)) {
+//         scheme.yearlyData.forEach(({ year, count }) => {
+//           if (!yearsMap[year]) {
+//             yearsMap[year] = { year: parseInt(year) };
+//           }
+//           yearsMap[year][name] = count;
+//         });
+//       }
+//     });
+
+//     const allNames = Array.from(names);
+
+//     Object.values(yearsMap).forEach((row) => {
+//       allNames.forEach((name) => {
+//         if (row[name] == null) {
+//           row[name] = 0;
+//         }
+//       });
+//     });
+
+//     const sortedChartData = Object.values(yearsMap).sort(
+//       (a, b) => a.year - b.year,
+//     );
+
+//     return {
+//       fullChartData: sortedChartData,
+//       schemeNames: allNames,
+//     };
+//   }, [schemeData]);
+
+//   // Handle drilldown filter
+//   const StuentSchemeChartData = useMemo(() => {
+//     if (selectedBarYear) {
+//       return fullChartData.filter((item) => item.year === selectedBarYear);
+//     }
+//     return fullChartData;
+//   }, [fullChartData, selectedBarYear]);
+
+//   const displayedStuentSchemeChartData = StuentSchemeChartData.slice(
+//     0,
+//     maxStudentSchemeBarsCount,
+//   );
+
+//   const chartHeightStudentScheme = Math.max(
+//     350,
+//     displayedStuentSchemeChartData.length * 35,
+//   );
+
+//   // Fix: Safe payload tracking for vertical layout systems
+//   const handleChartClick = (state) => {
+//     if (state && state.activePayload && state.activePayload.length > 0) {
+//       const clickedYear = state.activePayload[0].payload.year;
+//       setSelectedBarYear(clickedYear);
+//     } else if (state && state.activeLabel) {
+//       setSelectedBarYear(parseInt(state.activeLabel));
+//     }
+//   };
+
+//   return (
+//     <>
+//       <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full h-[500px]">
+//         <div className="flex justify-between gap-2 items-center">
+//           <div>
+//             <h3 className="text-base font-semibold">
+//               Programme-wise Annual Participation
+//             </h3>
+//             <p className="text-sm text-gray-700">
+//               Click/Hover over a bar to view the Yearly Count for the Selected
+//               Student Scheme
+//             </p>
+//           </div>
+
+//           {selectedBarYear && (
+//             <div className="flex justify-between items-center gap-2 text-blue-700 px-3 py-2 rounded-md text-xs font-medium">
+//               <button
+//                 onClick={() => setSelectedBarYear(null)}
+//                 className="bg-blue-50 hover:bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs flex gap-2 items-center"
+//               >
+//                 <span className="whitespace-nowrap">Reset Chart</span>{" "}
+//                 <RxCross1 />
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//         <ResponsiveContainer width="100%" height={chartHeightStudentScheme}>
+//           <BarChart
+//             layout="vertical"
+//             data={displayedStuentSchemeChartData}
+//             onClick={handleChartClick}
+//           >
+//             <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+//             <XAxis type="number" stroke="#6b7280" />
+//             <YAxis
+//               type="category"
+//               dataKey="year"
+//               interval={0}
+//               stroke="#4b5563"
+//               reversed={true}
+//             />
+//             <Tooltip
+//               cursor={{ fill: "#f3f4f6", opacity: 0.4 }}
+//               contentStyle={{
+//                 backgroundColor: "#fff",
+//                 borderRadius: "8px",
+//                 border: "1px solid #e5e7eb",
+//               }}
+//             />
+//             <Legend verticalAlign="top" height={36} />
+
+//             {schemeNames.map((name, index) => (
+//               <Bar
+//                 key={name}
+//                 dataKey={name}
+//                 stackId="a"
+//                 className="cursor-pointer"
+//                 fill={BAR_COLORS[index % BAR_COLORS.length]}
+//                 shape={(props) => (
+//                   <RoundedStackBar
+//                     {...props}
+//                     dataKey={name}
+//                     allKeys={schemeNames}
+//                   />
+//                 )}
+//               />
+//             ))}
+//           </BarChart>
+//         </ResponsiveContainer>
+
+//         <div className="flex justify-center mt-2 gap-2">
+//           {!selectedBarYear &&
+//             maxStudentSchemeBarsCount < StuentSchemeChartData.length && (
+//               <button
+//                 onClick={() =>
+//                   setMaxStudentSchemeBarsCount((prev) =>
+//                     Math.min(prev + 15, StuentSchemeChartData.length),
+//                   )
+//                 }
+//                 className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+//               >
+//                 Show More
+//                 <FaArrowDown className="animate-bounce" size={18} />
+//               </button>
+//             )}
+
+//           {maxStudentSchemeBarsCount > 15 && (
+//             <button
+//               onClick={() =>
+//                 setMaxStudentSchemeBarsCount((prev) => Math.max(prev - 15, 15))
+//               }
+//               className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl  animate-pulse"
+//             >
+//               Show Less
+//               <FaArrowUp className="animate-bounce" size={18} />
+//             </button>
+//           )}
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default BarChartStudentScheme;

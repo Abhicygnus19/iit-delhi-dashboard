@@ -44,7 +44,10 @@ function ConsultancyLineChartbox({
     <div className="border-2 p-4 rounded-md shadow-sm text-sm bg-white">
       <div className="flex justify-between items-center gap-2 mb-4">
         <div>
-          <h3 className="font-semibold">Project Trends Over the Years</h3>
+          <h3 className="font-semibold">
+            {" "}
+            Year-wise Sponsored Research Projects
+          </h3>
           <p className=" text-gray-700">
             {" "}
             Click/Hover over a point to view details
@@ -77,7 +80,7 @@ function ConsultancyLineChartbox({
             tickLine={false}
           >
             <Label
-              value="Analysis Period"
+              value="Finalcial Year"
               offset={-25}
               position="insideBottom"
               style={{

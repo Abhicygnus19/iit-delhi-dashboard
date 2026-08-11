@@ -54,26 +54,26 @@ function StatsPublications({
           <StatsCard key={index} title={item.title} value={item.value} />
         ))} */}
         <StatsCard
-          title={"Total Research Publications"}
+          title={"Total Publications"}
           value={totalPublications.toLocaleString()}
           icon={LuBookText}
         />{" "}
         <StatsCard
-          title="Total Research Citations"
+          title="Total Citations"
           value={totalCitations.toLocaleString()}
           icon={BsChatRightQuoteFill}
-          bgClass="bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700"
-          borderClass="border-l-emerald-900"
-          iconBgClass="bg-emerald-800"
+          bgClass="bg-gradient-to-r from-blue-300 to-blue-500"
+          borderClass="border-l-blue-900"
+          iconBgClass="bg-blue-500"
           iconClass="text-white"
           titleClass="text-white"
           textClass="text-white"
         />
         <StatsCard
-          title="Participating Academic Units"
+          title="Academic Units"
           value={totalOrgUnits}
           icon={LiaUniversitySolid}
-          bgClass="bg-gradient-to-r from-neutral-200  to-neutral-300"
+          bgClass="bg-gradient-to-r from-neutral-200 to-neutral-300"
           borderClass="border-l-neutral-800"
           iconBgClass="bg-neutral-600"
           iconClass="text-white"

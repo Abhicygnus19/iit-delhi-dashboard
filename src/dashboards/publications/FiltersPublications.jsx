@@ -45,7 +45,7 @@ export default function FiltersPublications({
       {/* <Heading pageheading={"Publications"} /> */}
       <div className="flex flex-wrap items-center gap-6 max-w-[1500px] mx-auto">
         <CustomSelect
-          label="Org Type"
+          label="Academic Units"
           options={categoryOptions}
           selected={activeCategory}
           onChange={onCategoryChange}
@@ -53,7 +53,7 @@ export default function FiltersPublications({
         />
 
         <CustomSelect
-          label="Dept/Units"
+          label="Dept./Centres/Schools"
           options={entityOptions}
           selected={selectedEntities}
           onChange={onSelectedEntitiesChange}

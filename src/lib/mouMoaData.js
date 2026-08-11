@@ -23,6 +23,7 @@ export const fetchMouData = async () => {
       mouSignedOrganization: item.mouSignedOrganization,
       category: item.category,
       mouSigningDate: item.mouSigningDate,
+      mouYear: item.year,
     }));
   } catch (error) {
     console.log("error fetching MOU data", error);
@@ -34,33 +35,49 @@ export const fetchMouData = async () => {
 //     mouSignedOrganization:
 //       "Agricultural and Processed Food Products Export Development Authority (APEDA), New Delhi",
 //     category: "Government",
-//     mouSigningDate: "04-03-2020",
+//     mouYear: 2026,
 //   },
 //   {
 //     mouSignedOrganization: "Mastercard Technology Private Limited, USA",
 //     category: "Industry/Foreign",
-//     mouSigningDate: "28-08-2020",
+//     mouYear: 2025,
 //   },
 //   {
 //     mouSignedOrganization:
 //       "Daksh Society, Bengaluru (COE for Law and Technology)",
 //     category: "NPO",
-//     mouSigningDate: "09-10-2020",
+//     mouYear: 2024,
 //   },
 //   {
 //     mouSignedOrganization: "Hebrew University of Jerusalem, Israel (HUJI)",
 //     category: "Foreign/Academic",
-//     mouSigningDate: "04-01-2021",
+//     mouYear: 2023,
 //   },
 //   {
 //     mouSignedOrganization: "Ashoka University, Haryana",
 //     category: "Non-Government",
-//     mouSigningDate: "04-03-2021",
+//     mouYear: 2022,
 //   },
 //   {
 //     mouSignedOrganization: "The TATA Power Company Ltd., Mumbai",
 //     category: "Indian-Industry",
-//     mouSigningDate: "01-10-2021",
+//     mouYear: 2021,
+//   },
+//   {
+//     mouSignedOrganization: "Infosys Technologies Ltd., Bengaluru",
+//     category: "Indian-Industry",
+//     mouYear: 2020,
+//   },
+//   {
+//     mouSignedOrganization: "Indian Institute of Science (IISc), Bengaluru",
+//     category: "Academic",
+//     mouYear: 2019,
+//   },
+//   {
+//     mouSignedOrganization:
+//       "Defence Research and Development Organisation (DRDO)",
+//     category: "Government",
+//     mouYear: 2018,
 //   },
 // ];
 

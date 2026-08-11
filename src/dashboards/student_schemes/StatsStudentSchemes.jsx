@@ -51,23 +51,23 @@ function StatsStudentSchemes({ studentsSchemesActiveData = [] }) {
           title="Total SURA"
           value={getTotal("SURA")}
           icon={BsChatRightQuoteFill}
-          bgClass="bg-gradient-to-r from-emerald-500 to-emerald-600"
-          borderClass="border-l-emerald-800"
-          iconBgClass="bg-emerald-200"
-          iconClass="text-emerald-700"
-          textClass="text-white"
-          titleClass="text-white"
+          bgClass="bg-gradient-to-r from-blue-300 to-blue-400"
+          borderClass="border-l-blue-800"
+          iconBgClass="bg-blue-200"
+          iconClass="text-blue-700"
+          textClass="text-black"
+          titleClass="text-black"
         />
 
         <StatsCard
           title="Total Student Startup Action"
           value={getTotal("Student Startup Action")}
           icon={FaRocket}
-          bgClass="bg-gradient-to-r from-amber-400  to-amber-500"
-          borderClass="border-l-amber-800"
-          iconBgClass="bg-amber-200"
-          iconClass="text-amber-700"
-          textClass="text-amber-800"
+          bgClass="bg-gradient-to-r from-blue-100  to-blue-200"
+          borderClass="border-l-blue-800"
+          iconBgClass="bg-blue-600"
+          iconClass="text-white"
+          textClass="text-blue-800"
         />
 
         <StatsCard

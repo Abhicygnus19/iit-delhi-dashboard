@@ -45,13 +45,13 @@ function ConsultancyYearlyProjects({ activeData }) {
 
     switch (org.toLowerCase()) {
       case "government":
-        return "bg-green-600 text-white";
+        return "bg-blue-400 text-white";
 
       case "industry":
         return "bg-blue-600 text-white";
 
       case "foreign":
-        return "bg-violet-900 text-white";
+        return "bg-blue-900 text-white";
 
       default:
         return "bg-gray-200 text-gray-700";
@@ -61,7 +61,7 @@ function ConsultancyYearlyProjects({ activeData }) {
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card">
       <h3 className="text-sm font-semibold mb-4 font-sans">
-        Year-wise Project Count by Category
+        Year-wise Project numbers
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">

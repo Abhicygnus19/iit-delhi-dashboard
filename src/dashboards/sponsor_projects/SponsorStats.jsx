@@ -2,6 +2,7 @@ import React from "react";
 import StatsCard from "../../components/ui/StatsCard";
 import { FaIndustry, FaGlobe, FaIndianRupeeSign } from "react-icons/fa6";
 import { FaRegBuilding } from "react-icons/fa";
+import SponsorStatCard from "../../components/ui/SponsorStatCard";
 
 function SponsorStats({
   activeData,
@@ -123,11 +124,15 @@ function SponsorStats({
           selectedFundingTypes.includes("government")) &&
           (!selectedBudgetTypes.length ||
             selectedBudgetTypes.includes("government")) && (
-            <StatsCard
-              title="Government Projects"
-              para="Count of Projects"
+            <SponsorStatCard
+              title="Government Funded Projects"
               value={totalGovtProject}
               icon={FaRegBuilding}
+              para="Projects"
+              budgetpara="Budget"
+              text="Cr"
+              symbol="₹"
+              budgetvalue={Number(totalGovBudget.toFixed(2))}
             />
           )}
 
@@ -135,11 +140,15 @@ function SponsorStats({
           selectedFundingTypes.includes("industry")) &&
           (!selectedBudgetTypes.length ||
             selectedBudgetTypes.includes("industry")) && (
-            <StatsCard
-              title="Industry Projects"
-              para="Count of Projects"
+            <SponsorStatCard
+              title="Industry Funded Projects"
               value={totalIndustryProject}
               icon={FaIndustry}
+              para="Projects"
+              budgetpara="Budget"
+              text="Cr"
+              symbol="₹"
+              budgetvalue={Number(totalIndustryBudget.toFixed(2))}
             />
           )}
 
@@ -147,24 +156,28 @@ function SponsorStats({
           selectedFundingTypes.includes("foreign")) &&
           (!selectedBudgetTypes.length ||
             selectedBudgetTypes.includes("foreign")) && (
-            <StatsCard
-              title="Foreign Projects"
-              para="Count of Projects"
+            <SponsorStatCard
+              title="Internationally Funded Projects"
               value={totalForeignProject}
               icon={FaGlobe}
+              para="Projects"
+              budgetpara="Budget"
+              text="Cr"
+              symbol="₹"
+              budgetvalue={Number(totalForeignBudget.toFixed(2))}
             />
           )}
 
-        {(!selectedFundingTypes.length ||
+        {/* {(!selectedFundingTypes.length ||
           selectedFundingTypes.includes("government")) &&
           (!selectedBudgetTypes.length ||
             selectedBudgetTypes.includes("government")) && (
             <StatsCard
               title="Government Projects"
-              para="Budget in Crores"
               value={Number(totalGovBudget.toFixed(2))}
+              text="Cr"
               symbol="₹"
-              icon={FaIndianRupeeSign}
+              icon={FaRegBuilding}
               bgClass="bg-gradient-to-r from-green-500  to-green-600"
               textClass="text-white"
               titleClass="text-white"
@@ -181,10 +194,10 @@ function SponsorStats({
             selectedBudgetTypes.includes("industry")) && (
             <StatsCard
               title="Industry Projects"
-              para="Budget in Crores"
               value={Number(totalIndustryBudget.toFixed(2))}
+              text="Cr"
               symbol="₹"
-              icon={FaIndianRupeeSign}
+              icon={FaIndustry}
               bgClass="bg-gradient-to-r from-blue-500  to-blue-600"
               textClass="text-white"
               titleClass="text-white"
@@ -200,10 +213,10 @@ function SponsorStats({
             selectedBudgetTypes.includes("foreign")) && (
             <StatsCard
               title="Foreign Projects"
-              para="Budget in Crores"
               value={Number(totalForeignBudget.toFixed(2))}
+              text="Cr"
               symbol="₹"
-              icon={FaIndianRupeeSign}
+              icon={FaGlobe}
               bgClass="bg-gradient-to-r from-violet-800  to-violet-900"
               textClass="text-white"
               titleClass="text-white"
@@ -211,7 +224,7 @@ function SponsorStats({
               iconBgClass="bg-violet-600"
               iconClass="text-white"
             />
-          )}
+          )} */}
       </div>
     </div>
   );

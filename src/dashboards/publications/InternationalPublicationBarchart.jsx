@@ -116,10 +116,10 @@ export default function InternationalPublicationBarchart() {
   }
 
   return (
-    <div className="border-2 rounded-md shadow-sm text-xs ">
-      <div className="flex justify-between gap-2 items-center mb-4 p-4 bg-gray-100 border-b-2">
-        <h3 className="font-semibold text-base">
-          Country-wise Research Publications by IIT Delhi ({displayYear})
+    <div className="border-2 rounded-md shadow-sm text-xs">
+      <div className="flex justify-center gap-2 items-center mb-2 p-4 bg-gray-100 border-b-2">
+        <h3 className="font-semibold text-xl text-center">
+          International Publications ({displayYear})
         </h3>
 
         {/* <div className="text-sm">

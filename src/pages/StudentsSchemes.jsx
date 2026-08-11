@@ -13,10 +13,8 @@ function StudentsSchemes() {
   const [loading, setLoading] = useState(true);
   const [selectedSchemes, setSelectedSchemes] = useState([]);
 
-  // Initialize range as null; populated explicitly on API response
   const [studentSchemeYearRange, setStudentSchemeYearRange] = useState(null);
 
-  // Helper function to safely extract the start year from formats like "2016-17" or standard numbers
   const getStartYear = (yearVal) => {
     if (!yearVal) return null;
     const yearStr = String(yearVal);
@@ -24,20 +22,18 @@ function StudentsSchemes() {
     return match ? Number(match[1]) : null;
   };
 
-  // Helper function to extract the 4-digit end year from formats like "2016-17" -> 2017 or standard numbers
   const getEndYear = (yearVal) => {
     if (!yearVal) return null;
     const yearStr = String(yearVal);
     const match = yearStr.match(/^(\d{2})(\d{2})-(\d{2})$/);
     if (match) {
-      const century = match[1]; // "20"
-      const endDecade = match[3]; // "17"
-      return Number(century + endDecade); // 2017
+      const century = match[1];
+      const endDecade = match[3];
+      return Number(century + endDecade);
     }
     return getStartYear(yearVal);
   };
 
-  // Compute absolute minimum and maximum years dynamically
   const [minYear, maxYear] = useMemo(() => {
     if (studentSchemeData.length === 0) return [0, 0];
 
@@ -59,7 +55,6 @@ function StudentsSchemes() {
     return [Math.min(...startYears), Math.max(...endYears)];
   }, [studentSchemeData]);
 
-  // API loading and range initialization technique
   useEffect(() => {
     const getStudentSchemeData = async () => {
       setLoading(true);
@@ -101,7 +96,6 @@ function StudentsSchemes() {
     }));
   }, [studentSchemeData]);
 
-  // Dynamically filter data tree based on configurations
   const filteredSchemesData = useMemo(() => {
     if (!Array.isArray(studentSchemeData)) return [];
 
@@ -160,7 +154,10 @@ function StudentsSchemes() {
       <StatsStudentSchemes studentsSchemesActiveData={filteredSchemesData} />
 
       <div className="mt-6 px-4 max-w-[1500px] mx-auto">
-        <BarChartStudentScheme schemeData={filteredSchemesData} />
+        <BarChartStudentScheme
+          schemeData={filteredSchemesData}
+          selectedSchemes={selectedSchemes}
+        />
       </div>
     </div>
   );

@@ -27,10 +27,10 @@ function SponsorYearlyBudget({ activeData }) {
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs bg-white">
       <h3 className=" font-semibold text-sm">
-        Year-wise Total Budget Allocation (₹ Crore)
+        Year-wise Total Funds (₹ In Crore)
       </h3>
       <p className="text-sm mb-4 text-gray-700">
-        Hover over a bar to view the total budget for the selected yea
+        Hover over a bar to view the total budget for the selected year
       </p>
 
       <ResponsiveContainer width="100%" height={340}>
@@ -57,7 +57,7 @@ function SponsorYearlyBudget({ activeData }) {
 
           <YAxis tickLine={false} tick={{ fontSize: 11 }}>
             <Label
-              value="Yearly Budget (in Crore)"
+              value="Budget (₹ In Crore)"
               angle={-90}
               position="insideLeft"
               offset={-10}
@@ -81,7 +81,12 @@ function SponsorYearlyBudget({ activeData }) {
 
           <Legend wrapperStyle={{ fontSize: "11px" }} verticalAlign="top" />
 
-          <Bar dataKey="budget" name="Total Budget (in Crore)" fill="#4185c5" />
+          <Bar
+            dataKey="budget"
+            name="Total Budget (in Crore)"
+            fill="#4185c5"
+            radius={[6, 6, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

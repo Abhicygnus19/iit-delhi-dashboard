@@ -71,9 +71,7 @@ function MouMoa() {
 
   return (
     <>
-      <Heading
-        pageheading={"Memorandum of Understanding/ Memorandum of Agreement"}
-      />
+      <Heading pageheading={"Memorandum of Understanding/Agreement"} />
       {/* Pass filter controls and available options down */}
       <div className="px-2 py-3 mb-4 text-sm border-t border-b bg-gray-50">
         <div className="max-w-[1500px] mx-auto">
@@ -91,9 +89,9 @@ function MouMoa() {
         <MouTableData Moudata={filteredMouData} />
 
         <div className="border-2 p-4 rounded-md shadow-sm ">
-          <div className="flex items-center justify-between flex-wrap mb-3 gap-3">
+          <div className="flex items-center justify-between flex-wrap  gap-4 mb-4">
             <h3 className="text-base font-semibold">
-              MOA with Foreign Universities/Institutions
+              International MOUs/MOAs{" "}
             </h3>
 
             <MouMoaFilter
@@ -105,7 +103,7 @@ function MouMoa() {
           </div>
           {/* <MoaTableData MoaData={filteredMoaData} /> */}
 
-          <div className="relative z-0 mt-6">
+          <div className="relative z-0  ">
             <MoaWorldMap MoaData={filteredMoaData} />
           </div>
         </div>

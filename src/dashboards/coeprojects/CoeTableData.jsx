@@ -67,12 +67,8 @@ function CoeTableData({ data = [] }) {
   return (
     <div>
       <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
-        {/* Table Top Header */}
         <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
-          <h3 className="text-base font-semibold text-gray-900">
-            COE-Projects Data
-          </h3>
-
+          <h3 className="font-semibold text-base">COEs</h3>
           {/* Search Bar */}
           <div className="relative w-full sm:w-64">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
@@ -81,17 +77,16 @@ function CoeTableData({ data = [] }) {
               placeholder="Search records..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-3 py-1.5   bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             />
           </div>
         </div>
-
         {/* Table Content */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 bg-slate-50/80   font-medium   tracking-wider">
-                <th className="p-3 w-10 text-center"></th>
+              <tr className="border-b border-gray-100 bg-slate-50/80 font-medium ">
+                <th className="p-3 w-20 text-center">Sl No.</th>
                 <th className="p-3 min-w-[200px]">Centre Name</th>
                 <th className="p-3">Funding Category</th>
                 <th className="p-3 min-w-[180px]"> Funding Agency</th>
@@ -113,7 +108,7 @@ function CoeTableData({ data = [] }) {
                 currentData.map((item, index) => (
                   <tr
                     key={index}
-                    className="hover:bg-slate-50/80 transition-colors"
+                    className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="p-3 text-center  font-medium">
                       {startIndex + index + 1}
@@ -205,7 +200,6 @@ function CoeTableData({ data = [] }) {
             </div>
           )}
         </div>
-
         {/* EXACT UNCHANGED Showing results count */}
         <div className="text-center text-gray-800 text-xs mt-2 pb-4">
           Showing {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}

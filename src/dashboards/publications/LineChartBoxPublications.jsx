@@ -56,7 +56,7 @@ export default function LineChartBoxPublications({
       <div className="flex items-center justify-between gap-2 mb-4">
         <div>
           <h3 className="font-semibold text-sm">
-            Research Publication Trends over the years
+            Publication Trends over the years
           </h3>
           <p className="text-sm text-gray-700">
             Click/Hover a data point to view the Total and Foreign Publications
@@ -93,7 +93,7 @@ export default function LineChartBoxPublications({
             tickLine={false}
           />{" "}
           <Label
-            value="Analysis Period"
+            value="Financial Year"
             offset={-55}
             position="insideBottom"
             style={{

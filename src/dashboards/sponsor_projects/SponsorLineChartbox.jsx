@@ -47,7 +47,7 @@ function SponsorLineChartbox({
           {" "}
           <h3 className="font-semibold">
             {" "}
-            Year-wise Sponsored Project Portfolio{" "}
+            Year-wise Sponsored Research Projects{" "}
           </h3>
           <p className=" text-gray-700">
             Click/Hover over a point to view details
@@ -81,7 +81,7 @@ function SponsorLineChartbox({
             tickLine={false}
           >
             <Label
-              value="Analysis Period"
+              value="Financial Year"
               offset={-25}
               position="insideBottom"
               style={{

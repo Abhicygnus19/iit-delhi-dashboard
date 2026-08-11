@@ -51,30 +51,21 @@ function StatCardsPatents({
       iconClass: "text-white",
     },
     {
-      title: "Technology License Deal",
-      value: aggregatedStats["Technology License Deal"] || 0,
+      title: "Technology License ",
+      value: aggregatedStats["Technology License"] || 0,
       icon: FaHandshake,
 
-      bgClass: "bg-gradient-to-r from-emerald-600  to-emerald-700",
-      borderClass: "border-l-emerald-800",
-      iconBgClass: "bg-emerald-200",
-      iconClass: "text-emerald-900",
-      textClass: "text-white",
-      titleClass: "text-white",
+      bgClass: "bg-gradient-to-r from-blue-200  to-blue-400",
+      borderClass: "border-l-blue-800",
+      iconBgClass: "bg-blue-500",
+      iconClass: "text-white",
+      textClass: "text-black",
+      titleClass: "text-black",
     },
   ];
 
   return (
     <div className="max-w-[1500px] mx-auto mt-6 px-4">
-      <div className="flex items-center gap-2 mb-3 h-6">
-        <span className="text-gray-500 text-xs">
-          Showing data for:{" "}
-          <strong className="text-gray-800">
-            {selectedYear ? selectedYear : "All Years Combined"}
-          </strong>
-        </span>
-      </div>
-
       {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {Object.entries(aggregatedStats).map(([title, value]) => (
           <StatsCard key={title} title={title} value={String(value)} />

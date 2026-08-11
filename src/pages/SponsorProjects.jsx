@@ -11,6 +11,7 @@ import YearChartBlock from "./../components/YearChartBlock";
 import SanctionedProject from "../dashboards/sponsor_projects/SanctionedProject";
 import { fetchSponsorProjectData } from "../lib/sponsorData";
 import Heading from "../components/ui/Heading";
+import { CustomSelect } from "../components/selectDropdown/CustomSelect";
 
 function SponsorProjects() {
   // Initialize state directly with the static mock array data
@@ -266,7 +267,7 @@ function SponsorProjects() {
                 </p>
               </div>
               <div className="flex gap-2 flex-wrap text-[14px]">
-                <OptionSelect
+                <CustomSelect
                   label="Select SRP type"
                   options={inlineSrpTypeOptions}
                   selected={selectedSrpTypes}

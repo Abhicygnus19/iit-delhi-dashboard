@@ -6,6 +6,7 @@ export default function SponsorStatCard({
   budgetpara,
   value,
   budgetvalue,
+  text,
   symbol = "",
   icon: Icon,
   bgClass = "bg-gradient-to-r from-blue-50 via-white to-blue-100",
@@ -31,14 +32,18 @@ export default function SponsorStatCard({
 
         <div>
           <p className={`text-lg font-medium ${titleClass}`}>{title}</p>
-          <p className={`text-sm font-medium ${paraClass}`}>
-            {para} : <span className="font-bold text-base">{value}</span>
-          </p>
+          <div className={`text-sm font-medium flex gap-1 ${paraClass}`}>
+            <span className="text-base">{para}: </span>
+            <span className="font-bold text-base">{value}</span>
+          </div>
 
-          <p className={`text-sm font-medium ${paraClass}`}>
-            {budgetpara} : {symbol}
-            <span className="font-bold text-base">{budgetvalue}</span>
-          </p>
+          <div className={`text-sm font-medium flex gap-1 ${paraClass}`}>
+            <span className="text-base"> {budgetpara} : </span>
+            <span className="font-bold text-base text-blue-900">
+              {symbol}
+              {budgetvalue} {text}
+            </span>
+          </div>
         </div>
       </div>
     </div>

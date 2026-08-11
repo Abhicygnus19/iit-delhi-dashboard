@@ -26,7 +26,7 @@ function ConsultancyYearlyBudget({ activeData }) {
   return (
     <div className="border-2 p-4 rounded-md shadow-sm text-xs bg-white">
       <h3 className=" font-semibold text-sm">
-        Year-wise Total Budget Allocation (₹ Crore)
+        Year-wise Total Funds (₹ In Crore)
       </h3>{" "}
       <p className="text-sm mb-4 text-gray-700">
         Hover over a bar to view the total budget for the selected year
@@ -42,9 +42,7 @@ function ConsultancyYearlyBudget({ activeData }) {
             tick={{ fontSize: 11 }}
             tickLine={false}
           />
-
           <YAxis tickLine={false} tick={{ fontSize: 11 }} />
-
           <Tooltip
             cursor={{ fill: "rgba(59, 130, 246, 0.05)" }}
             contentStyle={{ borderRadius: "3px", fontSize: "12px" }}
@@ -53,10 +51,14 @@ function ConsultancyYearlyBudget({ activeData }) {
               name,
             ]}
           />
-
           <Legend wrapperStyle={{ fontSize: "11px" }} />
-
-          <Bar dataKey="budget" name="Total Budget (in Crore)" fill="#1e4a8d" />
+          radius={[6, 6, 0, 0]}
+          <Bar
+            dataKey="budget"
+            name="Total Budget (in Crore)"
+            fill="#4185c5"
+            radius={[6, 6, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

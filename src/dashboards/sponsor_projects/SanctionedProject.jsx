@@ -233,7 +233,7 @@ function YearChartBlock({ yearObj, selectedSrpTypes }) {
                 />
                 <Bar
                   dataKey="Funds"
-                  fill="#10b981"
+                  fill="#3790c4"
                   name="Sanctioned Funds (Cr)"
                   className="cursor-pointer"
                   stackId="a"

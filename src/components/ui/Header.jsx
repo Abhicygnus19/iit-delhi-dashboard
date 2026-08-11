@@ -27,7 +27,7 @@ const navItems = [
 function Header() {
   return (
     <div className="bg-blue-900 py-6 px-2 sticky top-0 z-50  h-[82px]">
-      <div className="mt-2 max-w-[1500px] mx-auto flex flex-wrap gap-6">
+      <div className="mt-2 max-w-[1500px] mx-auto flex  overflow-auto gap-6">
         {navItems.map((item) => (
           <Link
             key={item.link}

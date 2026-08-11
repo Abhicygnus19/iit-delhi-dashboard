@@ -17,7 +17,7 @@ import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 // Vibrant colors for the Pie slices when a single unit is isolated
-const PIE_COLORS = ["#3b82f6", "#10b981"];
+const PIE_COLORS = ["#3b82f6", "#abbdff"];
 
 export default function YearChartBlock({ yearObj, selectedSrpTypes }) {
   const [maxUnitsCount, setMaxUnitsCount] = useState(20);
@@ -228,10 +228,11 @@ export default function YearChartBlock({ yearObj, selectedSrpTypes }) {
                 />
                 <Bar
                   dataKey="SanctionedFunds"
-                  fill="#10b981"
+                  fill="#abbdff"
                   name="Sanctioned Funds (Cr)"
                   className="cursor-pointer"
                   stackId="a"
+                  radius={[0, 6, 6, 0]}
                 />
               </BarChart>
             )}

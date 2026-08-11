@@ -128,15 +128,15 @@ function GrpProjects() {
 
                 {/* World map only renders under International Projects */}
                 {isInternational && formattedMapData.length > 0 && (
-                  <div className="mt-2 border-2 p-2 rounded-xl">
-                    <div className="p-2">
+                  <div className="mt-2 border-2 overflow-hidden rounded-xl">
+                    <div className="p-4 bg-gray-100 flex items-center gap-3 justify-between">
                       {" "}
                       <h3 className="text-base font-semibold">
                         Worldwide Collaboration Network
                       </h3>
-                      <p className="text-gray-700 text-sm">
+                      <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">
                         Select a Country to view details
-                      </p>
+                      </span>
                     </div>
 
                     <WorldMap

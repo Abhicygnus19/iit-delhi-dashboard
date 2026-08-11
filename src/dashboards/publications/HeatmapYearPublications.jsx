@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
 const ORG_TYPE_COLORS = {
-  department: "#1e4a8d", // Blue
-  centre: "#0d9488", // Teal
-  school: "#7c3aed", // Purple
+  department: "#1e4a8d", // navy
+  centre: "rgb(48 110 255)", // blue
+  school: "rgb(147 157 250)", // light blue
 };
 const DEFAULT_BAR_COLOR = "#64748b";
 
@@ -58,12 +58,24 @@ function HeatmapYearPublications({
       }, 0);
   };
 
-  // Dynamic heat styling for cells
-  const getCellStyle = (value, maxVal = 450, colorRgb = "59, 130, 246") => {
-    const intensity = Math.min(value / maxVal, 1);
+  // 3-shade red heat styling
+  const getCellStyle = (value, maxVal) => {
+    const ratio = value / maxVal;
+
+    let backgroundColor = "#fee2e2"; // Light red
+    let color = "#991b1b";
+
+    if (ratio >= 0.66) {
+      backgroundColor = "#b91c1c"; // Dark red
+      color = "#fff";
+    } else if (ratio >= 0.33) {
+      backgroundColor = "#ef4444"; // Medium red
+      color = "#fff";
+    }
+
     return {
-      backgroundColor: `rgba(${colorRgb}, ${Math.max(intensity, 0.12)})`,
-      color: intensity > 0.55 ? "#ffffff" : "inherit",
+      backgroundColor,
+      color,
     };
   };
 
@@ -81,15 +93,15 @@ function HeatmapYearPublications({
   return (
     <div className="border-2 p-4 rounded-md shadow-sm  chart-card bg-white ">
       <div className="mb-6  border-b pb-3">
-        <h3 className="text-base font-semibold mb-3 font-sans capitalize text-slate-800">
-          Heatmap: Research Output by Academic Unit Type
+        <h3 className="text-base font-semibold mb-3 font-sans   text-slate-800">
+          Heatmap: Publications of Academic Units
         </h3>
         <div className="overflow-x-auto mb-6">
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr>
                 <th className="text-left p-2 text-muted-foreground font-semibold border-b capitalize min-w-[140px] text-slate-600">
-                  Type \ Year
+                  Academic Units \ Year
                 </th>
                 {years.map((year) => (
                   <th
@@ -110,7 +122,7 @@ function HeatmapYearPublications({
               {uniqueOrgTypes.map((orgType) => (
                 <tr key={orgType}>
                   <td className="p-2 font-semibold whitespace-nowrap capitalize text-slate-700">
-                    {orgType}
+                    {orgType + "s"}{" "}
                   </td>
 
                   {years.map((year) => {
@@ -144,13 +156,10 @@ function HeatmapYearPublications({
             </tbody>
           </table>
         </div>{" "}
-        <h3 className="text-center text-sm font-medium ">
-          Publication Impact Metrics by Year
-        </h3>
       </div>
       <div className="mb-10 mt-4 ">
         <h3 className="text-base font-semibold mb-3 font-sans capitalize text-slate-800">
-          Heatmap: Year VS Publication, Citation & H-Index
+          Heatmap: Publications, Citations & H-Index
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
@@ -185,9 +194,8 @@ function HeatmapYearPublications({
                   return (
                     <td key={`total-${year}`} className="p-1 text-center">
                       <div
-                        className="rounded px-2 py-1.5 font-semibold min-w-[45px]"
+                        className="rounded px-2 py-1.5 font-semibold min-w-[45px] bg-blue-100"
                         title={`Total Publications, ${year}: ${totalVal.toLocaleString()}`}
-                        style={getCellStyle(totalVal, 4500, "59, 130, 246")}
                       >
                         {totalVal.toLocaleString()}
                       </div>
@@ -199,16 +207,15 @@ function HeatmapYearPublications({
               {/* Citations Row */}
               <tr className="hover:bg-slate-50">
                 <td className="p-2 font-semibold text-slate-800 whitespace-nowrap">
-                  Citation
+                  Citations
                 </td>
                 {years.map((year) => {
                   const citationVal = yearlyStatsMap.get(year)?.citations || 0;
                   return (
                     <td key={`citation-${year}`} className="p-1 text-center">
                       <div
-                        className="rounded px-2 py-1.5 font-medium min-w-[45px]"
+                        className="rounded px-2 py-1.5 font-medium min-w-[45px] bg-blue-300"
                         title={`Citations, ${year}: ${citationVal.toLocaleString()}`}
-                        style={getCellStyle(citationVal, 90000, "99, 102, 241")}
                       >
                         {citationVal.toLocaleString()}
                       </div>
@@ -227,9 +234,8 @@ function HeatmapYearPublications({
                   return (
                     <td key={`hindex-${year}`} className="p-1 text-center">
                       <div
-                        className="rounded px-2 py-1.5 font-medium min-w-[45px]"
+                        className="rounded px-2 py-1.5 font-medium min-w-[45px] bg-blue-500 text-white"
                         title={`H-Index, ${year}: ${hindexVal}`}
-                        style={getCellStyle(hindexVal, 120, "16, 185, 129")}
                       >
                         {hindexVal}
                       </div>
@@ -241,9 +247,6 @@ function HeatmapYearPublications({
           </table>
         </div>
       </div>{" "}
-      <h3 className="text-center text-sm font-medium ">
-        Year-wise records of Total Publications, Citation, & H-index
-      </h3>
     </div>
   );
 }

@@ -18,7 +18,7 @@ function FiltersPatents({
       {/* <Heading pageheading={"IP & Technology Transfer Dashboard"} /> */}
       <div className="flex flex-wrap items-center gap-6 max-w-[1500px] mx-auto">
         <CustomSelect
-          label="Select type of Patents"
+          label="Select Category"
           options={options}
           selected={selected}
           onChange={onChange}
