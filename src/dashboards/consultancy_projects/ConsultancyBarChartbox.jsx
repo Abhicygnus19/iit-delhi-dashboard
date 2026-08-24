@@ -11,18 +11,26 @@ import {
 import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
-// Default Palette mapped by category key name
-const DEFAULT_COLOR_MAP = {
-  government: "#86a6e5",
-  industry: "#2664ec",
-  foreign: "#4c1d96",
-};
+// Default API-structured color response (Array of Key-Value maps)
+const DEFAULT_SPONSOR_COLOR_MAP = [
+  {
+    government: "#3b82f6", // Blue
+    industry: "#1e4a8d", // Navy
+    foreign: "#86a6e5", // Light Blue
+  },
+];
 
-// Helper function to generate distinct dynamic HSL colors for any additional/unknown bars
+// Curated list of deep red, deep blue, and slate gray shades
+const DYNAMIC_SHADES = [
+  "#991b1b", // Deep Crimson Red
+  "#b91c1c", // Deep Ruby Red
+  "#0f172a", // Very Dark Slate/Midnight
+  "#334155", // Charcoal Gray
+  "#2563eb", // Deep Royal Blue
+];
+
 const getDynamicColor = (index) => {
-  // Uses golden ratio hue distribution for maximum contrast
-  const hue = (index * 137.508) % 360;
-  return `hsl(${Math.floor(hue)}, 65%, 50%)`;
+  return DYNAMIC_SHADES[index % DYNAMIC_SHADES.length];
 };
 
 function ConsultancyBarChartbox({
@@ -32,9 +40,18 @@ function ConsultancyBarChartbox({
   activeConsultancyYear,
   activeData = [],
   allAvailableKeys = [],
+  // Pass the API response array directly here
+  consultancyColorMap = DEFAULT_SPONSOR_COLOR_MAP,
 }) {
-  // Keeps track of how many rows should be loaded from the bottom up
   const [maxConsultancyCount, setMaxConsultancyCount] = useState(15);
+
+  // Convert the array of objects into a flat single key-value lookup map
+  const colorLookupMap = useMemo(() => {
+    if (!Array.isArray(consultancyColorMap)) return {};
+    return consultancyColorMap.reduce((acc, currMap) => {
+      return { ...acc, ...currMap };
+    }, {});
+  }, [consultancyColorMap]);
 
   // 1. Process base chart data, extract dynamic categories, and parse custom colors from JSON
   const { fullChartData, extractedKeys, inlineColors } = useMemo(() => {
@@ -66,7 +83,7 @@ function ConsultancyBarChartbox({
     };
   }, [activeData]);
 
-  // 2. Permanent Registry for dynamic keys to lock their index position and colors
+  // 2. Permanent Registry for dynamic keys to lock their index position
   const masterKeyRegistry = useRef([]);
   const colorMapRef = useRef({});
 
@@ -80,13 +97,13 @@ function ConsultancyBarChartbox({
       const registeredIndex = masterKeyRegistry.current.length - 1;
 
       // Color selection hierarchy:
-      // 1. Color defined directly in data object (type.color)
-      // 2. Fixed color from DEFAULT_COLOR_MAP by name
-      // 3. Fallback dynamically generated HSL color
+      // 1. Explicit color in item object (type.color)
+      // 2. Fixed color from API array lookup
+      // 3. Sequential shade selection from dynamic shade array
       if (inlineColors[key]) {
         colorMapRef.current[key] = inlineColors[key];
-      } else if (DEFAULT_COLOR_MAP[key]) {
-        colorMapRef.current[key] = DEFAULT_COLOR_MAP[key];
+      } else if (colorLookupMap[key]) {
+        colorMapRef.current[key] = colorLookupMap[key];
       } else {
         colorMapRef.current[key] = getDynamicColor(registeredIndex);
       }
@@ -99,10 +116,9 @@ function ConsultancyBarChartbox({
     return fullChartData.filter((item) => item.year === activeConsultancyYear);
   }, [fullChartData, activeConsultancyYear]);
 
-  // 4. Paginate from the BOTTOM up (Show latest records first, slice backward)
+  // 4. Slice the latest records
   const displayedChartData = useMemo(() => {
     if (activeConsultancyYear) return filteredYearData;
-
     const sliceStart = Math.max(
       0,
       filteredYearData.length - maxConsultancyCount,
@@ -110,7 +126,7 @@ function ConsultancyBarChartbox({
     return filteredYearData.slice(sliceStart);
   }, [filteredYearData, maxConsultancyCount, activeConsultancyYear]);
 
-  // 5. Track active keys in locked order for Recharts stack calculations
+  // 5. Track active keys in locked order
   const activeKeysInOrder = useMemo(() => {
     return masterKeyRegistry.current.filter(
       (key) =>
@@ -118,7 +134,6 @@ function ConsultancyBarChartbox({
     );
   }, [selectedBudgetTypes]);
 
-  // Click handler on bar tracks
   const handleSponsorbarClick = (state) => {
     if (state && state.activeLabel) {
       onConsultancyYearClick(state.activeLabel);
@@ -143,14 +158,12 @@ function ConsultancyBarChartbox({
     return orderedYears[orderedYears.length - 1] || "";
   }, [activeData, fullChartData]);
 
-  // Is latest unit year visible in sliced window
   const isLatestUnitYearVisible = useMemo(() => {
     return displayedChartData.some(
       (item) => item.year === latestConsultancyUnitYear,
     );
   }, [displayedChartData, latestConsultancyUnitYear]);
 
-  // Adjust height calculation dynamically based on item count
   const chartHeight = Math.max(350, displayedChartData.length * 35);
 
   return (
@@ -158,10 +171,9 @@ function ConsultancyBarChartbox({
       <div className="flex justify-between items-center gap-2 mb-4">
         <div>
           <h3 className="font-semibold text-sm">
-            Year-wise Sponsored Research Funds (₹ In Crore){" "}
+            Year-wise Consultancy Research Funds (₹ In Crore){" "}
             {activeConsultancyYear ? `- ${activeConsultancyYear}` : ""}
           </h3>
-
           <p className="text-sm text-gray-700">
             Click/Hover a bar to explore budget details by category
           </p>
@@ -182,8 +194,8 @@ function ConsultancyBarChartbox({
       {latestConsultancyUnitYear && isLatestUnitYearVisible && (
         <button className="rounded-full px-4 py-1 bg-red-700 hover:bg-red-800 text-white text-sm font-medium mb-4 flex gap-2 items-center">
           <span>
-            Click {latestConsultancyUnitYear} to view Sanctioned Research
-            Projects
+            Click {latestConsultancyUnitYear} Bar to view academic unit-wise
+            project details
           </span>
           <FaArrowDown className="animate-bounce" size={16} />
         </button>
@@ -222,37 +234,33 @@ function ConsultancyBarChartbox({
               <Bar
                 key={name}
                 dataKey={name}
-                name={name.charAt(0).toUpperCase() + name.slice(1)}
-                fill={colorMapRef.current[name]}
                 stackId="a"
                 className="cursor-pointer"
-                isAnimationActive={true}
+                fill={colorMapRef.current[name]}
                 hide={!isSelected}
                 shape={(props) => {
                   const { x, y, width, height, payload } = props;
                   if (!width || width <= 0) return null;
 
-                  // Get active non-zero keys for this specific row item
                   const activeRowKeys = activeKeysInOrder.filter(
                     (k) => payload[k] && payload[k] > 0,
                   );
 
-                  // Check if this current key is the last non-zero visible segment
                   const isRightmost =
                     activeRowKeys[activeRowKeys.length - 1] === name;
 
-                  const r = 6; // Corner radius size
+                  const r = 6;
 
                   return (
                     <path
                       d={
                         isRightmost
-                          ? `M${x},${y} 
-                             h${Math.max(0, width - r)} 
-                             a${r},${r} 0 0 1 ${r},${r} 
-                             v${Math.max(0, height - 2 * r)} 
-                             a${r},${r} 0 0 1 -${r},${r} 
-                             h-${Math.max(0, width - r)} 
+                          ? `M${x},${y}
+                             h${Math.max(0, width - r)}
+                             a${r},${r} 0 0 1 ${r},${r}
+                             v${Math.max(0, height - 2 * r)}
+                             a${r},${r} 0 0 1 -${r},${r}
+                             h-${Math.max(0, width - r)}
                              z`
                           : `M${x},${y} h${width} v${height} h-${width} z`
                       }
@@ -267,10 +275,9 @@ function ConsultancyBarChartbox({
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Hide pagination controls if an activeConsultancyYear filter simplifies the dataset */}
       {!activeConsultancyYear && (
         <>
-          <div className="flex justify-center mt-6 gap-4">
+          <div className="flex justify-center mt-4 gap-2">
             {maxConsultancyCount < fullChartData.length && (
               <button
                 onClick={() =>
@@ -281,7 +288,7 @@ function ConsultancyBarChartbox({
                 className="flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl animate-pulse"
               >
                 Show More
-                <FaArrowDown className="animate-bounce" />
+                <FaArrowDown className="animate-bounce" size={18} />
               </button>
             )}
 

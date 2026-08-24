@@ -1,27 +1,27 @@
 import React, { useMemo } from "react";
 import { RxCross1 } from "react-icons/rx";
 
-function YearlyPatentsTable({
-  transformedPatentChartData = [],
-  patentTypes = [],
-  visiblePatentData = [],
-  isFiltered,
+function HeatmapYearlyScheme({
+  transformedSchemeChartData = [],
+  schemeTypes = [],
+  visibleSchemeData = [],
+  isFiltered = false,
   clearFilter,
 }) {
-  // Map columns based on visible data so it mirrors chart slicing
+  // 1. Extract visible years array for column headers
   const yearsRange = useMemo(() => {
-    return visiblePatentData.map((d) => d.year);
-  }, [visiblePatentData]);
+    return visibleSchemeData.map((d) => d.year);
+  }, [visibleSchemeData]);
 
-  // Compute dynamic minimum and maximum non-zero values across the dataset
+  // 2. Compute dynamic min and max non-zero counts across the dataset for heat intensity
   const { minCount, maxCount } = useMemo(() => {
     let min = Infinity;
     let max = -Infinity;
 
-    transformedPatentChartData.forEach((yearRow) => {
-      patentTypes.forEach((type) => {
+    transformedSchemeChartData.forEach((row) => {
+      schemeTypes.forEach((type) => {
         const cleanType = type.trim();
-        const val = Number(yearRow[type] ?? yearRow[cleanType]) || 0;
+        const val = Number(row[type] ?? row[cleanType]) || 0;
         if (val > 0) {
           if (val < min) min = val;
           if (val > max) max = val;
@@ -33,25 +33,25 @@ function YearlyPatentsTable({
       minCount: min === Infinity ? 0 : min,
       maxCount: max === -Infinity ? 0 : max,
     };
-  }, [transformedPatentChartData, patentTypes]);
+  }, [transformedSchemeChartData, schemeTypes]);
 
-  // Calculate dynamic heatmap styling based on value intensity
+  // 3. Dynamic HSL-based Heatmap Cell Style Generator
   const getHeatmapStyle = (value) => {
-    if (!value || value === 0) {
+    if (value === 0) {
       return {
-        backgroundColor: "#f9fafb", // Default light background for empty cells
+        backgroundColor: "#cbdcf6", // Light gray for empty cells
         color: "#9ca3af",
       };
     }
 
-    // Normalize value intensity between 0 and 1
+    // Normalize intensity between 0 and 1
     const intensity =
       maxCount === minCount ? 1 : (value - minCount) / (maxCount - minCount);
 
-    // Scale lightness from 85% (light blue) down to 35% (deep dark blue)
+    // Adjust lightness: 85% (lightest blue for min) down to 35% (darkest blue for max)
     const lightness = 85 - intensity * 50;
 
-    // Use dark text for light cells and white text for darker cells
+    // Contrast text color selection
     const textColor = lightness < 60 ? "#ffffff" : "#1e293b";
 
     return {
@@ -62,11 +62,10 @@ function YearlyPatentsTable({
 
   return (
     <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs bg-white">
+      {/* Header Bar */}
       <div className="flex justify-between items-center mb-3">
         <div>
-          <h3 className="text-sm font-semibold">
-            Heatmap: Patents and Technology Transfer
-          </h3>
+          <h3 className="text-sm font-semibold">Yearly Student Schemes</h3>
         </div>
         {/* Reset Filter Action */}
         {isFiltered && (
@@ -79,17 +78,18 @@ function YearlyPatentsTable({
         )}
       </div>
 
+      {/* Heatmap Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-xs text-left border-separate border-spacing-x-2 border-spacing-y-2 p-1">
           <thead>
             <tr>
-              <th className="text-left py-2 text-muted-foreground font-medium border-b capitalize min-w-[120px]">
-                Patent types \ Years
+              <th className="text-left py-2 text-gray-500 font-medium border-b capitalize min-w-[140px]">
+                Scheme Types \ Years
               </th>
               {yearsRange.map((year) => (
                 <th
                   key={year}
-                  className="text-center font-semibold whitespace-nowrap"
+                  className="text-center font-semibold whitespace-nowrap px-2"
                 >
                   {year}
                 </th>
@@ -98,14 +98,14 @@ function YearlyPatentsTable({
           </thead>
 
           <tbody className="align-middle">
-            {patentTypes.map((type) => (
+            {schemeTypes.map((type) => (
               <tr key={type} className="group border-b">
-                {/* Fixed Type Header Column */}
+                {/* Scheme Type Name */}
                 <td className="font-medium pr-2 whitespace-nowrap">{type}</td>
 
-                {/* Dynamically Heat-mapped Data Cells */}
+                {/* Heatmap Data Cells */}
                 {yearsRange.map((year) => {
-                  const yearRow = transformedPatentChartData.find(
+                  const yearRow = transformedSchemeChartData.find(
                     (d) => d.year === year,
                   );
 
@@ -118,11 +118,15 @@ function YearlyPatentsTable({
 
                   return (
                     <td
-                      key={year}
+                      key={`${type}-${year}`}
                       style={style}
                       className="rounded-lg p-2 text-center text-xs font-semibold transition-all duration-200"
                     >
-                      {count > 0 ? count : <span>--</span>}
+                      {count > 0 ? (
+                        count
+                      ) : (
+                        <span className="font-extrabold opacity-70">--</span>
+                      )}
                     </td>
                   );
                 })}
@@ -135,4 +139,4 @@ function YearlyPatentsTable({
   );
 }
 
-export default YearlyPatentsTable;
+export default HeatmapYearlyScheme;

@@ -230,7 +230,7 @@ export default function Publications() {
           activeCategories={activeCategories}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mx-auto mb-12">
           <LineChartBoxPublications
             yearRange={yearRange}
             selectedYear={selectedYear}

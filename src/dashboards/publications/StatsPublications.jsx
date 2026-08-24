@@ -63,7 +63,7 @@ function StatsPublications({
           value={totalCitations.toLocaleString()}
           icon={BsChatRightQuoteFill}
           bgClass="bg-gradient-to-r from-blue-300 to-blue-500"
-          borderClass="border-l-blue-900"
+          // borderClass="border-l-blue-900"
           iconBgClass="bg-blue-500"
           iconClass="text-white"
           titleClass="text-white"
@@ -74,7 +74,7 @@ function StatsPublications({
           value={totalOrgUnits}
           icon={LiaUniversitySolid}
           bgClass="bg-gradient-to-r from-neutral-200 to-neutral-300"
-          borderClass="border-l-neutral-800"
+          // borderClass="border-l-neutral-800"
           iconBgClass="bg-neutral-600"
           iconClass="text-white"
           textClass="text-black"

@@ -8,7 +8,8 @@ export default function StatsCard({
   text,
   icon: Icon,
   bgClass = "bg-gradient-to-r from-blue-50  to-blue-100",
-  borderClass = "border-l-blue-900",
+  // borderClass = "border-l-blue-900",
+
   textClass = "text-blue-800",
   titleClass = "text-black",
   paraClass = "text-gray-600",
@@ -17,7 +18,7 @@ export default function StatsCard({
 }) {
   return (
     <div
-      className={`${bgClass} flex   justify-between items-center gap-3 rounded-xl border border-gray-200 border-l-4 ${borderClass} p-4 shadow-md`}
+      className={`${bgClass} flex justify-between items-center gap-3 rounded-xl border border-gray-200 p-4 shadow-md`}
     >
       <div className="flex items-center gap-4">
         {Icon && (

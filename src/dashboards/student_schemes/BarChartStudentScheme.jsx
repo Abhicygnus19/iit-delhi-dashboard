@@ -13,56 +13,70 @@ import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { RoundedStackBar } from "../../components/ui/RoundedStackBar";
 
-const BAR_COLORS = [
-  "#3261a9", // Navy
-  "#3b82f6", // Blue
-  "#86a6e5", // Light Blue
+// Default Palette mapped by known scheme names
+const DEFAULT_SCHEME_COLOR_MAP = [
+  {
+    "Discover & Learn": "#2563eb", // Deep Royal Blue
+    SURA: "#86a6e5", // Light Blue
+    "Student Startup Action": "#3261a9", // Navy Blue
+  },
 ];
 
-function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
+// dynamic fallback
+const DYNAMIC_SHADES = [
+  "#991b1b", // Deep Crimson Red
+  "#1e3a8a", // Dark Navy Blue
+  "#475569", // Slate Gray
+  "#b91c1c", // Deep Ruby Red
+  "#0f172a", // Midnight Slate
+  "#334155", // Charcoal Gray
+];
+
+const getDynamicColor = (index) => {
+  return DYNAMIC_SHADES[index % DYNAMIC_SHADES.length];
+};
+
+function BarChartStudentScheme({
+  schemeData = [],
+  selectedSchemes = [],
+  allAvailableKeys = [],
+  colorMap = DEFAULT_SCHEME_COLOR_MAP,
+}) {
   const [selectedBarYear, setSelectedBarYear] = useState(null);
   const [maxStudentSchemeBarsCount, setMaxStudentSchemeBarsCount] =
     useState(15);
 
-  const masterKeyRegistry = useRef([]);
-  const colorMapRef = useRef({});
+  // Convert array-based colorMap prop into a flattened lookup map
+  const activeColorLookup = useMemo(() => {
+    if (!Array.isArray(colorMap)) return {};
+    return colorMap.reduce((acc, curr) => {
+      return { ...acc, ...curr };
+    }, {});
+  }, [colorMap]);
 
-  const { fullChartData, activeSchemeNames } = useMemo(() => {
+  // 1. Process base chart data, extract keys, and collect explicit inline colors (if present)
+  const { fullChartData, extractedKeys, inlineColors } = useMemo(() => {
     const yearsMap = {};
-    const names = new Set();
+    const namesSet = new Set();
+    const colorsFromData = {};
 
     schemeData.forEach((scheme) => {
       const name = scheme.schemeName;
       if (!name) return;
-      names.add(name);
+      namesSet.add(name);
+
+      if (scheme.color) {
+        colorsFromData[name] = scheme.color;
+      }
 
       if (Array.isArray(scheme.yearlyData)) {
         scheme.yearlyData.forEach(({ year, count }) => {
           if (!yearsMap[year]) {
             yearsMap[year] = { year: parseInt(year) };
           }
-          yearsMap[year][name] = count;
+          yearsMap[year][name] = Number(count) || 0;
         });
       }
-    });
-
-    const activeNames = Array.from(names);
-
-    activeNames.forEach((name) => {
-      if (!masterKeyRegistry.current.includes(name)) {
-        masterKeyRegistry.current.push(name);
-        const colorIndex =
-          (masterKeyRegistry.current.length - 1) % BAR_COLORS.length;
-        colorMapRef.current[name] = BAR_COLORS[colorIndex];
-      }
-    });
-
-    Object.values(yearsMap).forEach((row) => {
-      masterKeyRegistry.current.forEach((name) => {
-        if (row[name] == null) {
-          row[name] = 0;
-        }
-      });
     });
 
     const sortedChartData = Object.values(yearsMap).sort(
@@ -71,14 +85,62 @@ function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
 
     return {
       fullChartData: sortedChartData,
-      activeSchemeNames: activeNames,
+      extractedKeys: Array.from(namesSet),
+      inlineColors: colorsFromData,
     };
   }, [schemeData]);
 
-  // Determine which keys should actually display based on dropdown selection
-  const effectiveSelectedSchemes =
-    selectedSchemes.length > 0 ? selectedSchemes : activeSchemeNames;
+  // 2. Lock index positions & assign persistent dynamic/fallback colors
+  const masterKeyRegistry = useRef([]);
+  const colorMapRef = useRef({});
 
+  const keysToRegister =
+    allAvailableKeys.length > 0 ? allAvailableKeys : extractedKeys;
+
+  keysToRegister.forEach((key) => {
+    if (!masterKeyRegistry.current.includes(key)) {
+      masterKeyRegistry.current.push(key);
+
+      const registeredIndex = masterKeyRegistry.current.length - 1;
+
+      // Color Hierarchy:
+      // 1. Explicit color inside scheme object (scheme.color)
+      // 2. Dynamic map provided via colorMap prop
+      // 3. Dynamic color sequence from shade array
+      if (inlineColors[key]) {
+        colorMapRef.current[key] = inlineColors[key];
+      } else if (activeColorLookup[key]) {
+        colorMapRef.current[key] = activeColorLookup[key];
+      } else {
+        colorMapRef.current[key] = getDynamicColor(registeredIndex);
+      }
+    } else {
+      // Update color reference if prop map changes for existing keys
+      if (inlineColors[key]) {
+        colorMapRef.current[key] = inlineColors[key];
+      } else if (activeColorLookup[key]) {
+        colorMapRef.current[key] = activeColorLookup[key];
+      }
+    }
+  });
+
+  // Ensure all rows contain all keys to prevent Recharts layout distortion
+  fullChartData.forEach((row) => {
+    masterKeyRegistry.current.forEach((name) => {
+      if (row[name] == null) {
+        row[name] = 0;
+      }
+    });
+  });
+
+  // 3. Determine active displayed keys
+  const effectiveSelectedSchemes = useMemo(() => {
+    return masterKeyRegistry.current.filter(
+      (key) => selectedSchemes.length === 0 || selectedSchemes.includes(key),
+    );
+  }, [selectedSchemes]);
+
+  // 4. Filter data on click selection
   const StudentSchemeChartData = useMemo(() => {
     if (selectedBarYear) {
       return fullChartData.filter((item) => item.year === selectedBarYear);
@@ -86,10 +148,9 @@ function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
     return fullChartData;
   }, [fullChartData, selectedBarYear]);
 
-  const displayedStudentSchemeChartData = StudentSchemeChartData.slice(
-    0,
-    maxStudentSchemeBarsCount,
-  );
+  const displayedStudentSchemeChartData = useMemo(() => {
+    return StudentSchemeChartData.slice(0, maxStudentSchemeBarsCount);
+  }, [StudentSchemeChartData, maxStudentSchemeBarsCount]);
 
   const chartHeightStudentScheme = Math.max(
     350,
@@ -106,7 +167,7 @@ function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
   };
 
   return (
-    <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full h-[500px]">
+    <div className="border border-gray-200 p-4 rounded-md shadow-sm text-xs w-full min-h-[500px]">
       <div className="flex justify-between gap-2 items-center mb-3">
         <div>
           <h3 className="text-base font-semibold">
@@ -172,7 +233,7 @@ function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
                   <RoundedStackBar
                     {...props}
                     dataKey={name}
-                    allKeys={activeSchemeNames}
+                    allKeys={masterKeyRegistry.current}
                   />
                 )}
               />
@@ -214,6 +275,7 @@ function BarChartStudentScheme({ schemeData = [], selectedSchemes = [] }) {
 }
 
 export default BarChartStudentScheme;
+
 // import React, { useMemo, useState } from "react";
 // import {
 //   BarChart,

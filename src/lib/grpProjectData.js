@@ -32,35 +32,40 @@ export const fetchGrpProjectData = async () => {
 };
 
 // export const grpProjectData = [
-//   {
-//     universityName: "University College of London; UCL",
-//     country: "UK",
-//     totalProjects: 35,
-//     grpType: "International",
-//     collaborationType: "bilateral",
-//   },
+// {
+//   universityName: "University College of London; UCL",
+//   country: "UK",
+//   totalProjects: 35,
+//   grpType: "International",
+//   collaborationType: "bilateral",
+//   informationlink: "#";
+// },
 
-//   {
-//     universityName: "National Yang Ming Chiao Tung University, Twain; NYCU",
-//     country: "Taiwan",
-//     totalProjects: 35,
-//     grpType: "International",
-//     collaborationType: "bilateral",
-//   },
+// {
+//   universityName: "National Yang Ming Chiao Tung University, Twain; NYCU",
+//   country: "Taiwan",
+//   totalProjects: 35,
+//   grpType: "International",
+//   collaborationType: "bilateral",
+//   informationlink: "#";
+// },
+
 //   {
 //     universityName: "Clemson University",
 //     country: "US",
 //     totalProjects: 3,
 //     grpType: "International",
 //     collaborationType: "bilateral",
+//     informationlink: "#";
 //   },
 
 //   {
 //     universityName: "Hebrew University of Jerusalem, Israel (HUJI)",
-//     country: "Israeil",
+//     country: "Israel",
 //     totalProjects: 24,
 //     grpType: "International",
 //     collaborationType: "bilateral",
+//     informationlink: "#";
 //   },
 
 //   {
@@ -69,6 +74,7 @@ export const fetchGrpProjectData = async () => {
 //     totalProjects: 6,
 //     grpType: "International",
 //     collaborationType: "trilateral",
+//     informationlink: "#";
 //   },
 
 //   {
@@ -76,6 +82,7 @@ export const fetchGrpProjectData = async () => {
 //     totalProjects: 65,
 //     grpType: "National",
 //   },
+
 //   {
 //     universityName: "National Institute of Immunology; NII",
 //     totalProjects: 14,

@@ -1,73 +1,103 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-function ConsultancyYearlyProjects({ activeData }) {
+function ConsultancyYearlyProjects({ activeData = [] }) {
   // 1. Extract unique years dynamically from active data
-  const yearsRange = activeData.map((item) => item.year);
-
-  // 2. Identify the unique organization types dynamically from the current data slice
-  const sponsorOrgTypes = Array.from(
-    new Set(activeData.flatMap((item) => item.types.map((type) => type.name))),
+  const yearsRange = useMemo(
+    () => activeData.map((item) => item.year),
+    [activeData],
   );
 
-  // Helper function to pull the project count for a specific year and organization type
+  // 2. Identify unique organization types dynamically with priority sorting
+  const sponsorOrgTypes = useMemo(() => {
+    const rawTypes = Array.from(
+      new Set(
+        activeData.flatMap((item) =>
+          (item.types || []).map((type) => type.name),
+        ),
+      ),
+    );
+
+    const priorityOrder = ["government", "industry", "foreign"];
+
+    return rawTypes.sort((a, b) => {
+      const indexA = priorityOrder.indexOf(a.toLowerCase());
+      const indexB = priorityOrder.indexOf(b.toLowerCase());
+
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+
+      return a.localeCompare(b);
+    });
+  }, [activeData]);
+
+  // Helper function to pull project count for a specific year and org type
   const getProjectCount = (targetYear, targetOrg) => {
     const yearData = activeData.find((item) => item.year === targetYear);
-    if (!yearData) return 0;
+    if (!yearData || !yearData.types) return 0;
 
-    const orgData = yearData.types.find((type) => type.name === targetOrg);
-    return orgData ? orgData.projects : 0;
+    const orgData = yearData.types.find(
+      (type) => type.name.toLowerCase() === targetOrg.toLowerCase(),
+    );
+    return orgData ? Number(orgData.projects) || 0 : 0;
   };
 
-  // 3. Find the maximum value dynamically to calibrate the heatmap scale live
-  const maxProjectCount = Math.max(
-    ...activeData.flatMap((item) => item.types.map((t) => t.projects)),
-    1, // Fallback to 1 to prevent division by zero if all data is cleared
-  );
+  // 3. Compute dynamic min and max values across all types/years for precise heatmap scaling
+  const { minCount, maxCount } = useMemo(() => {
+    let min = Infinity;
+    let max = -Infinity;
 
-  // Helper to generate heatmap background colors dynamically
-  // const getcellcolorStyle = (value) => {
-  //   if (value === 0) return { backgroundColor: "transparent" };
+    activeData.forEach((item) => {
+      (item.types || []).forEach((type) => {
+        const val = Number(type.projects) || 0;
+        if (val > 0) {
+          if (val < min) min = val;
+          if (val > max) max = val;
+        }
+      });
+    });
 
-  //   const minOpacity = 0.08;
-  //   const maxOpacity = 0.85;
-  //   const ratio = value / maxProjectCount;
-  //   const opacity = minOpacity + ratio * (maxOpacity - minOpacity);
+    return {
+      minCount: min === Infinity ? 0 : min,
+      maxCount: max === -Infinity ? 0 : max,
+    };
+  }, [activeData]);
 
-  //   return {
-  //     backgroundColor: `rgba(59, 130, 246, ${opacity})`,
-  //   };
-  // };
-
-  const getCellClass = (org, value) => {
+  // 4. Intensity-based Heatmap Style Resolver
+  const getHeatmapStyle = (value) => {
     if (value === 0) {
-      return "bg-gray-50 text-gray-400";
+      return {
+        backgroundColor: "#f9fafb", // Subtle gray for empty values
+        color: "#9ca3af",
+      };
     }
 
-    switch (org.toLowerCase()) {
-      case "government":
-        return "bg-blue-400 text-white";
+    // Calculate normalized intensity ratio between 0 and 1
+    const intensity =
+      maxCount === minCount ? 1 : (value - minCount) / (maxCount - minCount);
 
-      case "industry":
-        return "bg-blue-600 text-white";
+    // Map lightness dynamically from 85% (lightest blue for lowest value) to 35% (darkest blue for max value)
+    const lightness = 85 - intensity * 50;
 
-      case "foreign":
-        return "bg-blue-900 text-white";
+    // Dynamically toggle font color for optimal accessibility contrast
+    const textColor = lightness < 60 ? "#ffffff" : "#0f172a";
 
-      default:
-        return "bg-gray-200 text-gray-700";
-    }
+    return {
+      backgroundColor: `hsl(217, 91%, ${lightness}%)`,
+      color: textColor,
+    };
   };
 
   return (
-    <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card">
+    <div className="border-2 p-4 rounded-md shadow-sm text-xs chart-card bg-white">
       <h3 className="text-sm font-semibold mb-4 font-sans">
-        Year-wise Project numbers
+        Heatmap: Year-wise Project numbers
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">
           <thead>
             <tr>
-              <th className="text-left text-muted-foreground font-semibold capitalize min-w-[140px] ">
+              <th className="text-left text-muted-foreground font-semibold capitalize min-w-[140px]">
                 Organizations \ Years
               </th>
               {yearsRange.map((year) => (
@@ -88,25 +118,17 @@ function ConsultancyYearlyProjects({ activeData }) {
                 </td>
                 {yearsRange.map((year) => {
                   const count = getProjectCount(year, org);
-                  // const cellStyle = getcellcolorStyle(count);
+                  const style = getHeatmapStyle(count);
 
                   return (
-                    // <td
-                    //   key={`${org}-${year}`}
-                    //   style={cellStyle}
-                    //   className="text-center rounded-md font-semibold transition-all duration-200 p-2"
-                    // >
-                    //   {count}
-                    // </td>
-
                     <td
                       key={`${org}-${year}`}
-                      className={`text-center rounded-md font-semibold transition-all duration-200 p-2 ${getCellClass(
-                        org,
-                        count,
-                      )}`}
+                      style={style}
+                      className="text-center rounded-md font-semibold transition-all duration-200 p-2"
                     >
-                      {count}
+                      {count || (
+                        <span className="font-extrabold opacity-70">--</span>
+                      )}
                     </td>
                   );
                 })}

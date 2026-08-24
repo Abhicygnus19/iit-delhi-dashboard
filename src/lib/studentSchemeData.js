@@ -74,3 +74,49 @@ export const fetchStudentSchemeData = async () => {
 //     ],
 //   },
 // ];
+
+export const fecthStudentSchemePDF = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/#`, {
+      method: "GET",
+      headers: {
+        "X-API_KEY": API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error backend! status: ${response.status}`);
+    }
+
+    const jsonResponse = await response.json();
+    console.log("Student Scheme Files link", jsonResponse.data);
+
+    return (jsonResponse.data || []).map((item) => ({
+      ...item,
+      label: item.label,
+      pdflink: item.pdflink,
+    }));
+  } catch (error) {
+    console.error("Error fetching Student Scheme files:", error);
+  }
+};
+
+export const schemePDF = [
+  {
+    label: "Discover & Learn",
+    pdflink: "#",
+  },
+  {
+    label: "SURA",
+    pdflink: "#",
+  },
+  {
+    label: "Student Startup Action",
+    pdflink: "#",
+  },
+  {
+    label: "Test",
+    pdflink: "#",
+  },
+];

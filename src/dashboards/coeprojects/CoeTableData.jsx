@@ -67,17 +67,26 @@ function CoeTableData({ data = [] }) {
   return (
     <div>
       <div className="border border-gray-200 bg-white rounded-xl shadow-sm w-full overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
-          <h3 className="font-semibold text-base">COEs</h3>
-          {/* Search Bar */}
-          <div className="relative w-full sm:w-64">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-4" />
+        <div className="flex flex-col gap-4 border-b border-gray-200 bg-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-base font-semibold text-gray-900">
+              Centres of Excellence
+            </h3>
+
+            <p className="mt-0.5 text-xs text-gray-700">
+              Explore research centres & details
+            </p>
+          </div>
+
+          <div className="relative w-full sm:w-72">
+            <FiSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+
             <input
               type="text"
-              placeholder="Search records..."
+              placeholder="Search centres..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5   bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
           </div>
         </div>
@@ -200,6 +209,84 @@ function CoeTableData({ data = [] }) {
             </div>
           )}
         </div>
+
+        {/* Card Content */}
+        {/* <div className="p-4 sm:p-5">
+          {!filteredData || filteredData.length === 0 ? (
+            <div className="py-16 text-center">
+              <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-gray-100">
+                <FiSearch className="size-5 text-gray-400" />
+              </div>
+
+              <p className="font-medium text-gray-500">No records found</p>
+
+              <p className="mt-1 text-xs text-gray-400">
+                Try searching with a different keyword
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {currentData.map((item, index) => (
+                <div
+                  key={index}
+                  className="group relative flex flex-col rounded-xl border border-gray-200 bg-blue-50 p-4 shadow-sm transition-all duration-300   hover:border-blue-200 hover:shadow-lg"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-500 text-white text-sm font-semibold  ">
+                      {startIndex + index + 1}
+                    </div>
+
+                    {item.category && (
+                      <span className="inline-flex items-center rounded-full border border-gray-300 bg-red-50 px-3 py-1 text-sm text-black">
+                        {item.category.charAt(0).toUpperCase() +
+                          item.category.slice(1)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-2">
+                    <h3 className="text-base font-semibold leading-snug text-gray-900 transition-colors group-hover:text-blue-700">
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  <div className="my-4">
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                      Funding Agency
+                    </p>
+
+                    {item.sponsoringAgencyLink ? (
+                      <a
+                        href={item.sponsoringAgencyLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-start gap-1.5 text-sm font-medium leading-relaxed text-blue-600 transition-colors hover:text-blue-900 hover:underline"
+                      >
+                        <span>{item.sponsoringAgency}</span>
+                        <FiExternalLink className="mt-1 size-3 shrink-0" />
+                      </a>
+                    ) : (
+                      <p className="text-sm font-medium leading-relaxed text-gray-700">
+                        {item.sponsoringAgency || "—"}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-auto rounded-lg border border-gray-100 bg-white p-3">
+                    <p className="mb-1  text-sm font-semibold  text-gray-700">
+                      Coordinator & Department
+                    </p>
+
+                    <p className="text-sm leading-relaxed text-gray-700">
+                      {item.coordinatorAndDepartment || "—"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div> */}
+
         {/* EXACT UNCHANGED Showing results count */}
         <div className="text-center text-gray-800 text-xs mt-2 pb-4">
           Showing {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
@@ -211,6 +298,7 @@ function CoeTableData({ data = [] }) {
 }
 
 export default CoeTableData;
+
 // import React, { useState, useEffect } from "react";
 
 // function CoeTableData({ data }) {

@@ -8,6 +8,7 @@ import { fetchMouData, fetchMoaData } from "./../lib/mouMoaData";
 import { LuLoaderCircle } from "react-icons/lu";
 import MoaWorldMap from "../dashboards/mou_moa/MoaWorldMap";
 import Heading from "./../components/ui/Heading";
+import WorldMap from "../components/WorldMap";
 
 function MouMoa() {
   const [mouData, setMouData] = useState([]);
@@ -104,7 +105,10 @@ function MouMoa() {
           {/* <MoaTableData MoaData={filteredMoaData} /> */}
 
           <div className="relative z-0  ">
-            <MoaWorldMap MoaData={filteredMoaData} />
+            <WorldMap
+              mapData={filteredMoaData}
+              maptooltiptext="Active Programs"
+            />
           </div>
         </div>
       </div>

@@ -213,7 +213,7 @@ function SponsorProjects() {
 
   return (
     <>
-      <Heading pageheading={" Sponsored Research Projects"} />
+      <Heading pageheading={"Sponsored Research Projects"} />
       <SponsorProjectFilter
         selectedFunding={selectedFunding}
         setSelectedFunding={setSelectedFunding}

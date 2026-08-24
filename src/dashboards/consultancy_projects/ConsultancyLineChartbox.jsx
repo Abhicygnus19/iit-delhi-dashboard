@@ -46,7 +46,7 @@ function ConsultancyLineChartbox({
         <div>
           <h3 className="font-semibold">
             {" "}
-            Year-wise Sponsored Research Projects
+            Year-wise Consultancy Research Projects
           </h3>
           <p className=" text-gray-700">
             {" "}
@@ -80,7 +80,7 @@ function ConsultancyLineChartbox({
             tickLine={false}
           >
             <Label
-              value="Finalcial Year"
+              value="Financial Year"
               offset={-25}
               position="insideBottom"
               style={{

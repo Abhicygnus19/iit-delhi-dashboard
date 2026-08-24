@@ -13,9 +13,10 @@ import { RxCross1 } from "react-icons/rx";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const COLOR_PALETTE = [
-  "#1e4a8d", // Navy
-  "#3b82f6", // Blue
-  "#86a6e5", // Light Blue
+  "#1e4a8d", // Navy Patents Filed
+  "#3b82f6", // Blue Patents Granted
+
+  "#86a6e5", // Light Blue Technology License
 ];
 
 function PatentsBarChartBox({

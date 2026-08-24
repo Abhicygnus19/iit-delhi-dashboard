@@ -3,13 +3,50 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { geocodeCountries } from "../lib/geocodeCountry";
 
-export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
+export default function WorldMap({
+  mapData = [],
+  informationlink,
+  maptooltiptext = "Projects",
+  pinColor = "blue",
+}) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const geoJsonLayerRef = useRef(null);
   const markersLayerRef = useRef(null);
   const [resolving, setResolving] = useState(false);
+  const [legendRange, setLegendRange] = useState({ min: 1, max: 100 });
+  const [countryGeoJson, setCountryGeoJson] = useState(null);
 
-  // 1. Initialize Leaflet map instance once
+  // GeoJSON / API country name normalization helper
+  const normalizeCountryName = (name) => {
+    if (!name) return "";
+    let clean = name.toLowerCase().trim();
+    clean = clean.replace(/\s*\([^)]*\)/g, "").trim();
+
+    if (clean === "tanzania") return "united republic of tanzania";
+    if (clean === "russian federation" || clean === "russia") return "russia";
+    if (
+      clean === "united states" ||
+      clean === "usa" ||
+      clean === "us" ||
+      clean === "united states of america"
+    )
+      return "united states of america";
+    if (clean === "uk") return "united kingdom";
+    if (clean === "uae") return "united arab emirates";
+
+    return clean;
+  };
+
+  useEffect(() => {
+    fetch(
+      "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json",
+    )
+      .then((res) => res.json())
+      .then((data) => setCountryGeoJson(data))
+      .catch((err) => console.error("Error loading country GeoJSON:", err));
+  }, []);
+
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
@@ -26,7 +63,6 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
       maxBoundsViscosity: 1.0,
     });
 
-    // Uses Esri World Street Map (Enforces English Labels & Vibrant Blue Oceans)
     L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
       { attribution: "Tiles &copy; Esri" },
@@ -42,61 +78,111 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
     };
   }, []);
 
-  // 2. Process dynamic mapData
+  const getDeepRedColor = (ratio) => {
+    if (ratio > 0.8) return "#67000d";
+    if (ratio > 0.6) return "#a50f15";
+    if (ratio > 0.4) return "#de2d26";
+    if (ratio > 0.2) return "#fb6a4a";
+    if (ratio > 0) return "#fcae91";
+    return "transparent";
+  };
+
   useEffect(() => {
-    if (!mapRef.current || !markersLayerRef.current) return;
+    if (!mapRef.current || !countryGeoJson) return;
 
     let cancelled = false;
 
     const run = async () => {
-      markersLayerRef.current.clearLayers();
+      if (markersLayerRef.current) markersLayerRef.current.clearLayers();
+      if (geoJsonLayerRef.current) {
+        mapRef.current.removeLayer(geoJsonLayerRef.current);
+        geoJsonLayerRef.current = null;
+      }
 
       const aggregatedCountries = mapData.reduce((acc, item) => {
         const countryRaw = item.country || item.name;
         if (!countryRaw) return acc;
 
-        const key = countryRaw.toLowerCase().trim();
-        if (key === "multiple countries") return acc;
+        const normalizedKey = normalizeCountryName(countryRaw);
+        if (normalizedKey === "multiple countries") return acc;
 
-        if (!acc[key]) {
-          acc[key] = {
+        if (!acc[normalizedKey]) {
+          acc[normalizedKey] = {
+            rawName: countryRaw,
             displayName: countryRaw,
             totalCount: 0,
             institutions: [],
           };
         }
 
-        if (typeof item.value === "number") {
-          acc[key].totalCount += item.value;
-        } else {
-          acc[key].totalCount += 1;
-        }
+        const rawVal = item.totalProjects ?? item.value ?? 1;
+        const parsedVal = parseInt(rawVal, 10);
+        acc[normalizedKey].totalCount += isNaN(parsedVal) ? 1 : parsedVal;
 
-        if (item.universityAndOrganization) {
-          acc[key].institutions.push(item.universityAndOrganization);
+        if (item.universityName || item.universityAndOrganization) {
+          acc[normalizedKey].institutions.push(
+            item.universityName || item.universityAndOrganization,
+          );
         }
 
         return acc;
       }, {});
 
-      const uniqueCountryNames = Object.values(aggregatedCountries).map(
-        (c) => c.displayName,
+      const rawCountryNames = Object.values(aggregatedCountries).map(
+        (c) => c.rawName,
       );
 
-      if (uniqueCountryNames.length === 0) return;
+      if (rawCountryNames.length === 0) return;
 
       setResolving(true);
-      const coordsByCountry = await geocodeCountries(uniqueCountryNames);
+      const coordsByCountry = await geocodeCountries(rawCountryNames);
       setResolving(false);
 
       if (cancelled) return;
 
-      // Animated Compact Location SVG Pin Icon with 3D Shadow
+      let maxVal = 1;
+      let minVal = Infinity;
+
+      Object.values(aggregatedCountries).forEach((c) => {
+        if (c.totalCount > maxVal) maxVal = c.totalCount;
+        if (c.totalCount < minVal) minVal = c.totalCount;
+      });
+
+      setLegendRange({
+        min: minVal === Infinity ? 0 : minVal,
+        max: maxVal,
+      });
+
+      geoJsonLayerRef.current = L.geoJSON(countryGeoJson, {
+        style: (feature) => {
+          const featureName = normalizeCountryName(feature.properties.name);
+          const countryMatch = aggregatedCountries[featureName];
+
+          if (countryMatch) {
+            const count = countryMatch.totalCount;
+            const ratio = count / maxVal;
+            return {
+              fillColor: getDeepRedColor(ratio),
+              fillOpacity: 0.65,
+              stroke: false,
+              weight: 0,
+            };
+          }
+
+          return {
+            fillColor: "transparent",
+            fillOpacity: 0,
+            stroke: false,
+            weight: 0,
+          };
+        },
+      }).addTo(mapRef.current);
+
       const locationPinIcon = L.divIcon({
         className: "custom-location-icon animated-pin",
         html: `
           <div class="pin-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#2563eb" width="24" height="24">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${pinColor}" width="24" height="24">
               <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
             </svg>
           </div>
@@ -106,23 +192,44 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
         popupAnchor: [0, -24],
       });
 
-      Object.keys(aggregatedCountries).forEach((countryKey) => {
-        const coordinates = coordsByCountry[countryKey];
+      Object.keys(aggregatedCountries).forEach((normKey) => {
+        const countryInfo = aggregatedCountries[normKey];
+        const rawKey = countryInfo.rawName.toLowerCase().trim();
+
+        const coordinates =
+          coordsByCountry[rawKey] ||
+          coordsByCountry[normKey] ||
+          coordsByCountry["united states"] ||
+          coordsByCountry["usa"];
+
         if (!coordinates) return;
 
-        const countryInfo = aggregatedCountries[countryKey];
         const count = countryInfo.totalCount;
 
         let detailsHtml = "";
         if (countryInfo.institutions.length > 0) {
           const list = countryInfo.institutions
-            .map(
-              (inst) =>
-                `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
-                   <span class="text-blue-500">•</span>
-                   <span class="hover:text-blue-600 transition-colors cursor-pointer">${inst}</span>
-                 </li>`,
-            )
+            .map((inst) => {
+              // Resolve URL dynamically if informationlink is a string or function
+              let targetUrl = "#";
+              if (typeof informationlink === "function") {
+                targetUrl = informationlink(inst, countryInfo.displayName);
+              } else if (typeof informationlink === "string") {
+                targetUrl = informationlink;
+              }
+
+              return `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
+                <span class="text-blue-500">•</span>
+                <a
+                  href="${targetUrl}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline hover:text-blue-800 transition-colors cursor-pointer"
+                >
+                  ${inst}
+                </a>
+              </li>`;
+            })
             .join("");
 
           detailsHtml = `<ul class="text-xs text-gray-700 mt-1.5 list-none p-0 max-h-52 overflow-y-auto pr-1">${list}</ul>`;
@@ -151,14 +258,6 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
           },
         );
 
-        // Smooth Camera Fly-To Zoom Effect on Location Click
-        marker.on("click", () => {
-          mapRef.current.flyTo(coordinates, 4, {
-            animate: true,
-            duration: 1.2, // 1.2-second smooth flight animation
-          });
-        });
-
         markersLayerRef.current.addLayer(marker);
       });
     };
@@ -168,21 +267,36 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
     return () => {
       cancelled = true;
     };
-  }, [mapData, maptooltiptext]);
+  }, [mapData, maptooltiptext, informationlink, pinColor, countryGeoJson]);
 
   return (
     <div className="mx-2 my-2 rounded-xl border border-gray-200 shadow-sm">
-      <div className="relative w-full h-[450px] z-[1] rounded-lg overflow-hidden bg-[#aadaff]">
+      <div className="relative w-full h-[550px] z-[1] rounded-lg overflow-hidden bg-[#aadaff]">
         <div ref={mapContainerRef} className="w-full h-full" />
 
         {resolving && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-[2000] flex flex-col items-center justify-center gap-3">
             <div className="w-9 h-9 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
             <span className="text-xs font-semibold text-gray-700 bg-white/80 px-3 py-1 rounded-full shadow-sm border border-gray-100">
-              Loading data for countries...
+              Loading map data...
             </span>
           </div>
         )}
+
+        <div className="absolute bottom-4 right-4 z-[1000] bg-white/90 backdrop-blur-md px-3.5 py-2.5 rounded-lg shadow-md border border-gray-200 text-xs text-gray-700 pointer-events-auto">
+          <div className="font-semibold text-[11px] text-gray-800 mb-1">
+            {maptooltiptext || "Density Range"}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-gray-500">
+              {legendRange.min.toLocaleString()}
+            </span>
+            <div className="w-28 h-2.5 rounded-sm bg-gradient-to-r from-[#fcae91] via-[#de2d26] to-[#67000d] border border-gray-200/50" />
+            <span className="font-medium text-gray-900">
+              {legendRange.max.toLocaleString()}
+            </span>
+          </div>
+        </div>
       </div>
 
       <style>{`
@@ -194,8 +308,7 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
           background: transparent !important;
           border: none !important;
         }
-  
-        /* Animated Popup Entry */
+
         .leaflet-popup {
           animation: popupFlyIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -220,13 +333,56 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
 // import "leaflet/dist/leaflet.css";
 // import { geocodeCountries } from "../lib/geocodeCountry";
 
-// export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
+// export default function WorldMap({
+//   mapData = [],
+//   informationlink,
+//   maptooltiptext = "Projects",
+//   pinColor = "blue",
+// }) {
 //   const mapContainerRef = useRef(null);
 //   const mapRef = useRef(null);
+//   const geoJsonLayerRef = useRef(null);
 //   const markersLayerRef = useRef(null);
 //   const [resolving, setResolving] = useState(false);
+//   const [legendRange, setLegendRange] = useState({ min: 1, max: 100 });
+//   const [countryGeoJson, setCountryGeoJson] = useState(null);
 
-//   // 1. Initialize Leaflet map instance once
+//   // GeoJSON / API country name normalization helper
+//   const normalizeCountryName = (name) => {
+//     if (!name) return "";
+//     let clean = name.toLowerCase().trim();
+//     clean = clean.replace(/\s*\([^)]*\)/g, "").trim();
+
+//     if (clean === "tanzania") return "united republic of tanzania";
+//     if (clean === "russian federation" || clean === "russia") return "russia";
+//     if (
+//       clean === "united states" ||
+//       clean === "usa" ||
+//       clean === "us" ||
+//       clean === "united states of america"
+//     )
+//       return "united states of america";
+//     if (
+//       clean === "uk" ||
+//       clean === "great britain" ||
+//       clean === "united kingdom"
+//     )
+//       return "united kingdom";
+//     if (clean === "uae" || clean === "united arab emirates")
+//       return "united arab emirates";
+
+//     return clean;
+//   };
+
+//   useEffect(() => {
+//     fetch(
+//       "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json",
+//     )
+//       .then((res) => res.json())
+//       .then((data) => setCountryGeoJson(data))
+//       .catch((err) => console.error("Error loading country GeoJSON:", err));
+//   }, []);
+
 //   useEffect(() => {
 //     if (!mapContainerRef.current || mapRef.current) return;
 
@@ -243,7 +399,6 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
 //       maxBoundsViscosity: 1.0,
 //     });
 
-//     // Uses Esri World Street Map (Enforces English Labels & Vibrant Blue Oceans)
 //     L.tileLayer(
 //       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
 //       { attribution: "Tiles &copy; Esri" },
@@ -259,85 +414,133 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
 //     };
 //   }, []);
 
-//   // 2. Process dynamic mapData
 //   useEffect(() => {
-//     if (!mapRef.current || !markersLayerRef.current) return;
+//     if (!mapRef.current || !countryGeoJson) return;
 
 //     let cancelled = false;
 
 //     const run = async () => {
-//       markersLayerRef.current.clearLayers();
+//       if (markersLayerRef.current) markersLayerRef.current.clearLayers();
+//       if (geoJsonLayerRef.current) {
+//         mapRef.current.removeLayer(geoJsonLayerRef.current);
+//         geoJsonLayerRef.current = null;
+//       }
 
 //       const aggregatedCountries = mapData.reduce((acc, item) => {
 //         const countryRaw = item.country || item.name;
 //         if (!countryRaw) return acc;
 
-//         const key = countryRaw.toLowerCase().trim();
-//         if (key === "multiple countries") return acc;
+//         const normalizedKey = normalizeCountryName(countryRaw);
+//         if (normalizedKey === "multiple countries") return acc;
 
-//         if (!acc[key]) {
-//           acc[key] = {
+//         if (!acc[normalizedKey]) {
+//           acc[normalizedKey] = {
+//             rawName: countryRaw,
 //             displayName: countryRaw,
 //             totalCount: 0,
 //             institutions: [],
 //           };
 //         }
 
-//         if (typeof item.value === "number") {
-//           acc[key].totalCount += item.value;
-//         } else {
-//           acc[key].totalCount += 1;
-//         }
+//         const rawVal = item.totalProjects ?? item.value ?? 1;
+//         const parsedVal = parseInt(rawVal, 10);
+//         acc[normalizedKey].totalCount += isNaN(parsedVal) ? 1 : parsedVal;
 
-//         if (item.universityAndOrganization) {
-//           acc[key].institutions.push(item.universityAndOrganization);
+//         if (item.universityName || item.universityAndOrganization) {
+//           acc[normalizedKey].institutions.push(
+//             item.universityName || item.universityAndOrganization,
+//           );
 //         }
 
 //         return acc;
 //       }, {});
 
-//       const uniqueCountryNames = Object.values(aggregatedCountries).map(
-//         (c) => c.displayName,
+//       const rawCountryNames = Object.values(aggregatedCountries).map(
+//         (c) => c.rawName,
 //       );
 
-//       if (uniqueCountryNames.length === 0) return;
+//       if (rawCountryNames.length === 0) return;
 
 //       setResolving(true);
-//       const coordsByCountry = await geocodeCountries(uniqueCountryNames);
+//       const coordsByCountry = await geocodeCountries(rawCountryNames);
 //       setResolving(false);
 
 //       if (cancelled) return;
 
-//       // Compact Location SVG Pin Icon
-//       const locationPinIcon = L.divIcon({
-//         className: "custom-location-icon",
-//         html: `
-//           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#2563eb" width="20" height="20" class="drop-shadow-sm">
-//             <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-//           </svg>
-//         `,
-//         iconSize: [20, 20],
-//         iconAnchor: [10, 20],
-//         popupAnchor: [0, -20],
+//       let maxVal = 1;
+//       let minVal = Infinity;
+
+//       Object.values(aggregatedCountries).forEach((c) => {
+//         if (c.totalCount > maxVal) maxVal = c.totalCount;
+//         if (c.totalCount < minVal) minVal = c.totalCount;
 //       });
 
-//       Object.keys(aggregatedCountries).forEach((countryKey) => {
-//         const coordinates = coordsByCountry[countryKey];
+//       setLegendRange({
+//         min: minVal === Infinity ? 0 : minVal,
+//         max: maxVal,
+//       });
+
+//       // GeoJSON layer maintained without heat color fills
+//       geoJsonLayerRef.current = L.geoJSON(countryGeoJson, {
+//         style: () => ({
+//           fillColor: "transparent",
+//           fillOpacity: 0,
+//           stroke: false,
+//           weight: 0,
+//         }),
+//       }).addTo(mapRef.current);
+
+//       const locationPinIcon = L.divIcon({
+//         className: "custom-location-icon animated-pin",
+//         html: `
+//           <div class="pin-wrapper">
+//             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${pinColor}" width="24" height="24">
+//               <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+//             </svg>
+//           </div>
+//         `,
+//         iconSize: [24, 24],
+//         iconAnchor: [12, 24],
+//         popupAnchor: [0, -24],
+//       });
+
+//       Object.keys(aggregatedCountries).forEach((normKey) => {
+//         const countryInfo = aggregatedCountries[normKey];
+//         const rawKey = countryInfo.rawName.toLowerCase().trim();
+
+//         const coordinates =
+//           coordsByCountry[rawKey] ||
+//           coordsByCountry[normKey] ||
+//           coordsByCountry["united states"] ||
+//           coordsByCountry["usa"];
+
 //         if (!coordinates) return;
 
-//         const countryInfo = aggregatedCountries[countryKey];
 //         const count = countryInfo.totalCount;
 
 //         let detailsHtml = "";
 //         if (countryInfo.institutions.length > 0) {
 //           const list = countryInfo.institutions
-//             .map(
-//               (inst) =>
-//                 `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
-//                    <span class="text-blue-500">•</span>
-//                    <span class="hover:text-blue-600 transition-colors cursor-pointer">${inst}</span>
-//                  </li>`,
-//             )
+//             .map((inst) => {
+//               let targetUrl = "#";
+//               if (typeof informationlink === "function") {
+//                 targetUrl = informationlink(inst, countryInfo.displayName);
+//               } else if (typeof informationlink === "string") {
+//                 targetUrl = informationlink;
+//               }
+
+//               return `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
+//                 <span class="text-blue-500">•</span>
+//                 <a
+//                   href="${targetUrl}"
+//                   target="_blank"
+//                   rel="noopener noreferrer"
+//                   class="text-blue-600 hover:underline hover:text-blue-800 transition-colors cursor-pointer"
+//                 >
+//                   ${inst}
+//                 </a>
+//               </li>`;
+//             })
 //             .join("");
 
 //           detailsHtml = `<ul class="text-xs text-gray-700 mt-1.5 list-none p-0 max-h-52 overflow-y-auto pr-1">${list}</ul>`;
@@ -375,21 +578,37 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
 //     return () => {
 //       cancelled = true;
 //     };
-//   }, [mapData, maptooltiptext]);
+//   }, [mapData, maptooltiptext, informationlink, pinColor, countryGeoJson]);
 
 //   return (
-//     <div className="mx-4 p-2 rounded-xl border border-gray-200 shadow-sm my-4">
-//       <div className="relative w-full h-[450px] z-[1] rounded-lg overflow-hidden bg-[#aadaff]">
+//     <div className="mx-2 my-2 rounded-xl border border-gray-200 shadow-sm">
+//       <div className="relative w-full h-[550px] z-[1] rounded-lg overflow-hidden bg-[#aadaff]">
 //         <div ref={mapContainerRef} className="w-full h-full" />
 
 //         {resolving && (
 //           <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-[2000] flex flex-col items-center justify-center gap-3">
 //             <div className="w-9 h-9 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
 //             <span className="text-xs font-semibold text-gray-700 bg-white/80 px-3 py-1 rounded-full shadow-sm border border-gray-100">
-//               Loading data for countries...
+//               Loading map data...
 //             </span>
 //           </div>
 //         )}
+
+//         {/* Updated simplified legend without the heat spectrum */}
+//         {/* <div className="absolute bottom-4 right-4 z-[1000] bg-white/90 backdrop-blur-md px-3.5 py-2.5 rounded-lg shadow-md border border-gray-200 text-xs text-gray-700 pointer-events-auto">
+//           <div className="font-semibold text-[11px] text-gray-800 mb-1">
+//             {maptooltiptext || "Range"}
+//           </div>
+//           <div className="flex items-center gap-2">
+//             <span className="font-medium text-gray-500">
+//               Min: {legendRange.min.toLocaleString()}
+//             </span>
+//             <span className="text-gray-300">|</span>
+//             <span className="font-medium text-gray-900">
+//               Max: {legendRange.max.toLocaleString()}
+//             </span>
+//           </div>
+//         </div> */}
 //       </div>
 
 //       <style>{`
@@ -402,15 +621,6 @@ export default function WorldMap({ mapData = [], maptooltiptext = "" }) {
 //           border: none !important;
 //         }
 
-//           /* Floating Pin Animation & 3D Shadow */
-//         .animated-pin .pin-wrapper {
-//           position: relative;
-//           display: flex;
-//           flex-direction: column;
-//           align-items: center;
-//         }
-
-//         /* Animated Smooth Popup Entry */
 //         .leaflet-popup {
 //           animation: popupFlyIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 //         }
