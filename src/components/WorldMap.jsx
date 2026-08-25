@@ -5,7 +5,7 @@ import { geocodeCountries } from "../lib/geocodeCountry";
 
 export default function WorldMap({
   mapData = [],
-  informationlink,
+  filelink,
   maptooltiptext = "Projects",
   pinColor = "blue",
 }) {
@@ -119,10 +119,12 @@ export default function WorldMap({
         const parsedVal = parseInt(rawVal, 10);
         acc[normalizedKey].totalCount += isNaN(parsedVal) ? 1 : parsedVal;
 
+        // AFTER
         if (item.universityName || item.universityAndOrganization) {
-          acc[normalizedKey].institutions.push(
-            item.universityName || item.universityAndOrganization,
-          );
+          acc[normalizedKey].institutions.push({
+            name: item.universityName || item.universityAndOrganization,
+            filelink: item.filelink || "#",
+          });
         }
 
         return acc;
@@ -207,28 +209,38 @@ export default function WorldMap({
         const count = countryInfo.totalCount;
 
         let detailsHtml = "";
+
         if (countryInfo.institutions.length > 0) {
           const list = countryInfo.institutions
             .map((inst) => {
-              // Resolve URL dynamically if informationlink is a string or function
-              let targetUrl = "#";
-              if (typeof informationlink === "function") {
-                targetUrl = informationlink(inst, countryInfo.displayName);
-              } else if (typeof informationlink === "string") {
-                targetUrl = informationlink;
+              let targetUrl = null;
+
+              // Determine valid URL
+              if (typeof filelink === "function") {
+                const resolved = filelink(inst.name, countryInfo.displayName);
+                if (resolved && resolved !== "#") targetUrl = resolved;
+              } else if (inst.filelink && inst.filelink !== "#") {
+                targetUrl = inst.filelink;
+              } else if (typeof filelink === "string" && filelink !== "#") {
+                targetUrl = filelink;
               }
 
+              // Render <a> tag if valid link exists, otherwise plain <span>
+              const content = targetUrl
+                ? `<a
+             href="${targetUrl}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+           >
+             ${inst.name}
+           </a>`
+                : `<span  class="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer">${inst.name}</span>`;
+
               return `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
-                <span class="text-blue-500">•</span>
-                <a
-                  href="${targetUrl}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:underline hover:text-blue-800 transition-colors cursor-pointer"
-                >
-                  ${inst}
-                </a>
-              </li>`;
+        <span class="text-blue-500">•</span>
+        ${content} 
+      </li>`;
             })
             .join("");
 
@@ -267,7 +279,7 @@ export default function WorldMap({
     return () => {
       cancelled = true;
     };
-  }, [mapData, maptooltiptext, informationlink, pinColor, countryGeoJson]);
+  }, [mapData, maptooltiptext, filelink, pinColor, countryGeoJson]);
 
   return (
     <div className="mx-2 my-2 rounded-xl border border-gray-200 shadow-sm">
@@ -446,11 +458,12 @@ export default function WorldMap({
 //         const parsedVal = parseInt(rawVal, 10);
 //         acc[normalizedKey].totalCount += isNaN(parsedVal) ? 1 : parsedVal;
 
-//         if (item.universityName || item.universityAndOrganization) {
-//           acc[normalizedKey].institutions.push(
-//             item.universityName || item.universityAndOrganization,
-//           );
-//         }
+//        if (item.universityName || item.universityAndOrganization) {
+//          acc[normalizedKey].institutions.push({
+//          name: item.universityName || item.universityAndOrganization,
+//          filelink: item.filelink || "#",
+//         });
+//        }
 
 //         return acc;
 //       }, {});
@@ -519,32 +532,43 @@ export default function WorldMap({
 //         const count = countryInfo.totalCount;
 
 //         let detailsHtml = "";
-//         if (countryInfo.institutions.length > 0) {
-//           const list = countryInfo.institutions
-//             .map((inst) => {
-//               let targetUrl = "#";
-//               if (typeof informationlink === "function") {
-//                 targetUrl = informationlink(inst, countryInfo.displayName);
-//               } else if (typeof informationlink === "string") {
-//                 targetUrl = informationlink;
-//               }
 
-//               return `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
-//                 <span class="text-blue-500">•</span>
-//                 <a
-//                   href="${targetUrl}"
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   class="text-blue-600 hover:underline hover:text-blue-800 transition-colors cursor-pointer"
-//                 >
-//                   ${inst}
-//                 </a>
-//               </li>`;
-//             })
-//             .join("");
+// if (countryInfo.institutions.length > 0) {
+//   const list = countryInfo.institutions
+//     .map((inst) => {
+//       let targetUrl = null;
 
-//           detailsHtml = `<ul class="text-xs text-gray-700 mt-1.5 list-none p-0 max-h-52 overflow-y-auto pr-1">${list}</ul>`;
-//         }
+//       // Determine valid URL
+//       if (typeof filelink === "function") {
+//         const resolved = filelink(inst.name, countryInfo.displayName);
+//         if (resolved && resolved !== "#") targetUrl = resolved;
+//       } else if (inst.filelink && inst.filelink !== "#") {
+//         targetUrl = inst.filelink;
+//       } else if (typeof filelink === "string" && filelink !== "#") {
+//         targetUrl = filelink;
+//       }
+
+//       // Render <a> tag if valid link exists, otherwise plain <span>
+//       const content = targetUrl
+//         ? `<a
+//              href="${targetUrl}"
+//              target="_blank"
+//              rel="noopener noreferrer"
+//              class="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+//            >
+//              ${inst.name}
+//            </a>`
+//         : `<span  class="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer">${inst.name}</span>`;
+
+//       return `<li class="py-1 border-b border-gray-100 last:border-none flex items-center gap-1.5">
+//         <span class="text-blue-500">•</span>
+//         ${content}
+//       </li>`;
+//     })
+//     .join("");
+
+//   detailsHtml = `<ul class="text-xs text-gray-700 mt-1.5 list-none p-0 max-h-52 overflow-y-auto pr-1">${list}</ul>`;
+// }
 
 //         const marker = L.marker(coordinates, {
 //           icon: locationPinIcon,

@@ -115,7 +115,7 @@ function GrpProjects() {
                   country: item.country,
                   universityAndOrganization: item.universityName,
                   value: Number(item.totalProjects || 1),
-                  informationlink: item.informationlink || "#",
+                  filelink: item.filelink || "#",
                 }))
             : [];
 

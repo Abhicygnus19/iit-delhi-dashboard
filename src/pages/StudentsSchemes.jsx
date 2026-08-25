@@ -7,7 +7,6 @@ import StatsStudentSchemes from "../dashboards/student_schemes/StatsStudentSchem
 import {
   fetchStudentSchemeData,
   fecthStudentSchemePDF,
-  schemePDF,
 } from "./../lib/studentSchemeData";
 import { LuLoaderCircle } from "react-icons/lu";
 import { FiArrowUpRight } from "react-icons/fi";

@@ -77,10 +77,10 @@ export const fetchStudentSchemeData = async () => {
 
 export const fecthStudentSchemePDF = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/#`, {
+    const response = await fetch(`${API_BASE_URL}/studentschemecategory`, {
       method: "GET",
       headers: {
-        "X-API_KEY": API_KEY,
+        "X-API-KEY": API_KEY,
         "Content-Type": "application/json",
       },
     });
@@ -102,21 +102,21 @@ export const fecthStudentSchemePDF = async () => {
   }
 };
 
-export const schemePDF = [
-  {
-    label: "Discover & Learn",
-    pdflink: "#",
-  },
-  {
-    label: "SURA",
-    pdflink: "#",
-  },
-  {
-    label: "Student Startup Action",
-    pdflink: "#",
-  },
-  {
-    label: "Test",
-    pdflink: "#",
-  },
-];
+// export const schemePDF = [
+//   {
+//     label: "Discover & Learn",
+//     pdflink: "#",
+//   },
+//   {
+//     label: "SURA",
+//     pdflink: "#",
+//   },
+//   {
+//     label: "Student Startup Action",
+//     pdflink: "#",
+//   },
+//   {
+//     label: "Test",
+//     pdflink: "#",
+//   },
+// ];
