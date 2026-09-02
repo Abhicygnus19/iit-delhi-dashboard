@@ -83,13 +83,13 @@ function HeatmapYearlyScheme({
         <table className="w-full text-xs text-left border-separate border-spacing-x-2 border-spacing-y-2 p-1">
           <thead>
             <tr>
-              <th className="text-left py-2 text-gray-500 font-medium border-b capitalize min-w-[140px]">
+              <th className="text-left py-2 text-gray-500 font-medium border-b capitalize min-w-[140px] bg-white">
                 Scheme Types \ Years
               </th>
               {yearsRange.map((year) => (
                 <th
                   key={year}
-                  className="text-center font-semibold whitespace-nowrap px-2"
+                  className="text-center font-semibold whitespace-nowrap px-2 bg-white"
                 >
                   {year}
                 </th>

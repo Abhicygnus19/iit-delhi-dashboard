@@ -9,9 +9,6 @@ import ConsultancyYearlyBudget from "./../dashboards/consultancy_projects/Consul
 import ConsultancyYearlyProjects from "./../dashboards/consultancy_projects/ConsultancyYearlyProjects";
 import ConsultancyUnitProject from "./../dashboards/consultancy_projects/ConsultancyUnitProject";
 
-// Shared common UI Block components
-import OptionSelect from "../components/ui/OptionSelect";
-
 import { LuLoaderCircle } from "react-icons/lu";
 import YearChartBlock from "./../components/YearChartBlock";
 import Heading from "../components/ui/Heading";

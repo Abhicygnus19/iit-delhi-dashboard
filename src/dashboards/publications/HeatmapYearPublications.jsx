@@ -130,17 +130,17 @@ function HeatmapYearPublications({
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr>
-                <th className="text-left p-2 text-muted-foreground font-semibold border-b capitalize min-w-[140px] text-slate-600">
+                <th className="text-left p-2 text-muted-foreground font-semibold border-b capitalize min-w-[140px]  bg-white">
                   Academic Units \ Year
                 </th>
                 {years.map((year) => (
                   <th
                     key={year}
                     className={
-                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors " +
+                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white" +
                       (selectedYear === year
                         ? "bg-blue-50 text-blue-700 font-bold"
-                        : "text-slate-600")
+                        : "text-slate-800")
                     }
                   >
                     {year}
@@ -151,7 +151,7 @@ function HeatmapYearPublications({
             <tbody>
               {uniqueOrgTypes.map((orgType) => (
                 <tr key={orgType}>
-                  <td className="p-2 font-semibold whitespace-nowrap capitalize text-slate-700">
+                  <td className="p-2 font-semibold whitespace-nowrap capitalize  ">
                     {orgType + "s"}
                   </td>
 
@@ -202,14 +202,14 @@ function HeatmapYearPublications({
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr>
-                <th className="text-left p-2 text-muted-foreground font-semibold border-b capitalize min-w-[140px] text-slate-600">
+                <th className="text-left p-2 text-muted-foreground font-semibold border-b capitalize min-w-[140px]  bg-white">
                   Metric \ Year
                 </th>
                 {years.map((year) => (
                   <th
                     key={year}
                     className={
-                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors " +
+                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white" +
                       (selectedYear === year
                         ? "bg-blue-50 text-blue-700 font-bold"
                         : "text-slate-600")

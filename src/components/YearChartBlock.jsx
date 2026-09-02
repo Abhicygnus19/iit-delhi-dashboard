@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import OptionSelect from "./ui/OptionSelect";
 import {
   BarChart,
   Bar,
@@ -209,7 +208,7 @@ export default function YearChartBlock({ yearObj, selectedSrpTypes }) {
                 />
                 <Tooltip
                   cursor={{ fill: "#f9fafb" }}
-                  content={<CustomTooltip />}
+                  // content={<CustomTooltip />}
                 />
                 <Legend
                   verticalAlign="top"

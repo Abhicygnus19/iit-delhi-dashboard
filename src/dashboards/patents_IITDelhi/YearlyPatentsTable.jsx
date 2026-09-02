@@ -83,13 +83,13 @@ function YearlyPatentsTable({
         <table className="w-full text-xs text-left border-separate border-spacing-x-2 border-spacing-y-2 p-1">
           <thead>
             <tr>
-              <th className="text-left py-2 text-muted-foreground font-medium border-b capitalize min-w-[120px]">
+              <th className="text-left py-2 text-muted-foreground font-medium border-b capitalize min-w-[120px] bg-white">
                 Patent types \ Years
               </th>
               {yearsRange.map((year) => (
                 <th
                   key={year}
-                  className="text-center font-semibold whitespace-nowrap"
+                  className="text-center font-semibold whitespace-nowrap bg-white"
                 >
                   {year}
                 </th>

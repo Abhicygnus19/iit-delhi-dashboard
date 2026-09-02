@@ -97,13 +97,13 @@ function YearlyProjects({ activeData = [] }) {
         <table className="w-full text-xs border-separate border-spacing-x-2 border-spacing-y-2">
           <thead>
             <tr>
-              <th className="text-left text-muted-foreground font-semibold capitalize min-w-[140px]">
+              <th className="text-left text-muted-foreground font-semibold capitalize min-w-[140px] bg-white">
                 Organizations \ Years
               </th>
               {yearsRange.map((year) => (
                 <th
                   key={year}
-                  className="text-center text-muted-foreground font-semibold whitespace-nowrap align-middle"
+                  className="text-center text-muted-foreground font-semibold whitespace-nowrap align-middle bg-white"
                 >
                   {year}
                 </th>

@@ -5,7 +5,6 @@ import SponsorLineChartbox from "../dashboards/sponsor_projects/SponsorLineChart
 import SponsorBarChartbox from "../dashboards/sponsor_projects/SponsorBarChartbox";
 import YearlyProjects from "../dashboards/sponsor_projects/YearlyProjects";
 import SponsorYearlyBudget from "../dashboards/sponsor_projects/SponsorYearlyBudget";
-import OptionSelect from "../components/ui/OptionSelect";
 import { LuLoaderCircle } from "react-icons/lu";
 import YearChartBlock from "./../components/YearChartBlock";
 import SanctionedProject from "../dashboards/sponsor_projects/SanctionedProject";
@@ -53,7 +52,7 @@ function SponsorProjects() {
     return [Math.min(...startYears), Math.max(...endYears)];
   }, [sponsorProjectData]);
 
-  //api calling
+  // api calling
   useEffect(() => {
     const getSponsorProjectData = async () => {
       setLoading(true);
