@@ -137,7 +137,7 @@ function HeatmapYearPublications({
                   <th
                     key={year}
                     className={
-                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white" +
+                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white " +
                       (selectedYear === year
                         ? "bg-blue-50 text-blue-700 font-bold"
                         : "text-slate-800")
@@ -209,10 +209,10 @@ function HeatmapYearPublications({
                   <th
                     key={year}
                     className={
-                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white" +
+                      "p-2 text-center text-muted-foreground font-semibold border-b transition-colors bg-white " +
                       (selectedYear === year
                         ? "bg-blue-50 text-blue-700 font-bold"
-                        : "text-slate-600")
+                        : "text-slate-800")
                     }
                   >
                     {year}

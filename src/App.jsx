@@ -13,7 +13,7 @@ import StudentsSchemes from "./pages/StudentsSchemes";
 function App() {
   return (
     <BrowserRouter basename="/iitd/react-dashboard/">
-      {/* <Header /> */}
+      <Header />
       <div className="md:mt-0">
         <Routes>
           <Route
