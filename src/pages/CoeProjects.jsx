@@ -58,7 +58,7 @@ function CoeProjects() {
         selected={selectedCategories}
         onChange={setSelectedCategories}
       />
-      <div className="px-2 min-h-screen max-w-[1500px] mx-auto pb-20">
+      <div className="px-2 min-h-screen max-w-[1500px] mx-auto pb-20 ">
         {/* Pass the dynamic filtered array instead of reading hardcoded data inside */}
         <CoeTableData data={filteredData} />
       </div>

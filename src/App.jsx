@@ -1,7 +1,7 @@
 // import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SponsorProjects from "./pages/SponsorProjects";
-import Header from "./components/ui/Header";
+import Menu from "./components/ui/Menu";
 import ConsultancyProjects from "./pages/ConsultancyProjects";
 import PatentsIITDelhi from "./pages/PatentsIITDelhi";
 import CoeProjects from "./pages/CoeProjects";
@@ -9,6 +9,7 @@ import GrpProjects from "./pages/GrpProjects";
 import MouMoa from "./pages/MouMoa";
 import Publications from "./pages/Publications";
 import StudentsSchemes from "./pages/StudentsSchemes";
+import Header from "./components/ui/Header";
 
 function App() {
   return (
